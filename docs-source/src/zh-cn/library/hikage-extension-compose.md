@@ -35,6 +35,26 @@ libraries:
 implementation(com.highcapable.hikage.hikage.extension.compose)
 ```
 
+### Version Catalog
+
+在你的项目 `gradle/libs.versions.toml` 中添加依赖。
+
+```toml
+[versions]
+hikage-extension-compose = "<version>"
+
+[libraries]
+hikage-extension-compose = { module = "com.highcapable.hikage:hikage-extension-compose", version.ref = "hikage-extension-compose" }
+```
+
+在你的项目 `build.gradle.kts` 中配置依赖。
+
+```kotlin
+implementation(libs.hikage.extension.compose)
+```
+
+请将 `<version>` 修改为此文档顶部显示的版本。
+
 ### 传统方式
 
 在你的项目 `build.gradle.kts` 中配置依赖。

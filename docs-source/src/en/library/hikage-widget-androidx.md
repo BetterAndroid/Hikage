@@ -29,6 +29,26 @@ Configure dependency in your project `build.gradle.kts`.
 implementation(com.highcapable.hikage.hikage.widget.androidx)
 ```
 
+### Version Catalog
+
+Add dependency in your project's `gradle/libs.versions.toml`.
+
+```toml
+[versions]
+hikage-widget-androidx = "<version>"
+
+[libraries]
+hikage-widget-androidx = { module = "com.highcapable.hikage:hikage-widget-androidx", version.ref = "hikage-widget-androidx" }
+```
+
+Configure dependency in your project `build.gradle.kts`.
+
+```kotlin
+implementation(libs.hikage.widget.androidx)
+```
+
+Please change `<version>` to the version displayed at the top of this document.
+
 ### Traditional Method
 
 Configure dependency in your project `build.gradle.kts`.

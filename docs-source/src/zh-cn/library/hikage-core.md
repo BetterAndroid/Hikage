@@ -29,6 +29,26 @@ libraries:
 implementation(com.highcapable.hikage.hikage.core)
 ```
 
+### Version Catalog
+
+在你的项目 `gradle/libs.versions.toml` 中添加依赖。
+
+```toml
+[versions]
+hikage-core = "<version>"
+
+[libraries]
+hikage-core = { module = "com.highcapable.hikage:hikage-core", version.ref = "hikage-core" }
+```
+
+在你的项目 `build.gradle.kts` 中配置依赖。
+
+```kotlin
+implementation(libs.hikage.core)
+```
+
+请将 `<version>` 修改为此文档顶部显示的版本。
+
 ### 传统方式
 
 在你的项目 `build.gradle.kts` 中配置依赖。

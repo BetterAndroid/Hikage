@@ -56,6 +56,47 @@ dependencies {
 }
 ```
 
+### Version Catalog
+
+在你的项目 `gradle/libs.versions.toml` 中添加依赖。
+
+```toml
+[versions]
+ksp = "<ksp-version>"
+hikage-compiler = "<version>"
+
+[plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+[libraries]
+hikage-compiler = { module = "com.highcapable.hikage:hikage-compiler", version.ref = "hikage-compiler" }
+```
+
+在你的根项目 `build.gradle.kts` 中配置依赖。
+
+```kotlin
+plugins {
+    // ...
+    alias(libs.plugins.ksp) apply false
+}
+```
+
+在你的项目 `build.gradle.kts` 中配置依赖。
+
+```kotlin
+plugins {
+    // ...
+    alias(libs.plugins.ksp)
+}
+
+dependencies {
+    // ...
+    ksp(libs.hikage.compiler)
+}
+```
+
+请将 `<version>` 修改为此文档顶部显示的版本，并将 `<ksp-version>` 修改为你项目当前使用的 Kotlin 版本对应的 KSP 版本。
+
 ### 传统方式
 
 在你的根项目 `build.gradle.kts` 中配置依赖。

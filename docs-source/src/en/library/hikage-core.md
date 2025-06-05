@@ -29,6 +29,26 @@ Configure dependency in your project `build.gradle.kts`.
 implementation(com.highcapable.hikage.hikage.core)
 ```
 
+### Version Catalog
+
+Add dependency in your project's `gradle/libs.versions.toml`.
+
+```toml
+[versions]
+hikage-core = "<version>"
+
+[libraries]
+hikage-core = { module = "com.highcapable.hikage:hikage-core", version.ref = "hikage-core" }
+```
+
+Configure dependency in your project `build.gradle.kts`.
+
+```kotlin
+implementation(libs.hikage.core)
+```
+
+Please change `<version>` to the version displayed at the top of this document.
+
 ### Traditional Method
 
 Configure dependency in your project `build.gradle.kts`.

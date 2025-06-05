@@ -29,6 +29,26 @@ libraries:
 implementation(com.highcapable.hikage.hikage.widget.androidx)
 ```
 
+### Version Catalog
+
+在你的项目 `gradle/libs.versions.toml` 中添加依赖。
+
+```toml
+[versions]
+hikage-widget-androidx = "<version>"
+
+[libraries]
+hikage-widget-androidx = { module = "com.highcapable.hikage:hikage-widget-androidx", version.ref = "hikage-widget-androidx" }
+```
+
+在你的项目 `build.gradle.kts` 中配置依赖。
+
+```kotlin
+implementation(libs.hikage.widget.androidx)
+```
+
+请将 `<version>` 修改为此文档顶部显示的版本。
+
 ### 传统方式
 
 在你的项目 `build.gradle.kts` 中配置依赖。

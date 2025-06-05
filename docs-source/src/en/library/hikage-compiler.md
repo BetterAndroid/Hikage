@@ -56,6 +56,48 @@ dependencies {
 }
 ```
 
+### Version Catalog
+
+Add dependency in your project's `gradle/libs.versions.toml`.
+
+```toml
+[versions]
+ksp = "<ksp-version>"
+hikage-compiler = "<version>"
+
+[plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+[libraries]
+hikage-compiler = { module = "com.highcapable.hikage:hikage-compiler", version.ref = "hikage-compiler" }
+```
+
+Configure dependency in your root project `build.gradle.kts`.
+
+```kotlin
+plugins {
+    // ...
+    alias(libs.plugins.ksp) apply false
+}
+```
+
+Configure dependency in your project `build.gradle.kts`.
+
+```kotlin
+plugins {
+    // ...
+    alias(libs.plugins.ksp)
+}
+
+dependencies {
+    // ...
+    ksp(libs.hikage.compiler)
+}
+```
+
+Please change `<version>` to the version displayed at the top of this document,
+and change `<ksp-version>` to the KSP version corresponding to the Kotlin version currently used by your project.
+
 ### Traditional Method
 
 Configure dependency in your root project `build.gradle.kts`.

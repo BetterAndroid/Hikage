@@ -29,6 +29,26 @@ Configure dependency in your project `build.gradle.kts`.
 implementation(com.highcapable.hikage.hikage.extension.betterandroid)
 ```
 
+### Version Catalog
+
+Add dependency in your project's `gradle/libs.versions.toml`.
+
+```toml
+[versions]
+hikage-extension-betterandroid = "<version>"
+
+[libraries]
+hikage-extension-betterandroid = { module = "com.highcapable.hikage:hikage-extension-betterandroid", version.ref = "hikage-extension-betterandroid" }
+```
+
+Configure dependency in your project `build.gradle.kts`.
+
+```kotlin
+implementation(libs.hikage.extension.betterandroid)
+```
+
+Please change `<version>` to the version displayed at the top of this document.
+
 ### Traditional Method
 
 Configure dependency in your project `build.gradle.kts`.
