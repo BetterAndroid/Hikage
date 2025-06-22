@@ -120,7 +120,7 @@ internal object XmlBlockBypass {
         // Context may be loaded from the preview and other non-Android platforms, ignoring this.
         if (context.javaClass.name.endsWith("BridgeContext")) return
         init(context.applicationContext.applicationInfo)
-    } 
+    }
 
     /**
      * Initialize.
@@ -148,9 +148,18 @@ internal object XmlBlockBypass {
                 ).apply { isAccessible = true }.invoke(null, sourceDir, false, false, false)
             else -> error("Unsupported Android version.")
         } as? Long? ?: error("Failed to create ApkAssets.")
-        blockParser = HiddenApiBypass.getDeclaredConstructor(XmlBlockClass, AssetManagerClass, LongType)
-            .apply { isAccessible = true }
-            .newInstance(null, xmlBlock) as? AutoCloseable? ?: error("Failed to create XmlBlock\$Parser.")
+        blockParser = when {
+            SystemVersion.isHighOrEqualsTo(36) ->
+                // XmlBlock(@Nullable AssetManager assets, long xmlBlock, boolean usesFeatureFlags)
+                HiddenApiBypass.getDeclaredConstructor(XmlBlockClass, AssetManagerClass, LongType, BooleanType)
+                    .apply { isAccessible = true }
+                    .newInstance(null, xmlBlock, false)
+            else ->
+                // XmlBlock(@Nullable AssetManager assets, long xmlBlock)
+                HiddenApiBypass.getDeclaredConstructor(XmlBlockClass, AssetManagerClass, LongType)
+                    .apply { isAccessible = true }
+                    .newInstance(null, xmlBlock)
+        } as? AutoCloseable? ?: error("Failed to create XmlBlock\$Parser.")
         isInitOnce = true
     }
 
@@ -166,7 +175,7 @@ internal object XmlBlockBypass {
          * @return [XmlResourceParser]
          */
         fun createViewAttrs() = context.layoutInflater.inflateOrNull<HikageAttrsView>(R.layout.layout_hikage_attrs_view)?.attrs
-            as? XmlResourceParser? ?: error("Failed to create AttributeSet.")
+          as? XmlResourceParser? ?: error("Failed to create AttributeSet.")
         return if (SystemVersion.isHighOrEqualsTo(SystemVersion.P)) {
             if (!isInitOnce) return createViewAttrs()
             require(blockParser != null) { "Hikage initialization failed." }
