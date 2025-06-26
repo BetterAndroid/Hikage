@@ -39,7 +39,8 @@ android {
 
 dependencies {
     implementation(projects.hikageCore)
-    implementation(com.highcapable.yukireflection.api)
+    implementation(com.highcapable.kavaref.kavaref.core)
+    implementation(com.highcapable.kavaref.kavaref.extension)
     implementation(com.highcapable.betterandroid.ui.component)
     implementation(com.highcapable.betterandroid.ui.extension)
     implementation(com.highcapable.betterandroid.system.extension)

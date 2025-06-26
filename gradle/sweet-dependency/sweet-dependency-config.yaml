@@ -24,7 +24,7 @@ plugins:
     auto-update: false
   com.android.application:
     alias: android-application
-    version: 8.9.0
+    version: 8.9.3
   com.android.library:
     alias: android-library
     version-ref: android-application
@@ -37,7 +37,7 @@ plugins:
     auto-update: false
   com.vanniktech.maven.publish:
     alias: maven-publish
-    version: 0.31.0
+    version: 0.33.0
 
 libraries:
   org.jetbrains.kotlin:
@@ -54,7 +54,7 @@ libraries:
       version: 1.2.0
   com.squareup:
     kotlinpoet:
-      version: 2.1.0
+      version: 2.2.0
     kotlinpoet-ksp:
       version-ref: <this>::kotlinpoet
   com.highcapable.betterandroid:
@@ -67,20 +67,22 @@ libraries:
   org.lsposed.hiddenapibypass:
     hiddenapibypass:
       version: 6.1
-  com.highcapable.yukireflection:
-    api:
-      version: 1.0.3
+  com.highcapable.kavaref:
+    kavaref-core:
+      version: 1.0.0
+    kavaref-extension:
+      version: 1.0.0
   com.highcapable.pangutext:
     pangutext-android:
       version: 1.0.2
   androidx.core:
     core:
-      version: 1.15.0
+      version: 1.16.0
     core-ktx:
       version-ref: <this>::core
   androidx.appcompat:
     appcompat:
-      version: 1.7.0
+      version: 1.7.1
   com.google.android.material:
     material:
       auto-update: false
@@ -115,7 +117,7 @@ libraries:
       version: 1.4.0
   androidx.compose.ui:
     ui:
-      version: 1.7.8
+      version: 1.8.3
   junit:
     junit:
       version: 4.13.2
@@ -127,7 +129,7 @@ libraries:
       version: 3.6.1
   com.android.tools.lint:
     lint:
-      version: 31.9.0
+      version: 31.11.0
     lint-api:
       version-ref: <this>::lint
     lint-checks:

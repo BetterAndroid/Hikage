@@ -25,6 +25,7 @@ package com.highcapable.hikage.bypass
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.content.res.AssetManager
 import android.content.res.XmlResourceParser
 import android.content.res.loader.AssetsProvider
 import android.content.res.loader.ResourcesProvider
@@ -34,14 +35,13 @@ import com.highcapable.betterandroid.system.extension.tool.SystemVersion
 import com.highcapable.betterandroid.ui.extension.view.inflateOrNull
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.core.R
-import com.highcapable.yukireflection.factory.classOf
-import com.highcapable.yukireflection.factory.lazyClass
-import com.highcapable.yukireflection.type.android.AssetManagerClass
-import com.highcapable.yukireflection.type.java.BooleanType
-import com.highcapable.yukireflection.type.java.IntType
-import com.highcapable.yukireflection.type.java.LongType
-import com.highcapable.yukireflection.type.java.StringClass
+import com.highcapable.kavaref.KavaRef.Companion.resolve
+import com.highcapable.kavaref.condition.type.Modifiers
+import com.highcapable.kavaref.extension.lazyClass
+import com.highcapable.kavaref.resolver.processor.MemberProcessor
 import org.lsposed.hiddenapibypass.HiddenApiBypass
+import java.lang.reflect.Constructor
+import java.lang.reflect.Method
 import android.R as Android_R
 
 /**
@@ -101,7 +101,7 @@ internal object XmlBlockBypass {
     private val ApkAssetsClass by lazyClass("android.content.res.ApkAssets")
 
     /** The xml block class. */
-    private val XmlBlockClass by lazyClass("android.content.res.XmlBlock")
+    private val XmlBlockClass by lazyClass<AutoCloseable>("android.content.res.XmlBlock")
 
     /** Global pointer references object. */
     private var xmlBlock: Long? = null
@@ -111,6 +111,30 @@ internal object XmlBlockBypass {
 
     /** Whether the initialization is done once. */
     private var isInitOnce = false
+
+    /** The resolver for member processor. */
+    private val resolver = object : MemberProcessor.Resolver() {
+
+        override fun <T : Any> getDeclaredConstructors(declaringClass: Class<T>): List<Constructor<T>> =
+            SystemVersion.require(SystemVersion.P, super.getDeclaredConstructors(declaringClass)) {
+                HiddenApiBypass.getDeclaredMethods(declaringClass).filterIsInstance<Constructor<T>>().toList()
+            }
+
+        override fun <T : Any> getDeclaredMethods(declaringClass: Class<T>): List<Method> =
+            SystemVersion.require(SystemVersion.P, super.getDeclaredMethods(declaringClass)) {
+                HiddenApiBypass.getDeclaredMethods(declaringClass).filterIsInstance<Method>().toList()
+            }
+    }
+
+    private val newParser by lazy {
+        XmlBlockClass.resolve()
+            .processor(resolver)
+            .optional()
+            .firstMethodOrNull {
+                name = "newParser"
+                parameters(Int::class)
+            }
+    }
 
     /**
      * Initialize.
@@ -134,32 +158,40 @@ internal object XmlBlockBypass {
             SystemVersion.isHighOrEqualsTo(SystemVersion.R) ->
                 // private static native long nativeLoad(@FormatType int format, @NonNull String path,
                 //            @PropertyFlags int flags, @Nullable AssetsProvider asset) throws IOException;
-                HiddenApiBypass.getDeclaredMethod(
-                    ApkAssetsClass, "nativeLoad",
-                    IntType, StringClass, IntType, classOf<AssetsProvider>()
-                ).apply { isAccessible = true }.invoke(null, FORMAT_APK, sourceDir, PROPERTY_SYSTEM, null)
+                ApkAssetsClass.resolve()
+                    .processor(resolver)
+                    .optional()
+                    .firstMethodOrNull {
+                        name = "nativeLoad"
+                        parameters(Int::class, String::class, Int::class, AssetsProvider::class)
+                        modifiers(Modifiers.NATIVE)
+                    }?.invokeQuietly(FORMAT_APK, sourceDir, PROPERTY_SYSTEM, null)
             SystemVersion.isHighOrEqualsTo(SystemVersion.P) ->
                 // private static native long nativeLoad(
                 //            @NonNull String path, boolean system, boolean forceSharedLib, boolean overlay)
                 //            throws IOException;
-                HiddenApiBypass.getDeclaredMethod(
-                    ApkAssetsClass, "nativeLoad",
-                    StringClass, BooleanType, BooleanType, BooleanType
-                ).apply { isAccessible = true }.invoke(null, sourceDir, false, false, false)
+                ApkAssetsClass.resolve()
+                    .processor(resolver)
+                    .optional()
+                    .firstMethodOrNull {
+                        name = "nativeLoad"
+                        parameters(String::class, Boolean::class, Boolean::class, Boolean::class)
+                        modifiers(Modifiers.NATIVE)
+                    }?.invokeQuietly(sourceDir, false, false, false)
             else -> error("Unsupported Android version.")
         } as? Long? ?: error("Failed to create ApkAssets.")
-        blockParser = when {
-            SystemVersion.isHighOrEqualsTo(36) ->
-                // XmlBlock(@Nullable AssetManager assets, long xmlBlock, boolean usesFeatureFlags)
-                HiddenApiBypass.getDeclaredConstructor(XmlBlockClass, AssetManagerClass, LongType, BooleanType)
-                    .apply { isAccessible = true }
-                    .newInstance(null, xmlBlock, false)
-            else ->
-                // XmlBlock(@Nullable AssetManager assets, long xmlBlock)
-                HiddenApiBypass.getDeclaredConstructor(XmlBlockClass, AssetManagerClass, LongType)
-                    .apply { isAccessible = true }
-                    .newInstance(null, xmlBlock)
-        } as? AutoCloseable? ?: error("Failed to create XmlBlock\$Parser.")
+        blockParser = XmlBlockClass.resolve()
+            .processor(resolver)
+            .optional()
+            .firstConstructorOrNull {
+                if (SystemVersion.isHighOrEqualsTo(36))
+                    parameters(AssetManager::class, Long::class, Boolean::class)
+                else parameters(AssetManager::class, Long::class)
+            }?.let {
+                if (SystemVersion.isHighOrEqualsTo(36))
+                    it.createQuietly(null, xmlBlock, false)
+                else it.createQuietly(null, xmlBlock)
+            } ?: error("Failed to create XmlBlock\$Parser.")
         isInitOnce = true
     }
 
@@ -175,13 +207,13 @@ internal object XmlBlockBypass {
          * @return [XmlResourceParser]
          */
         fun createViewAttrs() = context.layoutInflater.inflateOrNull<HikageAttrsView>(R.layout.layout_hikage_attrs_view)?.attrs
-          as? XmlResourceParser? ?: error("Failed to create AttributeSet.")
+            as? XmlResourceParser? ?: error("Failed to create AttributeSet.")
         return if (SystemVersion.isHighOrEqualsTo(SystemVersion.P)) {
             if (!isInitOnce) return createViewAttrs()
             require(blockParser != null) { "Hikage initialization failed." }
-            HiddenApiBypass.getDeclaredMethod(XmlBlockClass, "newParser", IntType)
-                .apply { isAccessible = true }
-                .invoke(blockParser, resId) as? XmlResourceParser? ?: error("Failed to create parser.")
+            newParser?.copy()?.of(blockParser)
+                ?.invokeQuietly<XmlResourceParser>(resId)
+                ?: error("Failed to create parser.")
         } else createViewAttrs()
     }
 }

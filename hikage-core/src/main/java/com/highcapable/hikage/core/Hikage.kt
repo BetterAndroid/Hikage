@@ -61,17 +61,12 @@ import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.PerformerException
 import com.highcapable.hikage.core.base.ProvideException
 import com.highcapable.hikage.core.extension.ResourcesScope
-import com.highcapable.yukireflection.factory.buildOf
-import com.highcapable.yukireflection.factory.classOf
-import com.highcapable.yukireflection.factory.constructor
-import com.highcapable.yukireflection.factory.current
-import com.highcapable.yukireflection.factory.notExtends
-import com.highcapable.yukireflection.type.android.AttributeSetClass
-import com.highcapable.yukireflection.type.android.ContextClass
-import com.highcapable.yukireflection.type.android.ViewGroup_LayoutParamsClass
-import com.highcapable.yukireflection.type.java.IntType
+import com.highcapable.kavaref.KavaRef.Companion.resolve
+import com.highcapable.kavaref.extension.classOf
+import com.highcapable.kavaref.extension.createInstanceOrNull
+import com.highcapable.kavaref.extension.isNotSubclassOf
+import com.highcapable.kavaref.resolver.ConstructorResolver
 import java.io.Serializable
-import java.lang.reflect.Constructor
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -91,7 +86,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         private const val LayoutParamsUnspecified = LayoutParamsWrapContent - 1
 
         /** The view constructors map. */
-        private val viewConstructors = mutableMapOf<String, ViewConstructor>()
+        private val viewConstructors = mutableMapOf<String, ViewConstructor<*>>()
 
         /** The view atomic id. */
         private val viewAtomicId = AtomicInteger(0x7F00000)
@@ -143,7 +138,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             attachToParent: Boolean = parent != null,
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<ViewGroup.LayoutParams>
-        ) = create(ViewGroup_LayoutParamsClass, context, parent, attachToParent, factory, performer)
+        ) = create(classOf<ViewGroup.LayoutParams>(), context, parent, attachToParent, factory, performer)
 
         /**
          * Create a new [Hikage].
@@ -195,7 +190,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         fun build(
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<ViewGroup.LayoutParams>
-        ) = build(ViewGroup_LayoutParamsClass, factory, performer)
+        ) = build(classOf<ViewGroup.LayoutParams>(), factory, performer)
 
         /**
          * Create a new [Hikage.Delegate].
@@ -229,11 +224,11 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
 
     /**
      * The view constructor class.
-     * @param instance the constructor instance.
+     * @param resolver the constructor resolver.
      * @param parameterCount the parameter count.
      */
-    private inner class ViewConstructor(
-        private val instance: Constructor<*>,
+    private inner class ViewConstructor<V : View>(
+        private val resolver: ConstructorResolver<V>,
         private val parameterCount: Int
     ) {
 
@@ -243,11 +238,11 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          * @param attrs the attribute set.
          * @return [V] or null.
          */
-        fun <V : View> build(context: Context, attrs: AttributeSet) = when (parameterCount) {
-            2 -> instance.newInstance(context, attrs)
-            1 -> instance.newInstance(context)
+        fun build(context: Context, attrs: AttributeSet) = when (parameterCount) {
+            2 -> resolver.createQuietly(context, attrs)
+            1 -> resolver.createQuietly(context)
             else -> null
-        } as? V?
+        }
     }
 
     /** The performer set. */
@@ -333,17 +328,17 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
     /**
      * Get the view constructor.
      * @param viewClass the view class.
-     * @return [ViewConstructor] or null.
+     * @return [ViewConstructor]<[V]> or null.
      */
     private fun <V : View> getViewConstructor(viewClass: Class<V>) =
-        viewConstructors[viewClass.name] ?: run {
+        viewConstructors[viewClass.name] as? ViewConstructor<V>? ?: run {
             var parameterCount = 0
-            val twoParams = viewClass.constructor {
-                param(ContextClass, AttributeSetClass)
-            }.ignored().give()
-            val onceParam = viewClass.constructor {
-                param(ContextClass)
-            }.ignored().give()
+            val twoParams = viewClass.resolve()
+                .optional(silent = true)
+                .firstConstructorOrNull { parameters(Context::class, AttributeSet::class) }
+            val onceParam = viewClass.resolve()
+                .optional(silent = true)
+                .firstConstructorOrNull { parameters(Context::class) }
             val constructor = onceParam?.apply { parameterCount = 1 }
                 ?: twoParams?.apply { parameterCount = 2 }
             val viewConstructor = constructor?.let { ViewConstructor(it, parameterCount) }
@@ -365,7 +360,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         factories.forEach { factory ->
             val params = PerformerParams(id, attrs, viewClass as Class<View>)
             val view = factory(parent, processed, context, params)
-            if (view != null && view.javaClass notExtends viewClass) throw PerformerException(
+            if (view != null && view.javaClass isNotSubclassOf viewClass) throw PerformerException(
                 "HikageFactory cannot cast the created view type \"${view.javaClass}\" to \"${viewClass.name}\", " +
                     "please confirm that the view type you created is correct."
             )
@@ -897,17 +892,16 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          */
         private fun createDefaultLayoutParams(lparams: ViewGroup.LayoutParams? = null): ViewGroup.LayoutParams {
             val wrapped = lparams?.let {
-                parent?.current(ignored = true)?.method {
+                parent?.resolve()?.optional(silent = true)?.firstMethodOrNull {
                     name = "generateLayoutParams"
-                    param(ViewGroup_LayoutParamsClass)
-                    superClass()
-                }?.invoke<ViewGroup.LayoutParams?>(it)
+                    parameters(ViewGroup.LayoutParams::class)
+                    superclass()
+                }?.invokeQuietly<ViewGroup.LayoutParams>(it)
             } ?: lparams
             return wrapped
                 // Build a default.
-                ?: lpClass.buildOf<ViewGroup.LayoutParams>(LayoutParamsWrapContent, LayoutParamsWrapContent) {
-                    param(IntType, IntType)
-                } ?: throw PerformerException("Create default layout params failed.")
+                ?: lpClass.createInstanceOrNull(LayoutParamsWrapContent, LayoutParamsWrapContent)
+                ?: throw PerformerException("Create default layout params failed.")
         }
 
         /**
