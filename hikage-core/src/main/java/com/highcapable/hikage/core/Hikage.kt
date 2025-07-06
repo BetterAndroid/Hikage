@@ -61,6 +61,7 @@ import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.PerformerException
 import com.highcapable.hikage.core.base.ProvideException
 import com.highcapable.hikage.core.extension.ResourcesScope
+import com.highcapable.kavaref.KavaRef.Companion.asResolver
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.classOf
 import com.highcapable.kavaref.extension.createInstanceOrNull
@@ -892,7 +893,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          */
         private fun createDefaultLayoutParams(lparams: ViewGroup.LayoutParams? = null): ViewGroup.LayoutParams {
             val wrapped = lparams?.let {
-                parent?.resolve()?.optional(silent = true)?.firstMethodOrNull {
+                parent?.asResolver()?.optional(silent = true)?.firstMethodOrNull {
                     name = "generateLayoutParams"
                     parameters(ViewGroup.LayoutParams::class)
                     superclass()

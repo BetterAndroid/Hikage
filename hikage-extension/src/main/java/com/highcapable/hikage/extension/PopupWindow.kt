@@ -31,7 +31,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.Hikageable
-import com.highcapable.kavaref.KavaRef.Companion.resolve
+import com.highcapable.kavaref.KavaRef.Companion.asResolver
 
 /**
  * @see PopupWindow.setContentView
@@ -67,5 +67,5 @@ fun PopupWindow.setContentView(
  * @return [Context]
  */
 private fun PopupWindow.requireContext() =
-    resolve().optional(silent = true).firstFieldOrNull { name = "mContext" }?.getQuietly<Context>()
+    asResolver().optional(silent = true).firstFieldOrNull { name = "mContext" }?.getQuietly<Context>()
         ?: error("Hikage need a Context to create PopupWindow content view.")
