@@ -545,7 +545,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             val view = createView(classOf<V>(), id, context)
             view.layoutParams = lpDelegate.create()
             requireNoPerformers(classOf<V>().name) { view.init() }
-            startProvide<V>(id)
+            startProvide(id, classOf<V>())
             addToParentIfRequired(view)
             return view
         }
@@ -588,7 +588,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             val view = createView(classOf<VG>(), id, context)
             view.layoutParams = lpDelegate.create()
             requireNoPerformers(classOf<VG>().name) { view.init() }
-            startProvide<VG>(id)
+            startProvide(id, classOf<VG>())
             addToParentIfRequired(view)
             newPerformer<LP>(view).apply(performer)
             return view
@@ -625,7 +625,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             id: String? = null
         ): View {
             val view = context.layoutInflater.inflate(resId, parent, attachToRoot = false)
-            startProvide<View>(id, view)
+            startProvide(id, view.javaClass, view)
             lparams?.create()?.let { view.layoutParams = it }
             provideView(view, id)
             addToParentIfRequired(view)
@@ -645,7 +645,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         ): VB {
             val viewBinding = ViewBinding<VB>().inflate(context.layoutInflater, parent, attachToParent = false)
             val view = viewBinding.root
-            startProvide<View>(id, view)
+            startProvide(id, view.javaClass, view)
             if (view.parent != null) throw ProvideException(
                 "The ViewBinding($view) already has a parent, " +
                     "it may have been created using layout root node <merge> or <include>, cannot be provided."
@@ -670,7 +670,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             id: String? = null
         ): View {
             if (view.parent != null) throw ProvideException("The view $view already has a parent, cannot be provided.")
-            startProvide<View>(id, view)
+            startProvide(id, view.javaClass, view)
             val lpDelegate = LayoutParams.from(current = this@Hikage, lpClass, parent, lparams, view.layoutParams)
             view.layoutParams = lpDelegate.create()
             provideView(view, id)
@@ -707,7 +707,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             id: String? = null
         ): Hikage {
             val view = hikage.root
-            startProvide<View>(id, view)
+            startProvide(id, view.javaClass, view)
             val lpDelegate = LayoutParams.from(current = this@Hikage, lpClass, parent, lparams, view.layoutParams)
             if (view.parent != null) throw ProvideException(
                 "The Hikage layout root view $view already has a parent, cannot be provided."
@@ -778,12 +778,13 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         /**
          * Call to start providing a new view.
          * @param id the view id.
+         * @param viewClass the view class.
          * @param view the view instance.
          */
-        private inline fun <reified V : View> startProvide(id: String?, view: V? = null) {
+        private fun <V : View> startProvide(id: String?, viewClass: Class<V>, view: V? = null) {
             provideCount++
             if (provideCount > 1 && (parent == null || !attachToParent)) throw ProvideException(
-                "Provide view ${view?.javaClass ?: classOf<V>()}(${id?.let { "\"$it\""} ?: "<anonymous>"}) failed. ${
+                "Provide view ${view?.javaClass ?: viewClass}(${id?.let { "\"$it\""} ?: "<anonymous>"}) failed. ${
                     if (parent == null) "No parent view group found"
                     else "Parent view group declares attachToParent = false"
                 }, you can only provide one view for the root view."
