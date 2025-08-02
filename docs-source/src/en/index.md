@@ -14,8 +14,8 @@ features:
     details: Using View as the foundation and Kotlin as the development language, 100% dynamic code layout, no additional configuration required, supports custom Views.
   - title: Fully Compatible
     details: Supports embedding and mixing XML, ViewBinding, and Jetpack Compose, and provides support for Material components and Jetpack.
-  - title: Quickly Started
-    details: Simple and easy to use it now! Do not need complex configuration and full development experience, Integrate dependencies and enjoy yourself.
+  - title: Quick to Start
+    details: Simple and easy to use right now! No complex configuration or extensive development experience needed. Just integrate dependencies and enjoy!
 footer: Apache-2.0 License | Copyright (C) 2019 HighCapable
 ---
 

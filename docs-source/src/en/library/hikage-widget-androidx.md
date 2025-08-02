@@ -23,7 +23,7 @@ libraries:
       version: +
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(com.highcapable.hikage.hikage.widget.androidx)
@@ -41,7 +41,7 @@ hikage-widget-androidx = "<version>"
 hikage-widget-androidx = { module = "com.highcapable.hikage:hikage-widget-androidx", version.ref = "hikage-widget-androidx" }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(libs.hikage.widget.androidx)
@@ -51,7 +51,7 @@ Please change `<version>` to the version displayed at the top of this document.
 
 ### Traditional Method
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation("com.highcapable.hikage:hikage-widget-androidx:<version>")

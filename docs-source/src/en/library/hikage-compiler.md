@@ -33,7 +33,7 @@ libraries:
       version: +
 ```
 
-Configure dependency in your root project `build.gradle.kts`.
+Configure dependency in your root project's `build.gradle.kts`.
 
 ```kotlin
 plugins {
@@ -42,7 +42,7 @@ plugins {
 }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 plugins {
@@ -72,7 +72,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hikage-compiler = { module = "com.highcapable.hikage:hikage-compiler", version.ref = "hikage-compiler" }
 ```
 
-Configure dependency in your root project `build.gradle.kts`.
+Configure dependency in your root project's `build.gradle.kts`.
 
 ```kotlin
 plugins {
@@ -81,7 +81,7 @@ plugins {
 }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 plugins {
@@ -109,7 +109,7 @@ plugins {
 }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 plugins {

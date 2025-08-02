@@ -23,7 +23,7 @@ libraries:
       version: +
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(com.highcapable.hikage.hikage.extension.betterandroid)
@@ -41,7 +41,7 @@ hikage-extension-betterandroid = "<version>"
 hikage-extension-betterandroid = { module = "com.highcapable.hikage:hikage-extension-betterandroid", version.ref = "hikage-extension-betterandroid" }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(libs.hikage.extension.betterandroid)
@@ -51,7 +51,7 @@ Please change `<version>` to the version displayed at the top of this document.
 
 ### Traditional Method
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation("com.highcapable.hikage:hikage-extension-betterandroid:<version>")

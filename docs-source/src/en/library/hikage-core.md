@@ -23,7 +23,7 @@ libraries:
       version: +
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(com.highcapable.hikage.hikage.core)
@@ -41,7 +41,7 @@ hikage-core = "<version>"
 hikage-core = { module = "com.highcapable.hikage:hikage-core", version.ref = "hikage-core" }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(libs.hikage.core)
@@ -51,7 +51,7 @@ Please change `<version>` to the version displayed at the top of this document.
 
 ### Traditional Method
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation("com.highcapable.hikage:hikage-core:<version>")
@@ -96,7 +96,7 @@ val root = hikage.root
 activity.setContentView(root)
 ```
 
-In this way, we complete a simple layout creation and setting.
+In this way, we can complete a simple layout creation and configuration.
 
 ### Layout Agreement
 

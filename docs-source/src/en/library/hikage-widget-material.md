@@ -23,7 +23,7 @@ libraries:
       version: +
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(com.highcapable.hikage.hikage.widget.material)
@@ -41,7 +41,7 @@ hikage-widget-material = "<version>"
 hikage-widget-material = { module = "com.highcapable.hikage:hikage-widget-material", version.ref = "hikage-widget-material" }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(libs.hikage.widget.material)
@@ -51,7 +51,7 @@ Please change `<version>` to the version displayed at the top of this document.
 
 ### Traditional Method
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation("com.highcapable.hikage:hikage-widget-material:<version>")

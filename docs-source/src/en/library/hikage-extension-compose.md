@@ -31,7 +31,7 @@ libraries:
       version: +
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(com.highcapable.hikage.hikage.extension.compose)
@@ -49,7 +49,7 @@ hikage-extension-compose = "<version>"
 hikage-extension-compose = { module = "com.highcapable.hikage:hikage-extension-compose", version.ref = "hikage-extension-compose" }
 ```
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation(libs.hikage.extension.compose)
@@ -59,7 +59,7 @@ Please change `<version>` to the version displayed at the top of this document.
 
 ### Traditional Method
 
-Configure dependency in your project `build.gradle.kts`.
+Configure dependency in your project's `build.gradle.kts`.
 
 ```kotlin
 implementation("com.highcapable.hikage:hikage-extension-compose:<version>")

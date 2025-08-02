@@ -1,4 +1,4 @@
-# Looking for Future
+# Looking Toward the Future
 
 > The future is bright and uncertain, let us look forward to the future development space of `Hikage`.
 
@@ -6,13 +6,13 @@
 
 > Features that `Hikage` may add later are included here.
 
-### Process AttrtibuteSet
+### Process AttributeSet
 
-`Hikage` will support processing `AttributeSet` in the future to dock with the original XML properties to implement the takeover
+`Hikage` will support processing `AttributeSet` in the future to interface with the original XML properties to implement the takeover
 of some third-party components that are not open to customization of layout properties in the code.
 
 `Hikage` currently supports automated creation of `XmlBlock`, but does not support the direct processing
-of customized `AttributeSet`. Because of its historical problems and high processing difficulty, it may compromise whether to continue to improve this function in the later stage.
+of customized `AttributeSet`. Because of its historical problems and high processing difficulty, it may be considered whether to continue to improve this function in later stages.
 
 > The following example
 

@@ -1,10 +1,10 @@
-# Introduce
+# Introduction
 
 > `Hikage` (Pronunciation /ˈhɪkɑːɡeɪ/) is an Android responsive UI building tool.
 
 ## Background
 
-This is an Android responsive UI build tool designed to focus on **Real-time code building UI**.
+This is an Android responsive UI build tool designed to focus on **real-time code-based UI building**.
 
 The project icon was designed by [MaiTungTM](https://github.com/Lagrio),
 the name is taken from the original song "Haru**hikage**" in "BanG Dream It's MyGO!!!!!".
@@ -22,11 +22,11 @@ and its design goal is to enable developers to quickly build UIs and directly su
 
 **<u>Hikage is just a UI build tool and does not provide any UI components themselves</u>**.
 
-Rejecting duplicate wheels, our solution is always compatible and efficient. Now you can abandon ViewBinding and XML and even `findViewById` and try
-to use the code layout directly.
+Rejecting duplicate wheels, our solution is always compatible and efficient. Now you can abandon ViewBinding and XML, and even `findViewById`, and try
+using code layout directly.
 
-`Hikage` works better with another project [BetterAndroid](https://github.com/BetterAndroid/BetterAndroid) and
-`Hikage` itself will automatically reference the `BetterAndroid` related dependencies as the core content.
+`Hikage` works better with another project [BetterAndroid](https://github.com/BetterAndroid/BetterAndroid), and
+`Hikage` itself will automatically reference the `BetterAndroid`-related dependencies as the core content.
 
 ## Usage
 
@@ -116,5 +116,5 @@ The maintenance of this project is inseparable from the support and contribution
 
 This project is currently in its early stages, and there may still be some problems or lack of functions you need.
 
-If possible, feel free to submit a PR to contribute features you think are needed to this project or goto [GitHub Issues](repo://issues)
+If possible, feel free to submit a PR to contribute features you think are needed to this project, or go to [GitHub Issues](repo://issues)
 to make suggestions to us.
