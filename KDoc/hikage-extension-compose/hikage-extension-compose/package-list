@@ -1,0 +1,8 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.highcapable.hikage.extension.androidx.compose////PointingToDeclaration/hikage-extension-compose/com.highcapable.hikage.extension.androidx.compose/index.html
+$dokka.location:com.highcapable.hikage.extension.androidx.compose//ComposeView/com.highcapable.hikage.core.Hikage.Performer[TypeParam(bounds=[android.view.ViewGroup.LayoutParams])]#com.highcapable.hikage.core.Hikage.LayoutParams?#kotlin.String?#kotlin.Function1[androidx.compose.ui.platform.ComposeView,kotlin.Unit]#kotlin.Function0[kotlin.Unit]?/PointingToDeclaration/hikage-extension-compose/com.highcapable.hikage.extension.androidx.compose/-compose-view.html
+$dokka.location:com.highcapable.hikage.extension.androidx.compose//HikageView/#androidx.compose.ui.Modifier#kotlin.Function1[android.view.View,kotlin.Unit]#kotlin.Function1[com.highcapable.hikage.core.base.HikageFactoryBuilder,kotlin.Unit]#kotlin.Function1[com.highcapable.hikage.core.Hikage.Performer[android.view.ViewGroup.LayoutParams],kotlin.Unit]/PointingToDeclaration/hikage-extension-compose/com.highcapable.hikage.extension.androidx.compose/-hikage-view.html
+$dokka.location:com.highcapable.hikage.extension.androidx.compose//HikageView/#com.highcapable.hikage.core.Hikage.Delegate[*]#androidx.compose.ui.Modifier#kotlin.Function1[android.view.View,kotlin.Unit]/PointingToDeclaration/hikage-extension-compose/com.highcapable.hikage.extension.androidx.compose/-hikage-view.html
+com.highcapable.hikage.extension.androidx.compose
+
