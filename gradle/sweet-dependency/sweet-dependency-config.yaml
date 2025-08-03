@@ -59,11 +59,13 @@ libraries:
       version-ref: <this>::kotlinpoet
   com.highcapable.betterandroid:
     ui-component:
-      version: 1.0.7
+      version: 1.0.8
+    ui-component-adapter:
+      version: 1.0.0
     ui-extension:
-      version: 1.0.6
+      version: 1.0.7
     system-extension:
-      version: 1.0.2
+      version: 1.0.3
   org.lsposed.hiddenapibypass:
     hiddenapibypass:
       version: 6.1
@@ -74,7 +76,7 @@ libraries:
       version: 1.0.1
   com.highcapable.pangutext:
     pangutext-android:
-      version: 1.0.2
+      version: 1.0.3
   androidx.core:
     core:
       version: 1.16.0

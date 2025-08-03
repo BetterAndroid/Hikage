@@ -31,6 +31,7 @@ abstract class BaseActivity : AppViewsActivity() {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         PanguTextFactory2.inject(this)
     }
 }

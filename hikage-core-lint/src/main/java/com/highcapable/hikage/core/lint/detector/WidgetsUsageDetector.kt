@@ -135,18 +135,23 @@ class WidgetsUsageDetector : Detector(), Detector.UastScanner {
                 importRefs.getOrNull(1)?.trim()
             else null
             val importPrefix = importRefs[0]
+
             val hasPrefix = importPrefix.contains(".")
+
             val name = if (hasPrefix)
                 importPrefix.split(".").last()
             else importPrefix
+
             val packagePrefix = importPrefix.replace(if (hasPrefix) ".$name" else name, "")
             val reference = ImportReference(packagePrefix, name, alias)
+
             importReferences.add(reference)
         }
 
         override fun visitCallExpression(node: UCallExpression) {
             val callExpr = node.sourcePsi as? KtCallExpression ?: return
             val method = node.resolve() ?: return
+
             startLint(callExpr, method)
         }
 
@@ -165,7 +170,9 @@ class WidgetsUsageDetector : Detector(), Detector.UastScanner {
                         type.canonicalText == VIEW_GROUP_CLASS_NAME 
                 }
             }
+
             val isTypedViewFunction = typedViewFunctionIndex >= 0
+
             val imports = typeArgumentsText.mapNotNull { typeName ->
                 when {
                     // Like `TextView`.
@@ -179,18 +186,24 @@ class WidgetsUsageDetector : Detector(), Detector.UastScanner {
                     else -> null
                 }
             }
+
             val matchedIndex = builtInWidgets.indexOfFirst { imports.any { e -> e.alias == it || e.name == it } }
             val isBuiltInWidget = matchedIndex >= 0
+
             if (isTypedViewFunction && isBuiltInWidget) {
                 val widgetName = builtInWidgets[matchedIndex]
+
                 val sourceLocation = context.getLocation(callExpr)
                 val sourceText = callExpr.toUElement()?.asSourceString() ?: return
                 val callExprElement = callExpr.toUElement() ?: return
+
                 // Matchs '>' and like `View<TextView`'s length + 1.
                 val callExprLength = sourceText.split(">")[0].trim().length + 1
                 val nameLocation = context.getRangeLocation(callExprElement, fromDelta = 0, callExprLength)
+
                 // Only replace the first one, because there may be multiple sub-functions in DSL.
                 val replacement = sourceText.replaceFirst(viewExpressionRegex, widgetName)
+
                 val lintFix = LintFix.create()
                     .name("Replace with '$widgetName'")
                     .replace()
@@ -199,6 +212,7 @@ class WidgetsUsageDetector : Detector(), Detector.UastScanner {
                     .imports("$WIDGET_FUNCTION_PREFIX.$widgetName")
                     .reformat(true)
                     .build()
+
                 val message = "Can be simplified to `$widgetName`."
                 context.report(ISSUE, callExpr, nameLocation, message, lintFix)
             }

@@ -167,7 +167,9 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             if (parent != null && attachToParent) {
                 val parentId = generateRandomViewId()
                 provideView(parent, parentId)
-            }; newPerformer(lpClass, parent, attachToParent, context).apply(performer)
+            }
+
+            newPerformer(lpClass, parent, attachToParent, context).apply(performer)
         }
 
         /**
@@ -317,11 +319,13 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
      */
     private fun <V : View> createView(viewClass: Class<V>, id: String?, context: Context): V {
         val attrs = createAttributeSet(context)
+
         val view = createViewFromFactory(viewClass, id, context, attrs) ?: getViewConstructor(viewClass)?.build(context, attrs)
         if (view == null) throw PerformerException(
             "Create view of type ${viewClass.name} failed. " +
                 "Please make sure the view class has a constructor with a single parameter of type Context."
         )
+
         provideView(view, id)
         return view
     }
@@ -334,16 +338,20 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
     private fun <V : View> getViewConstructor(viewClass: Class<V>) =
         viewConstructors[viewClass.name] as? ViewConstructor<V>? ?: run {
             var parameterCount = 0
+
             val twoParams = viewClass.resolve()
                 .optional(silent = true)
                 .firstConstructorOrNull { parameters(Context::class, AttributeSet::class) }
             val onceParam = viewClass.resolve()
                 .optional(silent = true)
                 .firstConstructorOrNull { parameters(Context::class) }
+
             val constructor = onceParam?.apply { parameterCount = 1 }
                 ?: twoParams?.apply { parameterCount = 2 }
+
             val viewConstructor = constructor?.let { ViewConstructor(it, parameterCount) }
             if (viewConstructor != null) viewConstructors[viewClass.name] = viewConstructor
+
             viewConstructor
         }
 
@@ -358,15 +366,20 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
     private fun <V : View> createViewFromFactory(viewClass: Class<V>, id: String?, context: Context, attrs: AttributeSet): V? {
         val parent = performers.firstOrNull()?.parent
         var processed: V? = null
+
         factories.forEach { factory ->
             val params = PerformerParams(id, attrs, viewClass as Class<View>)
+
             val view = factory(parent, processed, context, params)
             if (view != null && view.javaClass isNotSubclassOf viewClass) throw PerformerException(
                 "HikageFactory cannot cast the created view type \"${view.javaClass}\" to \"${viewClass.name}\", " +
                     "please confirm that the view type you created is correct."
             )
+
             if (view != null) processed = view as? V?
-        }; return processed
+        }
+
+        return processed
     }
 
     /**
@@ -379,6 +392,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         val (requireId, viewId) = generateViewId(id)
         view.id = viewId
         views[requireId] = view
+
         return requireId
     }
 
@@ -395,12 +409,16 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          */
         fun doGenerate(id: String): Int {
             val generateId = View.generateViewId()
+
             if (viewIds.contains(id)) throw PerformerException("View with id \"$id\" already exists.")
             viewIds[id] = generateId
+
             return generateId
         }
+
         val requireId = id ?: generateRandomViewId()
         val viewId = doGenerate(requireId)
+
         return requireId to viewId
     }
 
@@ -456,6 +474,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
      */
     internal inline fun requireNoPerformers(name: String, block: () -> Unit) {
         val viewCount = views.size
+
         block()
         if (views.size != viewCount) throw PerformerException(
             "Performers are not allowed to appear in $name DSL creation process."
@@ -472,13 +491,16 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
     private fun include(delegate: Delegate<*>, context: Context, embedded: Boolean): Hikage {
         val hikage = delegate.create(context)
         if (!embedded) return hikage
+
         val duplicateId = hikage.viewIds.toList().firstOrNull { (k, _) -> viewIds.containsKey(k) }?.first
         if (duplicateId != null) throw PerformerException(
             "Embedded layout view IDs conflict, the view id \"$duplicateId\" is already exists."
         )
+
         viewIds.putAll(hikage.viewIds)
         views.putAll(hikage.views)
         performers.addAll(hikage.performers)
+
         return hikage
     }
 
@@ -544,9 +566,11 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             val lpDelegate = LayoutParams.from(current, lpClass, parent, lparams)
             val view = createView(classOf<V>(), id, context)
             view.layoutParams = lpDelegate.create()
+
             requireNoPerformers(classOf<V>().name) { view.init() }
             startProvide(id, classOf<V>())
             addToParentIfRequired(view)
+
             return view
         }
 
@@ -587,10 +611,12 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             val lpDelegate = LayoutParams.from(current, lpClass, parent, lparams)
             val view = createView(classOf<VG>(), id, context)
             view.layoutParams = lpDelegate.create()
+
             requireNoPerformers(classOf<VG>().name) { view.init() }
             startProvide(id, classOf<VG>())
             addToParentIfRequired(view)
             newPerformer<LP>(view).apply(performer)
+
             return view
         }
 
@@ -625,10 +651,12 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             id: String? = null
         ): View {
             val view = context.layoutInflater.inflate(resId, parent, attachToRoot = false)
+
             startProvide(id, view.javaClass, view)
             lparams?.create()?.let { view.layoutParams = it }
             provideView(view, id)
             addToParentIfRequired(view)
+
             return view
         }
 
@@ -645,14 +673,17 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         ): VB {
             val viewBinding = ViewBinding<VB>().inflate(context.layoutInflater, parent, attachToParent = false)
             val view = viewBinding.root
+
             startProvide(id, view.javaClass, view)
             if (view.parent != null) throw ProvideException(
                 "The ViewBinding($view) already has a parent, " +
                     "it may have been created using layout root node <merge> or <include>, cannot be provided."
             )
+
             lparams?.create()?.let { view.layoutParams = it }
             provideView(view, id)
             addToParentIfRequired(view)
+
             return viewBinding
         }
 
@@ -670,11 +701,14 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
             id: String? = null
         ): View {
             if (view.parent != null) throw ProvideException("The view $view already has a parent, cannot be provided.")
+
             startProvide(id, view.javaClass, view)
             val lpDelegate = LayoutParams.from(current = this@Hikage, lpClass, parent, lparams, view.layoutParams)
             view.layoutParams = lpDelegate.create()
+
             provideView(view, id)
             addToParentIfRequired(view)
+
             return view
         }
 
@@ -708,13 +742,17 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         ): Hikage {
             val view = hikage.root
             startProvide(id, view.javaClass, view)
+
             val lpDelegate = LayoutParams.from(current = this@Hikage, lpClass, parent, lparams, view.layoutParams)
             if (view.parent != null) throw ProvideException(
                 "The Hikage layout root view $view already has a parent, cannot be provided."
             )
+
             view.layoutParams = lpDelegate.create()
+
             provideView(view, id)
             addToParentIfRequired(view)
+
             return hikage
         }
 
@@ -783,6 +821,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          */
         private fun <V : View> startProvide(id: String?, viewClass: Class<V>, view: V? = null) {
             provideCount++
+
             if (provideCount > 1 && (parent == null || !attachToParent)) throw ProvideException(
                 "Provide view ${view?.javaClass ?: viewClass}(${id?.let { "\"$it\""} ?: "<anonymous>"}) failed. ${
                     if (parent == null) "No parent view group found"
@@ -900,6 +939,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
                     superclass()
                 }?.invokeQuietly<ViewGroup.LayoutParams>(it)
             } ?: lparams
+
             return wrapped
                 // Build a default.
                 ?: lpClass.createInstanceOrNull(LayoutParamsWrapContent, LayoutParamsWrapContent)
@@ -912,12 +952,15 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          */
         fun create(): ViewGroup.LayoutParams {
             if (bodyBuilder == null && wrapperBuilder == null) throw PerformerException("No layout params builder found.")
+
             return bodyBuilder?.let {
                 val lparams = ViewLayoutParams(lpClass, it.width, it.height, it.matchParent, it.widthMatchParent, it.heightMatchParent)
                 current.requireNoPerformers(lparams.javaClass.name) { it.body(lparams) }
+
                 lparams
             } ?: wrapperBuilder?.let {
                 val lparams = it.delegate?.create() ?: it.lparams
+
                 createDefaultLayoutParams(lparams)
             } ?: throw PerformerException("Internal error of build layout params.")
         }

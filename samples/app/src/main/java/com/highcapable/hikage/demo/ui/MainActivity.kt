@@ -52,9 +52,11 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView {
             var username = ""
             var password = ""
+
             CoordinatorLayout(
                 lparams = LayoutParams(matchParent = true)
             ) {

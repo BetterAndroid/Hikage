@@ -42,6 +42,7 @@ dependencies {
     implementation(com.highcapable.kavaref.kavaref.core)
     implementation(com.highcapable.kavaref.kavaref.extension)
     implementation(com.highcapable.betterandroid.ui.component)
+    implementation(com.highcapable.betterandroid.ui.component.adapter)
     implementation(com.highcapable.betterandroid.ui.extension)
     implementation(com.highcapable.betterandroid.system.extension)
     implementation(androidx.core.core.ktx)

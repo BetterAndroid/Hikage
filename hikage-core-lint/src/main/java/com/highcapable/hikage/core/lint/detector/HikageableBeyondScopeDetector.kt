@@ -70,6 +70,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
         override fun visitCallExpression(node: UCallExpression) {
             val callExpr = node.sourcePsi as? KtCallExpression ?: return
             val method = node.resolve() ?: return
+
             startLint(callExpr, method)
             organizeAndReport()
         }
@@ -78,6 +79,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
             val className = method.containingClass?.qualifiedName ?: ""
             val hasHikageable = method.hasHikageable()
             val hasLayoutParams = className == DeclaredSymbol.HIKAGE_PERFORMER_CLASS && method.name == "LayoutParams"
+
             if (hasHikageable || hasLayoutParams) visitAndLint(callExpr, method)
         }
 
@@ -85,6 +87,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
             reports.forEach {
                 // Check if the call has been reported before reporting.
                 if (reportedNodes.contains(it.callExpr)) return@forEach
+
                 val location = context.getLocation(it.callExpr)
                 val lintFix = LintFix.create()
                     .name("Delete Call Expression")
@@ -93,6 +96,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
                     // Delete the call expression.
                     .with("")
                     .build()
+
                 context.report(ISSUE, it.callExpr, location, it.message, lintFix)
                 reportedNodes.add(it.callExpr)
             }
@@ -102,28 +106,37 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
             val bodyBlocks = mutableMapOf<String, KtExpression>()
             val parameters = method.parameterList.parameters
             val valueArguments = callExpr.valueArgumentList?.arguments ?: emptyList()
+
             fun visitValueArg(arg: KtValueArgument) {
                 val name = arg.getArgumentName()?.asName?.identifier ?: ""
                 val expr = arg.getArgumentExpression()
+
                 val parameter = parameters.firstOrNull { it.name == name }
                     // If the last bit is a lambda expression, then `parameter` must have a lambda parameter defined by the last bit.
                     ?: if (arg is KtLambdaArgument) parameters.lastOrNull() else null
+
                 val isMatched = parameter?.type?.canonicalText?.matches(DeclaredSymbol.HIKAGE_VIEW_REGEX) == true &&
                     !parameter.type.canonicalText.contains(DeclaredSymbol.HIKAGE_PERFORMER_CLASS)
+
                 if (expr is KtLambdaExpression && isMatched)
                     expr.bodyExpression?.let { bodyBlocks[name] = it }
             }
+
             // Get the last lambda expression.
             val lastLambda = callExpr.lambdaArguments.lastOrNull()
             if (lastLambda != null) visitValueArg(lastLambda)
+
             valueArguments.forEach { arg -> visitValueArg(arg) }
+
             bodyBlocks.toList().flatMap { (_, value) -> value.children.filterIsInstance<KtCallExpression>() }.forEach {
                 val expression = it.toUElementOfType<UCallExpression>() ?: return@forEach
                 val sCallExpr = expression.sourcePsi as? KtCallExpression ?: return@forEach
                 val sMethod = expression.resolve() ?: return@forEach
+
                 if (sMethod.hasHikageable()) {
                     val message = "Performers are not allowed to appear in `${method.name}` DSL creation process."
                     reports.add(ReportDetail(message, expression))
+
                     // Recursively to visit next level.
                     visitAndLint(sCallExpr, sMethod)
                 }

@@ -31,7 +31,7 @@ import android.content.res.loader.AssetsProvider
 import android.content.res.loader.ResourcesProvider
 import android.util.AttributeSet
 import androidx.annotation.StyleRes
-import com.highcapable.betterandroid.system.extension.tool.SystemVersion
+import com.highcapable.betterandroid.system.extension.tool.AndroidVersion
 import com.highcapable.betterandroid.ui.extension.view.inflateOrNull
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.core.R
@@ -116,12 +116,12 @@ internal object XmlBlockBypass {
     private val resolver = object : MemberProcessor.Resolver() {
 
         override fun <T : Any> getDeclaredConstructors(declaringClass: Class<T>): List<Constructor<T>> =
-            SystemVersion.require(SystemVersion.P, super.getDeclaredConstructors(declaringClass)) {
+            AndroidVersion.require(AndroidVersion.P, super.getDeclaredConstructors(declaringClass)) {
                 HiddenApiBypass.getDeclaredMethods(declaringClass).filterIsInstance<Constructor<T>>().toList()
             }
 
         override fun <T : Any> getDeclaredMethods(declaringClass: Class<T>): List<Method> =
-            SystemVersion.require(SystemVersion.P, super.getDeclaredMethods(declaringClass)) {
+            AndroidVersion.require(AndroidVersion.P, super.getDeclaredMethods(declaringClass)) {
                 HiddenApiBypass.getDeclaredMethods(declaringClass).filterIsInstance<Method>().toList()
             }
     }
@@ -143,6 +143,7 @@ internal object XmlBlockBypass {
     fun init(context: Context) {
         // Context may be loaded from the preview and other non-Android platforms, ignoring this.
         if (context.javaClass.name.endsWith("BridgeContext")) return
+
         init(context.applicationContext.applicationInfo)
     }
 
@@ -151,11 +152,12 @@ internal object XmlBlockBypass {
      * @param info the application info.
      */
     private fun init(info: ApplicationInfo) {
-        if (SystemVersion.isLowOrEqualsTo(SystemVersion.P)) return
+        if (AndroidVersion.isAtMost(AndroidVersion.P)) return
         if (isInitOnce) return
+
         val sourceDir = info.sourceDir
         xmlBlock = when {
-            SystemVersion.isHighOrEqualsTo(SystemVersion.R) ->
+            AndroidVersion.isAtLeast(AndroidVersion.R) ->
                 // private static native long nativeLoad(@FormatType int format, @NonNull String path,
                 //            @PropertyFlags int flags, @Nullable AssetsProvider asset) throws IOException;
                 ApkAssetsClass.resolve()
@@ -166,7 +168,7 @@ internal object XmlBlockBypass {
                         parameters(Int::class, String::class, Int::class, AssetsProvider::class)
                         modifiers(Modifiers.NATIVE)
                     }?.invokeQuietly(FORMAT_APK, sourceDir, PROPERTY_SYSTEM, null)
-            SystemVersion.isHighOrEqualsTo(SystemVersion.P) ->
+            AndroidVersion.isAtLeast(AndroidVersion.P) ->
                 // private static native long nativeLoad(
                 //            @NonNull String path, boolean system, boolean forceSharedLib, boolean overlay)
                 //            throws IOException;
@@ -180,18 +182,20 @@ internal object XmlBlockBypass {
                     }?.invokeQuietly(sourceDir, false, false, false)
             else -> error("Unsupported Android version.")
         } as? Long? ?: error("Failed to create ApkAssets.")
+
         blockParser = XmlBlockClass.resolve()
             .processor(resolver)
             .optional()
             .firstConstructorOrNull {
-                if (SystemVersion.isHighOrEqualsTo(36))
+                if (AndroidVersion.isAtLeast(AndroidVersion.BAKLAVA))
                     parameters(AssetManager::class, Long::class, Boolean::class)
                 else parameters(AssetManager::class, Long::class)
             }?.let {
-                if (SystemVersion.isHighOrEqualsTo(36))
+                if (AndroidVersion.isAtLeast(AndroidVersion.BAKLAVA))
                     it.createQuietly(null, xmlBlock, false)
                 else it.createQuietly(null, xmlBlock)
             } ?: error("Failed to create XmlBlock\$Parser.")
+
         isInitOnce = true
     }
 
@@ -208,8 +212,10 @@ internal object XmlBlockBypass {
          */
         fun createViewAttrs() = context.layoutInflater.inflateOrNull<HikageAttrsView>(R.layout.layout_hikage_attrs_view)?.attrs
             as? XmlResourceParser? ?: error("Failed to create AttributeSet.")
-        return if (SystemVersion.isHighOrEqualsTo(SystemVersion.P)) {
+
+        return if (AndroidVersion.isAtLeast(AndroidVersion.P)) {
             if (!isInitOnce) return createViewAttrs()
+
             require(blockParser != null) { "Hikage initialization failed." }
             newParser?.copy()?.of(blockParser)
                 ?.invokeQuietly<XmlResourceParser>(resId)

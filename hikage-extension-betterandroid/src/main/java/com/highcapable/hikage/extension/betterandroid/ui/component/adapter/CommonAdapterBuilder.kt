@@ -25,7 +25,7 @@
 package com.highcapable.hikage.extension.betterandroid.ui.component.adapter
 
 import android.view.ViewGroup
-import com.highcapable.betterandroid.ui.component.adapter.CommonAdapterBuilder
+import com.highcapable.betterandroid.ui.component.adapter.BaseAdapterBuilder
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.Hikageable
@@ -51,26 +51,26 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  *     hikage.get<TextView>("text").text = "Item ${entity.name} of ${position + 1}"
  * }
  * ```
- * @see CommonAdapterBuilder.onBindItemView
- * @receiver [CommonAdapterBuilder]<[E]>
+ * @see BaseAdapterBuilder.onBindItemView
+ * @receiver [BaseAdapterBuilder]<[E]>
  * @param Hikageable the performer body.
- * @return [CommonAdapterBuilder]<[E]>
+ * @return [BaseAdapterBuilder]<[E]>
  */
 @JvmOverloads
-fun <E> CommonAdapterBuilder<E>.onBindItemView(
+fun <E> BaseAdapterBuilder<E>.onBindItemView(
     Hikageable: HikagePerformer<ViewGroup.LayoutParams>,
     viewHolder: (hikage: Hikage, entity: E, position: Int) -> Unit = { _, _, _ -> }
 ) = onBindItemView(Hikageable(performer = Hikageable), viewHolder)
 
 /**
  * Create and add view holder from [Hikage.Delegate].
- * @see CommonAdapterBuilder.onBindItemView
- * @receiver [CommonAdapterBuilder]<[E]>
+ * @see BaseAdapterBuilder.onBindItemView
+ * @receiver [BaseAdapterBuilder]<[E]>
  * @param delegate the delegate.
- * @return [CommonAdapterBuilder]<[E]>
+ * @return [BaseAdapterBuilder]<[E]>
  */
 @JvmOverloads
-fun <E> CommonAdapterBuilder<E>.onBindItemView(
+fun <E> BaseAdapterBuilder<E>.onBindItemView(
     delegate: Hikage.Delegate<*>,
     viewHolder: (hikage: Hikage, entity: E, position: Int) -> Unit = { _, _, _ -> }
 ) = onBindItemView(HikageHolderDelegate(delegate), viewHolder)

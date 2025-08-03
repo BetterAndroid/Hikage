@@ -39,15 +39,20 @@ fun KSDeclaration.getSimpleNameString(): String {
 fun KSClassDeclaration.isSubclassOf(superType: KSType?): Boolean {
     if (superType == null) return false
     if (this == superType.declaration) return true
+
     superTypes.forEach { parent ->
         val resolvedParent = parent.resolve()
         // Direct match.
         if (resolvedParent == superType) return true
+
         val parentDeclaration = resolvedParent.declaration as? KSClassDeclaration
             ?: return@forEach
+
         // Recursively check the parent class.
         if (parentDeclaration.isSubclassOf(superType)) return true
-    }; return false
+    }
+
+    return false
 }
 
 fun KSClassDeclaration.asType() = asType(emptyList())

@@ -65,6 +65,7 @@ class HikageableFunctionsDetector : Detector(), Detector.UastScanner {
 
         override fun visitMethod(node: UMethod) {
             val uastBody = node.uastBody as? UBlockExpression ?: return
+
             val bodyHasHikageable = uastBody.expressions.any {
                 when (it) {
                     is UCallExpression -> it.resolve()?.hasHikageable() ?: false
@@ -73,17 +74,22 @@ class HikageableFunctionsDetector : Detector(), Detector.UastScanner {
                     else -> false
                 }
             }
+
             if (!node.hasHikageable() && bodyHasHikageable) {
                 val location = context.getLocation(node)
                 val nameLocation = context.getNameLocation(node)
+
                 val message = "Function `${node.name}` must be marked with the `@Hikageable` annotation."
+
                 val functionText = node.asSourceString()
                 val hasDoubleSlash = functionText.startsWith("//")
+
                 val replacement = functionRegex.replace(functionText) { result ->
                     val functionBody = result.groupValues.getOrNull(0) ?: functionText
                     val prefix = if (hasDoubleSlash) "\n" else ""
                     "$prefix@Hikageable $functionBody"
                 }
+
                 val lintFix = LintFix.create()
                     .name("Add '@Hikageable' to '${node.name}'")
                     .replace()
@@ -92,6 +98,7 @@ class HikageableFunctionsDetector : Detector(), Detector.UastScanner {
                     .imports(DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS)
                     .reformat(true)
                     .build()
+
                 context.report(ISSUE, node, nameLocation, message, lintFix)
             }
         }

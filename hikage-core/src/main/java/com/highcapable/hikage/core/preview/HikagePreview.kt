@@ -47,6 +47,7 @@ abstract class HikagePreview(context: Context, attrs: AttributeSet? = null) : Fr
     @CallSuper
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+
         removeAllViews()
         build().create(context, parent = this)
     }

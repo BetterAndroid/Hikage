@@ -60,6 +60,7 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
 
         override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
             if (node.selector !is UBinaryExpressionWithType) return
+
             val castExpr = node.selector as UBinaryExpressionWithType
             visitAndLint(context, castExpr, node)
         }
@@ -75,11 +76,14 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
         ) {
             // Get the parent node, if it is wrapped with brackets will also be included.
             val locationNode = node.uastParent as? UParenthesizedExpression ?: node
+
             val receiver = parent?.receiver ?: node.operand
             val receiverType = (node.operand as? UArrayAccessExpression)?.receiver?.getExpressionType() ?: return
             val receiverClass = receiverType.canonicalText
+
             // Filter retains results that meet the conditions.
             if (receiverClass != DeclaredSymbol.HIKAGE_CLASS) return
+
             // Like `hikage["your_id"] as YourView`.
             val exprText = node.sourcePsi?.text ?: return
             // Like `hikage["your_id"]`.
@@ -88,11 +92,15 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
             val receiverNameText = receiverText.split("[")[0]
             // Like `"your_id"`.
             val receiverContent = runCatching { receiverText.split("[")[1].split("]")[0] }.getOrNull() ?: return
+
             val isSafeCast = exprText.contains("as?") || exprText.endsWith("?")
+
             // Like `YourView`.
             val castTypeContent = node.typeReference?.sourcePsi?.text?.removeSuffix("?") ?: return
+
             val replacement = "$receiverNameText.${if (isSafeCast) "getOrNull" else "get"}<$castTypeContent>($receiverContent)"
             val replaceSuggestion = if (isSafeCast) "Hikage.getOrNull<$castTypeContent>" else "Hikage.get<$castTypeContent>"
+
             val location = context.getLocation(locationNode)
             val lintFix = LintFix.create()
                 .name("Replace with '$replacement'")
@@ -101,6 +109,7 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
                 .with(replacement)
                 .reformat(true)
                 .build()
+
             context.report(
                 ISSUE, locationNode, location,
                 message = "Can be replaced with safe type cast `$replaceSuggestion`.",
