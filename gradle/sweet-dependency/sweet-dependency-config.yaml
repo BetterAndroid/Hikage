@@ -24,7 +24,7 @@ plugins:
     auto-update: false
   com.android.application:
     alias: android-application
-    version: 8.9.3
+    version: 8.12.1
   com.android.library:
     alias: android-library
     version-ref: android-application
@@ -131,7 +131,7 @@ libraries:
       version: 3.7.0
   com.android.tools.lint:
     lint:
-      version: 31.12.0
+      version: 31.12.1
     lint-api:
       version-ref: <this>::lint
     lint-checks:

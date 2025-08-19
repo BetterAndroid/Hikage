@@ -53,7 +53,6 @@ import com.highcapable.betterandroid.ui.extension.view.inflate
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.annotation.Hikageable
 import com.highcapable.hikage.bypass.XmlBlockBypass
-import com.highcapable.hikage.core.Hikage.LayoutParamsBody
 import com.highcapable.hikage.core.base.HikageFactory
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
