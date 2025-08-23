@@ -217,7 +217,7 @@ root.addView {
 class CustomView(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
 
     init {
-        addView {
+        addView<FrameLayout.LayoutParams> {
             TextView {
                 text = "Hello, World!"
                 textSize = 16f

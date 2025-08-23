@@ -35,11 +35,23 @@ import com.highcapable.hikage.core.base.Hikageable
  * @see Hikageable
  * @return [Hikage]
  */
+@JvmName("addViewTyped")
+inline fun <reified LP : ViewGroup.LayoutParams> ViewGroup.addView(
+    index: Int = -1,
+    factory: HikageFactoryBuilder.() -> Unit = {},
+    performer: HikagePerformer<LP>
+) = Hikageable<LP>(context = context, factory = factory, performer = performer).apply { addView(root, index) }
+
+/**
+ * @see ViewGroup.addView
+ * @see Hikageable
+ * @return [Hikage]
+ */
 inline fun ViewGroup.addView(
     index: Int = -1,
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<ViewGroup.LayoutParams>
-) = Hikageable(context = context, factory = factory, performer = performer).apply { addView(root, index) }
+) = addView<ViewGroup.LayoutParams>(index, factory, performer)
 
 /**
  * @see ViewGroup.addView
