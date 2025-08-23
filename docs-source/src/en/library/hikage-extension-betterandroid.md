@@ -65,7 +65,7 @@ You can view the KDoc [click here](kdoc://hikage-extension-betterandroid).
 
 ### Adapter Extension
 
-Hikage provides layout extension function for BetterAndroid's [Adapter](https://betterandroid.github.io/BetterAndroid/en/library/ui-component#adapter),
+Hikage provides layout extension function for BetterAndroid's [Adapter](https://betterandroid.github.io/BetterAndroid/en/library/ui-component-adapter),
 you can use the Hikage layout directly on the original extension method of the adapter.
 
 It uses the `ViewHolderDelegate` provided by BetterAndroid to create extension methods.
@@ -76,9 +76,9 @@ Here is a simple example based on `RecyclerView`.
 
 ```kotlin
 // Assume this is the dataset you need to bind to.
-val listData = ArrayList<CustomBean>()
+val listData = ArrayList<MyEntity>()
 // Create and bind to a custom RecyclerView.Adapter.
-val adapter = recyclerView.bindAdapter<CustomBean> {
+val adapter = recyclerView.bindAdapter<MyEntity> {
     onBindData { listData }
     onBindItemView(
         Hikageable = {
@@ -87,8 +87,8 @@ val adapter = recyclerView.bindAdapter<CustomBean> {
                 textSize = 16f
             }
         }
-    ) { hikage, bean, position ->
-        hikage.get<TextView>("text_view").text = bean.name
+    ) { hikage, entity, position ->
+        hikage.get<TextView>("text_view").text = entity.name
     }
 }
 ```

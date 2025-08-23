@@ -65,7 +65,7 @@ implementation("com.highcapable.hikage:hikage-extension-betterandroid:<version>"
 
 ### 适配器 (Adapter) 扩展
 
-Hikage 为 BetterAndroid 提供的 [适配器](https://betterandroid.github.io/BetterAndroid/zh-cn/library/ui-component#%E9%80%82%E9%85%8D%E5%99%A8-adapter)
+Hikage 为 BetterAndroid 提供的 [适配器](https://betterandroid.github.io/BetterAndroid/zh-cn/library/ui-component-adapter)
 提供了布局扩展功能，你可以直接在适配器的原始扩展方法上使用 Hikage 布局。
 
 它使用了 BetterAndroid 提供的 `ViewHolderDelegate` 来创建扩展方法。
@@ -76,9 +76,9 @@ Hikage 为 BetterAndroid 提供的 [适配器](https://betterandroid.github.io/B
 
 ```kotlin
 // 假设这就是你需要绑定的数据集
-val listData = ArrayList<CustomBean>()
+val listData = ArrayList<MyEntity>()
 // 创建并绑定到自定义的 RecyclerView.Adapter
-val adapter = recyclerView.bindAdapter<CustomBean> {
+val adapter = recyclerView.bindAdapter<MyEntity> {
     onBindData { listData }
     onBindItemView(
         Hikageable = {
@@ -87,8 +87,8 @@ val adapter = recyclerView.bindAdapter<CustomBean> {
                 textSize = 16f
             }
         }
-    ) { hikage, bean, position ->
-        hikage.get<TextView>("text_view").text = bean.name
+    ) { hikage, entity, position ->
+        hikage.get<TextView>("text_view").text = entity.name
     }
 }
 ```
