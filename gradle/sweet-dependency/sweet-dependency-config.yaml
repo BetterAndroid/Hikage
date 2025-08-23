@@ -131,7 +131,8 @@ libraries:
       version: 3.7.0
   com.android.tools.lint:
     lint:
-      version: 31.12.1
+      version: 31.9.0
+      auto-update: false
     lint-api:
       version-ref: <this>::lint
     lint-checks:
