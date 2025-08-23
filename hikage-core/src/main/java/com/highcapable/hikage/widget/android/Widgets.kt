@@ -24,6 +24,8 @@
 
 package com.highcapable.hikage.widget.android
 
+import android.view.SurfaceView
+import android.webkit.WebView
 import android.widget.ActionMenuView
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -172,8 +174,14 @@ private object ViewFlipperDeclaration
 @HikageViewDeclaration(ViewAnimator::class, FrameLayout.LayoutParams::class)
 private object ViewAnimatorDeclaration
 
+@HikageViewDeclaration(SurfaceView::class)
+private object SurfaceVieweclaration
+
 @HikageViewDeclaration(VideoView::class)
 private object VideoViewDeclaration
+
+@HikageViewDeclaration(WebView::class, final = true)
+private object WebViewDeclaration
 
 @HikageViewDeclaration(Toolbar::class, final = true)
 private object ToolbarDeclaration
