@@ -45,6 +45,9 @@ import kotlin.reflect.KClass
  * @param requireInit whether to force the `init` parameter to be called, default is false.
  * @param requirePerformer whether to force the `performer` parameter to be called, default is false,
  * this parameter will be ignored when no `performer` parameter is needed here.
+ * @param final whether to declare this layout as "final layout", default is false, that is,
+ * whether this layout inherits from or is [ViewGroup], the `performer` parameter will not be generated.
+ * After set to `true`, [lparams] and [requirePerformer] will no longer be valid.
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
@@ -53,5 +56,6 @@ annotation class HikageView(
     val lparams: KClass<*> = Any::class,
     val alias: String = "",
     val requireInit: Boolean = false,
-    val requirePerformer: Boolean = false
+    val requirePerformer: Boolean = false,
+    val final: Boolean = false
 )

@@ -211,7 +211,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         if (!performer.annotation.requireInit) defaultValue("{}")
                     }.build()
                 )
-                lparamsClass?.second?.let {
+                lparamsClass?.second?.takeIf { !performer.annotation.final }?.let {
                     addParameter(
                         ParameterSpec.builder(
                             name = "performer",
@@ -343,7 +343,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         override val lparams: KSClassDeclaration?,
         override val alias: String?,
         override val requireInit: Boolean,
-        override val requirePerformer: Boolean
+        override val requirePerformer: Boolean,
+        override val final: Boolean
     ) : HikageAnnotationSpec {
 
         companion object {
@@ -360,12 +361,13 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 val alias = annotation.arguments.getOrNull<String>("alias")
                 val requireInit = annotation.arguments.getOrNull<Boolean>("requireInit") ?: false
                 val requirePerformer = annotation.arguments.getOrNull<Boolean>("requirePerformer") ?: false
+                val final = annotation.arguments.getOrNull<Boolean>("final") ?: false
 
                 // Solve the actual content of the annotation parameters.
                 val declaration = Processor.createViewDeclaration(NAME, alias, ksClass)
                 val resolvedLparams = Processor.resolvedLparamsDeclaration(NAME, resolver, declaration, lparams)
 
-                return HikageViewSpec(resolvedLparams, alias, requireInit, requirePerformer) to declaration
+                return HikageViewSpec(resolvedLparams, alias, requireInit, requirePerformer, final) to declaration
             }
         }
     }
@@ -375,7 +377,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         override val lparams: KSClassDeclaration?,
         override val alias: String?,
         override val requireInit: Boolean,
-        override val requirePerformer: Boolean
+        override val requirePerformer: Boolean,
+        override val final: Boolean
     ) : HikageAnnotationSpec {
 
         companion object {
@@ -393,6 +396,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 val alias = annotation.arguments.getOrNull<String>("alias")
                 val requireInit = annotation.arguments.getOrNull<Boolean>("requireInit") ?: false
                 val requirePerformer = annotation.arguments.getOrNull<Boolean>("requirePerformer") ?: false
+                val final = annotation.arguments.getOrNull<Boolean>("final") ?: false
 
                 // Solve the actual content of the annotation parameters.
                 val resolvedView = view?.declaration?.getClassDeclaration(resolver) ?: error("Internal error.")
@@ -407,7 +411,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 }
 
                 val resolvedLparams = Processor.resolvedLparamsDeclaration(NAME, resolver, declaration, lparams)
-                return HikageViewDeclarationSpec(resolvedView, resolvedLparams, alias, requireInit, requirePerformer) to declaration
+                return HikageViewDeclarationSpec(resolvedView, resolvedLparams, alias, requireInit, requirePerformer, final) to declaration
             }
         }
     }
@@ -417,6 +421,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val alias: String?
         val requireInit: Boolean
         val requirePerformer: Boolean
+        val final: Boolean
     }
 
     private data class Performer(

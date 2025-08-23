@@ -139,12 +139,13 @@ Hikage can automatically generate the `Hikageable` function corresponding to the
 
 You can add the `HikageView` annotation on your custom `View` to mark it as a Hikage layout component.
 
-| Parameter Name     | Description                                                                                                                                                                      |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lparams`          | LayoutParams `Class` object, if your custom `View` is a subclass of `ViewGroup`, you can declare or leave it blank to use the default value                                      |
-| `alias`            | The alias of the layout component, that is, the function name to be generated, gets the name of the current Class by default                                                     |
-| `requireInit`      | Whether to fill in the initialization method block of the layout, the default is the omitted parameters                                                                          |
-| `requirePerformer` | Whether to fill in the `performer` method block of the layout, the default is an omitted parameter, which only takes effect when your custom `View` is a subclass of `ViewGroup` |
+| Parameter Name     | Description                                                                                                                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lparams`          | LayoutParams `Class` object, if your custom `View` is a subclass of `ViewGroup`, you can declare or leave it blank to use the default value                                                                                                                         |
+| `alias`            | The alias of the layout component, that is, the function name to be generated, gets the name of the current Class by default                                                                                                                                        |
+| `requireInit`      | Whether to fill in the initialization method block of the layout, the default is the omitted parameters                                                                                                                                                             |
+| `requirePerformer` | Whether to fill in the `performer` method block of the layout, the default is an omitted parameter, which only takes effect when your custom `View` is a subclass of `ViewGroup`                                                                                    |
+| `final`            | Whether to declare the layout as "final layout", the default is false, that is, whether this layout is `ViewGroup` or its subclasses will not generate the `performer` method block. After set to `true`, `lparams` and `requirePerformer` will no longer be valid. |
 
 > The following example
 
@@ -177,13 +178,14 @@ Hikageable {
 
 Hikage can also automatically generate layout component functions for the `View` component provided by third parties, and you can use the `HikageViewDeclaration` annotation to complete it.
 
-| Parameter Name     | Description                                                                                                                                                                      |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `view`             | Class object of layout component that needs to be declared                                                                                                                       |
-| `lparams`          | LayoutParams `Class` object, if your custom `View` is a subclass of `ViewGroup`, you can declare or leave it blank to use the default value                                      |
-| `alias`            | The alias of the layout component, that is, the name of the function to be generated, obtains the name of the `view` Class by default                                            |
-| `requireInit`      | Whether to fill in the initialization method block of the layout, the default is the omitted parameters                                                                          |
-| `requirePerformer` | Whether to fill in the `performer` method block of the layout, the default is an omitted parameter, which only takes effect when your custom `View` is a subclass of `ViewGroup` |
+| Parameter Name     | Description                                                                                                                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `view`             | Class object of layout component that needs to be declared                                                                                                                                                                                                          |
+| `lparams`          | LayoutParams `Class` object, if your custom `View` is a subclass of `ViewGroup`, you can declare or leave it blank to use the default value                                                                                                                         |
+| `alias`            | The alias of the layout component, that is, the name of the function to be generated, obtains the name of the `view` Class by default                                                                                                                               |
+| `requireInit`      | Whether to fill in the initialization method block of the layout, the default is the omitted parameters                                                                                                                                                             |
+| `requirePerformer` | Whether to fill in the `performer` method block of the layout, the default is an omitted parameter, which only takes effect when your custom `View` is a subclass of `ViewGroup`                                                                                    |
+| `final`            | Whether to declare the layout as "final layout", the default is false, that is, whether this layout is `ViewGroup` or its subclasses will not generate the `performer` method block. After set to `true`, `lparams` and `requirePerformer` will no longer be valid. |
 
 > The following example
 
