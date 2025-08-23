@@ -27,5 +27,5 @@ package com.highcapable.hikage.widget.androidx.recyclerview
 import androidx.recyclerview.widget.RecyclerView
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
-@HikageViewDeclaration(RecyclerView::class, RecyclerView.LayoutParams::class)
+@HikageViewDeclaration(RecyclerView::class, final = true)
 private object RecyclerViewDeclaration

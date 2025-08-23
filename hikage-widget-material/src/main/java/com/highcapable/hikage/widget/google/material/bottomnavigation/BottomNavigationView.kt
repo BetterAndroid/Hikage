@@ -24,9 +24,8 @@
 
 package com.highcapable.hikage.widget.google.material.bottomnavigation
 
-import android.widget.FrameLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
-@HikageViewDeclaration(BottomNavigationView::class, FrameLayout.LayoutParams::class)
+@HikageViewDeclaration(BottomNavigationView::class, final = true)
 private object BottomNavigationViewDeclaration

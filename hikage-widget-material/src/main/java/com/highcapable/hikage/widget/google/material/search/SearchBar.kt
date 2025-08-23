@@ -25,12 +25,11 @@
 package com.highcapable.hikage.widget.google.material.search
 
 import android.widget.FrameLayout
-import androidx.appcompat.widget.Toolbar
 import com.google.android.material.search.SearchBar
 import com.google.android.material.search.SearchView
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
-@HikageViewDeclaration(SearchBar::class, Toolbar.LayoutParams::class)
+@HikageViewDeclaration(SearchBar::class, final = true)
 private object SearchBarDeclaration
 
 @HikageViewDeclaration(SearchView::class, FrameLayout.LayoutParams::class)

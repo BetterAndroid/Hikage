@@ -24,7 +24,6 @@
 
 package com.highcapable.hikage.widget.android
 
-import android.widget.AbsListView
 import android.widget.ActionMenuView
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -101,7 +100,7 @@ private object SpaceDeclaration
 @HikageViewDeclaration(CheckedTextView::class)
 private object CheckedTextViewDeclaration
 
-@HikageViewDeclaration(ExpandableListView::class, AbsListView.LayoutParams::class)
+@HikageViewDeclaration(ExpandableListView::class, final = true)
 private object ExpandableListViewDeclaration
 
 @HikageViewDeclaration(Spinner::class)
@@ -143,13 +142,13 @@ private object TextSwitcherDeclaration
 @HikageViewDeclaration(ActionMenuView::class, ActionMenuView.LayoutParams::class)
 private object ActionMenuViewDeclaration
 
-@HikageViewDeclaration(CalendarView::class, FrameLayout.LayoutParams::class)
+@HikageViewDeclaration(CalendarView::class, final = true)
 private object CalendarViewDeclaration
 
-@HikageViewDeclaration(DatePicker::class, FrameLayout.LayoutParams::class)
+@HikageViewDeclaration(DatePicker::class, final = true)
 private object DatePickerDeclaration
 
-@HikageViewDeclaration(TimePicker::class, FrameLayout.LayoutParams::class)
+@HikageViewDeclaration(TimePicker::class, final = true)
 private object TimePickerDeclaration
 
 @HikageViewDeclaration(RatingBar::class)
@@ -176,16 +175,16 @@ private object ViewAnimatorDeclaration
 @HikageViewDeclaration(VideoView::class)
 private object VideoViewDeclaration
 
-@HikageViewDeclaration(Toolbar::class, Toolbar.LayoutParams::class)
+@HikageViewDeclaration(Toolbar::class, final = true)
 private object ToolbarDeclaration
 
 @HikageViewDeclaration(GridLayout::class, GridLayout.LayoutParams::class)
 private object GridLayoutDeclaration
 
-@HikageViewDeclaration(GridView::class, AbsListView.LayoutParams::class)
+@HikageViewDeclaration(GridView::class, final = true)
 private object GridViewDeclaration
 
-@HikageViewDeclaration(ListView::class, AbsListView.LayoutParams::class)
+@HikageViewDeclaration(ListView::class, final = true)
 private object ListViewDeclaration
 
 @HikageViewDeclaration(ImageView::class)
@@ -200,10 +199,10 @@ private object TableLayoutDeclaration
 @HikageViewDeclaration(TableRow::class, TableRow.LayoutParams::class)
 private object TableRowDeclaration
 
-@HikageViewDeclaration(NumberPicker::class, LinearLayout.LayoutParams::class)
+@HikageViewDeclaration(NumberPicker::class, final = true)
 private object NumberPickerDeclaration
 
-@HikageViewDeclaration(SearchView::class, FrameLayout.LayoutParams::class)
+@HikageViewDeclaration(SearchView::class, final = true)
 private object SearchViewDeclaration
 
 @HikageViewDeclaration(Switch::class)
@@ -212,5 +211,5 @@ private object SwitchDeclaration
 @HikageViewDeclaration(TabHost::class, FrameLayout.LayoutParams::class)
 private object TabHostDeclaration
 
-@HikageViewDeclaration(TabWidget::class, LinearLayout.LayoutParams::class)
+@HikageViewDeclaration(TabWidget::class, final = true)
 private object TabWidgetDeclaration

@@ -24,9 +24,8 @@
 
 package com.highcapable.hikage.widget.google.material.navigation
 
-import android.widget.FrameLayout
 import com.google.android.material.navigation.NavigationView
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
-@HikageViewDeclaration(NavigationView::class, FrameLayout.LayoutParams::class)
+@HikageViewDeclaration(NavigationView::class, final = true)
 private object NavigationViewDeclaration

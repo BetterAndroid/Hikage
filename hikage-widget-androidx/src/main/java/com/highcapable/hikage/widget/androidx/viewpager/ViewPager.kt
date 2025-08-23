@@ -28,8 +28,8 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
-@HikageViewDeclaration(ViewPager::class, ViewPager.LayoutParams::class)
+@HikageViewDeclaration(ViewPager::class, final = true)
 private object ViewPagerDeclaration
 
-@HikageViewDeclaration(ViewPager2::class)
+@HikageViewDeclaration(ViewPager2::class, final = true)
 private object ViewPager2Declaration

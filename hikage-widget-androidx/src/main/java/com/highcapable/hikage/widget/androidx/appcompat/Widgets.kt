@@ -78,7 +78,7 @@ private object AppCompatTextViewDeclaration
 @HikageViewDeclaration(AppCompatToggleButton::class)
 private object AppCompatToggleButtonDeclaration
 
-@HikageViewDeclaration(AppCompatToolbar::class, AppCompatToolbar.LayoutParams::class)
+@HikageViewDeclaration(AppCompatToolbar::class, final = true)
 private object AppCompatToolbarDeclaration
 
 @HikageViewDeclaration(AppCompatCheckedTextView::class)
@@ -87,7 +87,7 @@ private object AppCompatCheckedTextViewDeclaration
 @HikageViewDeclaration(SwitchCompat::class)
 private object SwitchCompatDeclaration
 
-@HikageViewDeclaration(AppCompatSearchView::class)
+@HikageViewDeclaration(AppCompatSearchView::class, final = true)
 private object AppCompatSearchViewDeclaration
 
 @HikageViewDeclaration(LinearLayoutCompat::class, LinearLayoutCompat.LayoutParams::class)

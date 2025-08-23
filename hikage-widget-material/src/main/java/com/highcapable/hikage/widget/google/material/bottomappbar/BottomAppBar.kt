@@ -24,9 +24,8 @@
 
 package com.highcapable.hikage.widget.google.material.bottomappbar
 
-import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
-@HikageViewDeclaration(BottomAppBar::class, Toolbar.LayoutParams::class)
+@HikageViewDeclaration(BottomAppBar::class, final = true)
 private object BottomAppBarDeclaration

@@ -24,7 +24,6 @@
 
 package com.highcapable.hikage.widget.google.material.appbar
 
-import android.widget.Toolbar
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
@@ -33,7 +32,7 @@ import com.highcapable.hikage.annotation.HikageViewDeclaration
 @HikageViewDeclaration(AppBarLayout::class, AppBarLayout.LayoutParams::class)
 private object AppBarLayoutDeclaration
 
-@HikageViewDeclaration(MaterialToolbar::class, Toolbar.LayoutParams::class)
+@HikageViewDeclaration(MaterialToolbar::class, final = true)
 private object MaterialToolbarDeclaration
 
 @HikageViewDeclaration(CollapsingToolbarLayout::class, CollapsingToolbarLayout.LayoutParams::class)
