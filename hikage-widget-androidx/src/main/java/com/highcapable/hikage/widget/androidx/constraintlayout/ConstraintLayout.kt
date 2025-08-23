@@ -24,8 +24,36 @@
 
 package com.highcapable.hikage.widget.androidx.constraintlayout
 
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.utils.widget.ImageFilterButton
+import androidx.constraintlayout.utils.widget.ImageFilterView
+import androidx.constraintlayout.utils.widget.MockView
+import androidx.constraintlayout.utils.widget.MotionButton
+import androidx.constraintlayout.utils.widget.MotionLabel
+import androidx.constraintlayout.utils.widget.MotionTelltales
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.highcapable.hikage.annotation.HikageViewDeclaration
 
 @HikageViewDeclaration(ConstraintLayout::class, ConstraintLayout.LayoutParams::class)
 private object ConstraintLayoutDeclaration
+
+@HikageViewDeclaration(MotionLayout::class, ConstraintLayout.LayoutParams::class)
+private object MotionLayoutDeclaration
+
+@HikageViewDeclaration(ImageFilterButton::class)
+private object ImageFilterButtonDeclaration
+
+@HikageViewDeclaration(ImageFilterView::class)
+private object ImageFilterViewDeclaration
+
+@HikageViewDeclaration(MockView::class)
+private object MockViewDeclaration
+
+@HikageViewDeclaration(MotionButton::class)
+private object MotionButtonDeclaration
+
+@HikageViewDeclaration(MotionLabel::class)
+private object MotionLabelDeclaration
+
+@HikageViewDeclaration(MotionTelltales::class)
+private object MotionTelltalesDeclaration
