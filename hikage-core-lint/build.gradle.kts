@@ -41,6 +41,7 @@ dependencies {
     compileOnly(org.jetbrains.kotlin.kotlin.stdlib)
     compileOnly(com.android.tools.lint.lint.api)
     compileOnly(com.android.tools.lint.lint.checks)
+
     testImplementation(com.android.tools.lint.lint)
     testImplementation(com.android.tools.lint.lint.tests)
 }

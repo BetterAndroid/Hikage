@@ -31,7 +31,7 @@ android {
 
 dependencies {
     ksp(projects.hikageCompiler)
-    implementation(projects.hikageCore)
+
     api(androidx.appcompat.appcompat)
     api(androidx.constraintlayout.constraintlayout)
     api(androidx.coordinatorlayout.coordinatorlayout)
@@ -42,6 +42,9 @@ dependencies {
     api(androidx.viewpager.viewpager)
     api(androidx.viewpager2.viewpager2)
     api(androidx.recyclerview.recyclerview)
+
+    implementation(projects.hikageCore)
+
     testImplementation(junit.junit)
     androidTestImplementation(androidx.test.ext.junit)
     androidTestImplementation(androidx.test.espresso.espresso.core)

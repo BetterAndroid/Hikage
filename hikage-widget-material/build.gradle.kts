@@ -31,8 +31,11 @@ android {
 
 dependencies {
     ksp(projects.hikageCompiler)
-    implementation(projects.hikageCore)
+
     api(com.google.android.material.material)
+
+    implementation(projects.hikageCore)
+
     testImplementation(junit.junit)
     androidTestImplementation(androidx.test.ext.junit)
     androidTestImplementation(androidx.test.espresso.espresso.core)

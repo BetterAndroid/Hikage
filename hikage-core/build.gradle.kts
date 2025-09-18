@@ -32,14 +32,18 @@ android {
 
 dependencies {
     lintPublish(projects.hikageCoreLint)
+
     ksp(projects.hikageCompiler)
+
+    api(com.highcapable.betterandroid.ui.extension)
+
     implementation(org.lsposed.hiddenapibypass.hiddenapibypass)
     implementation(com.highcapable.kavaref.kavaref.core)
     implementation(com.highcapable.kavaref.kavaref.extension)
-    api(com.highcapable.betterandroid.ui.extension)
     implementation(com.highcapable.betterandroid.system.extension)
     implementation(androidx.core.core.ktx)
     implementation(androidx.appcompat.appcompat)
+
     testImplementation(junit.junit)
     androidTestImplementation(androidx.test.ext.junit)
     androidTestImplementation(androidx.test.espresso.espresso.core)

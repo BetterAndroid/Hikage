@@ -23,6 +23,7 @@ libraryProjects {
                 val repositoryDir = gradle.gradleUserHomeDir
                     .resolve("highcapable-maven-repository")
                     .resolve("repository")
+
                 maven {
                     name = "HighCapableMavenReleases"
                     url = repositoryDir.resolve("releases").toURI()
@@ -33,10 +34,12 @@ libraryProjects {
                 }
             }
         }
+
         configure<MavenPublishBaseExtension> {
             if (name != Libraries.HIKAGE_COMPILER)
                 configure(AndroidSingleVariantLibrary(publishJavadocJar = false))
         }
+
         // Only apply to publishable tasks.
         if (gradle.startParameter.taskNames.any { it.startsWith("publish") })
             if (name != Libraries.HIKAGE_COMPILER)
@@ -48,10 +51,12 @@ libraryProjects {
                     }
                 }
     }
+
     tasks.withType<DokkaTask>().configureEach {
         val configuration = """{ "footerMessage": "Hikage | Apache-2.0 License | Copyright (C) 2019 HighCapable" }"""
         pluginsMapConfiguration.set(mapOf("org.jetbrains.dokka.base.DokkaBase" to configuration))
     }
+
     tasks.register("publishKDoc") {
         group = "documentation"
         dependsOn("dokkaHtml")
@@ -61,6 +66,7 @@ libraryProjects {
                 .resolve("dist")
                 .resolve("KDoc")
                 .resolve(project.name)
+
             if (docsDir.exists()) docsDir.deleteRecursively() else docsDir.mkdirs()
             layout.buildDirectory.dir("dokka/html").get().asFile.copyRecursively(docsDir)
         }

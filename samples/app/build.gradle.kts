@@ -27,6 +27,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     buildFeatures {
         buildConfig = true
         viewBinding = true
@@ -35,17 +36,20 @@ android {
 
 dependencies {
     ksp(projects.hikageCompiler)
+
     implementation(projects.hikageCore)
     implementation(projects.hikageExtension)
     implementation(projects.hikageExtensionBetterandroid)
     implementation(projects.hikageWidgetAndroidx)
     implementation(projects.hikageWidgetMaterial)
+
     implementation(com.highcapable.pangutext.pangutext.android)
     implementation(com.highcapable.betterandroid.ui.component)
     implementation(com.highcapable.betterandroid.ui.extension)
     implementation(com.highcapable.betterandroid.system.extension)
     implementation(androidx.core.core.ktx)
     implementation(androidx.appcompat.appcompat)
+
     testImplementation(junit.junit)
     androidTestImplementation(androidx.test.ext.junit)
     androidTestImplementation(androidx.test.espresso.espresso.core)

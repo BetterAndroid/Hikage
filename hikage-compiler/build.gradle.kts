@@ -25,7 +25,9 @@ kotlin {
 
 dependencies {
     compileOnly(com.google.devtools.ksp.symbol.processing.api)
+
     ksp(dev.zacsweers.autoservice.auto.service.ksp)
+
     implementation(com.google.auto.service.auto.service.annotations)
     implementation(com.squareup.kotlinpoet)
     implementation(com.squareup.kotlinpoet.ksp)

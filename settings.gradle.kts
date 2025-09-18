@@ -6,12 +6,19 @@ pluginManagement {
         mavenCentral()
     }
 }
+
 plugins {
     id("com.highcapable.sweetdependency") version "1.0.4"
     id("com.highcapable.sweetproperty") version "1.0.8"
 }
+
 sweetProperty {
-    rootProject { all { isEnable = false } }
+    rootProject {
+        all {
+            isEnable = false
+        }
+    }
+
     project(
         ":hikage-core",
         ":hikage-core-lint",
@@ -27,7 +34,9 @@ sweetProperty {
         }
     }
 }
+
 rootProject.name = "Hikage"
+
 include(":samples:app")
 include(
     ":hikage-core",

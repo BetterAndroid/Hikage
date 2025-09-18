@@ -32,6 +32,7 @@ android {
 
 dependencies {
     implementation(projects.hikageCore)
+
     implementation(com.highcapable.kavaref.kavaref.core)
     implementation(com.highcapable.kavaref.kavaref.extension)
     implementation(com.highcapable.betterandroid.ui.extension)
@@ -39,6 +40,7 @@ dependencies {
     implementation(androidx.core.core.ktx)
     implementation(androidx.appcompat.appcompat)
     implementation(androidx.compose.ui.ui)
+
     testImplementation(junit.junit)
     androidTestImplementation(androidx.test.ext.junit)
     androidTestImplementation(androidx.test.espresso.espresso.core)
