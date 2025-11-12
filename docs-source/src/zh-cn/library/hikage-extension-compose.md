@@ -18,24 +18,7 @@
 
 :::
 
-### SweetDependency (推荐)
-
-在你的项目 `SweetDependency` 配置文件中添加依赖。
-
-```yaml
-libraries:
-  com.highcapable.hikage:
-    hikage-extension-compose:
-      version: +
-```
-
-在你的项目 `build.gradle.kts` 中配置依赖。
-
-```kotlin
-implementation(com.highcapable.hikage.hikage.extension.compose)
-```
-
-### Version Catalog
+### Version Catalog (推荐)
 
 在你的项目 `gradle/libs.versions.toml` 中添加依赖。
 

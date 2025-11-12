@@ -20,24 +20,7 @@ Please refer to [here](https://developer.android.com/develop/ui/compose/compiler
 
 :::
 
-### SweetDependency (Recommended)
-
-Add dependency in your project's `SweetDependency` configuration file.
-
-```yaml
-libraries:
-  com.highcapable.hikage:
-    hikage-extension-compose:
-      version: +
-```
-
-Configure dependency in your project's `build.gradle.kts`.
-
-```kotlin
-implementation(com.highcapable.hikage.hikage.extension.compose)
-```
-
-### Version Catalog
+### Version Catalog (Recommended)
 
 Add dependency in your project's `gradle/libs.versions.toml`.
 

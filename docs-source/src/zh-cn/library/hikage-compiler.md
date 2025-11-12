@@ -18,45 +18,7 @@
 
 :::
 
-### SweetDependency (推荐)
-
-在你的项目 `SweetDependency` 配置文件中添加依赖。
-
-```yaml
-plugins:
-  com.google.devtools.ksp:
-    version: +
-
-libraries:
-  com.highcapable.hikage:
-    hikage-compiler:
-      version: +
-```
-
-在你的根项目 `build.gradle.kts` 中配置依赖。
-
-```kotlin
-plugins {
-    // ...
-    autowire(libs.plugins.com.google.devtools.ksp) apply false
-}
-```
-
-在你的项目 `build.gradle.kts` 中配置依赖。
-
-```kotlin
-plugins {
-    // ...
-    autowire(libs.plugins.com.google.devtools.ksp)
-}
-
-dependencies {
-    // ...
-    ksp(com.highcapable.hikage.hikage.compiler)
-}
-```
-
-### Version Catalog
+### Version Catalog (推荐)
 
 在你的项目 `gradle/libs.versions.toml` 中添加依赖。
 

@@ -18,45 +18,7 @@ You need to integrate the [Google KSP](https://github.com/google/ksp/releases) p
 
 :::
 
-### SweetDependency (Recommended)
-
-Add dependency in your project's `SweetDependency` configuration file.
-
-```yaml
-plugins:
-  com.google.devtools.ksp:
-    version: +
-
-libraries:
-  com.highcapable.hikage:
-    hikage-compiler:
-      version: +
-```
-
-Configure dependency in your root project's `build.gradle.kts`.
-
-```kotlin
-plugins {
-    // ...
-    autowire(libs.plugins.com.google.devtools.ksp) apply false
-}
-```
-
-Configure dependency in your project's `build.gradle.kts`.
-
-```kotlin
-plugins {
-    // ...
-    autowire(libs.plugins.com.google.devtools.ksp)
-}
-
-dependencies {
-    // ...
-    ksp(com.highcapable.hikage.hikage.compiler)
-}
-```
-
-### Version Catalog
+### Version Catalog (Recommended)
 
 Add dependency in your project's `gradle/libs.versions.toml`.
 
