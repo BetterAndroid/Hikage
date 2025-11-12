@@ -1,11 +1,11 @@
 plugins {
-    autowire(libs.plugins.kotlin.jvm)
-    autowire(libs.plugins.kotlin.ksp)
-    autowire(libs.plugins.maven.publish)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.maven.publish)
 }
 
-group = property.project.groupName
-version = property.project.hikage.compiler.version
+group = gropify.project.groupName
+version = gropify.project.hikage.compiler.version
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -24,11 +24,11 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(com.google.devtools.ksp.symbol.processing.api)
+    compileOnly(libs.ksp.symbol.processing.api)
 
-    ksp(dev.zacsweers.autoservice.auto.service.ksp)
+    ksp(libs.auto.service.ksp)
 
-    implementation(com.google.auto.service.auto.service.annotations)
-    implementation(com.squareup.kotlinpoet)
-    implementation(com.squareup.kotlinpoet.ksp)
+    implementation(libs.auto.service.annotations)
+    implementation(libs.kotlinpoet)
+    implementation(libs.kotlinpoet.ksp)
 }

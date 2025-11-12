@@ -1,20 +1,20 @@
 plugins {
-    autowire(libs.plugins.android.library)
-    autowire(libs.plugins.kotlin.android)
-    autowire(libs.plugins.kotlin.dokka)
-    autowire(libs.plugins.maven.publish)
-    autowire(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.dokka)
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.kotlin.ksp)
 }
 
-group = property.project.groupName
-version = property.project.hikage.core.version
+group = gropify.project.groupName
+version = gropify.project.hikage.core.version
 
 android {
-    namespace = property.project.hikage.core.namespace
-    compileSdk = property.project.android.compileSdk
+    namespace = gropify.project.hikage.core.namespace
+    compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {
-        minSdk = property.project.android.minSdk
+        minSdk = gropify.project.android.minSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -35,16 +35,16 @@ dependencies {
 
     ksp(projects.hikageCompiler)
 
-    api(com.highcapable.betterandroid.ui.extension)
+    api(libs.betterandroid.ui.extension)
 
-    implementation(org.lsposed.hiddenapibypass.hiddenapibypass)
-    implementation(com.highcapable.kavaref.kavaref.core)
-    implementation(com.highcapable.kavaref.kavaref.extension)
-    implementation(com.highcapable.betterandroid.system.extension)
-    implementation(androidx.core.core.ktx)
-    implementation(androidx.appcompat.appcompat)
+    implementation(libs.hiddenapibypass)
+    implementation(libs.kavaref.core)
+    implementation(libs.kavaref.extension)
+    implementation(libs.betterandroid.system.extension)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
-    testImplementation(junit.junit)
-    androidTestImplementation(androidx.test.ext.junit)
-    androidTestImplementation(androidx.test.espresso.espresso.core)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

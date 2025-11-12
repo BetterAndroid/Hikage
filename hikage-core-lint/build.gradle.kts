@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    autowire(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.jvm)
 }
 
-group = property.project.groupName
+group = gropify.project.groupName
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -32,16 +32,16 @@ tasks.withType<KotlinCompile>().configureEach {
 tasks.named<Jar>("jar") {
     manifest {
         attributes(
-            "Lint-Registry-V2" to property.project.hikage.core.lint.registry.v2.clazz
+            "Lint-Registry-V2" to gropify.project.hikage.core.lint.registry.v2.clazz
         )
     }
 }
 
 dependencies {
-    compileOnly(org.jetbrains.kotlin.kotlin.stdlib)
-    compileOnly(com.android.tools.lint.lint.api)
-    compileOnly(com.android.tools.lint.lint.checks)
+    compileOnly(libs.kotlin.stdlib)
+    compileOnly(libs.android.lint.api)
+    compileOnly(libs.android.lint.checks)
 
-    testImplementation(com.android.tools.lint.lint)
-    testImplementation(com.android.tools.lint.lint.tests)
+    testImplementation(libs.android.lint)
+    testImplementation(libs.android.lint.tests)
 }

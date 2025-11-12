@@ -1,0 +1,85 @@
+[versions]
+# noinspection NewerVersionAvailable, GradleDependency
+kotlin = "2.0.10"
+# noinspection GradleDependency
+ksp = "2.0.10-1.0.24"
+auto-service-annotations = "1.1.1"
+auto-service-ksp = "1.2.0"
+agp = "8.13.1"
+# noinspection NewerVersionAvailable
+dokka = "1.9.20"
+maven-publish = "0.35.0"
+kotlinpoet = "2.2.0"
+# noinspection GradleDependency
+material = "1.11.0"
+betterandroid-ui-component = "1.0.8"
+betterandroid-ui-component-adapter = "1.0.0"
+betterandroid-ui-extension = "1.0.7"
+betterandroid-system-extension = "1.0.3"
+hiddenapibypass = "6.1"
+kavaref-core = "1.0.2"
+kavaref-extension = "1.0.1"
+pangutext-android = "1.0.4"
+androidx-core = "1.17.0"
+androidx-appcompat = "1.7.1"
+androidx-constraintlayout = "2.2.1"
+androidx-coordinatorlayout = "1.3.0"
+androidx-swiperefreshlayout = "1.1.0"
+androidx-slidingpanelayout = "1.2.0"
+androidx-drawerlayout = "1.2.0"
+androidx-cardview = "1.0.0"
+androidx-viewpager = "1.1.0"
+androidx-viewpager2 = "1.1.0"
+androidx-recyclerview = "1.4.0"
+androidx-compose-ui = "1.9.4"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.3.0"
+androidx-test-espresso-core = "3.7.0"
+# noinspection GradleDependency
+android-lint = "31.9.0"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
+
+[libraries]
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+ksp-symbol-processing-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto-service-annotations" }
+auto-service-ksp = { group = "dev.zacsweers.autoservice", name = "auto-service-ksp", version.ref = "auto-service-ksp" }
+kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
+kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
+betterandroid-ui-component = { group = "com.highcapable.betterandroid", name = "ui-component", version.ref = "betterandroid-ui-component" }
+betterandroid-ui-component-adapter = { group = "com.highcapable.betterandroid", name = "ui-component-adapter", version.ref = "betterandroid-ui-component-adapter" }
+betterandroid-ui-extension = { group = "com.highcapable.betterandroid", name = "ui-extension", version.ref = "betterandroid-ui-extension" }
+betterandroid-system-extension = { group = "com.highcapable.betterandroid", name = "system-extension", version.ref = "betterandroid-system-extension" }
+hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypass", version.ref = "hiddenapibypass" }
+kavaref-core = { group = "com.highcapable.kavaref", name = "kavaref-core", version.ref = "kavaref-core" }
+kavaref-extension = { group = "com.highcapable.kavaref", name = "kavaref-extension", version.ref = "kavaref-extension" }
+pangutext-android = { group = "com.highcapable.pangutext", name = "pangutext-android", version.ref = "pangutext-android" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "androidx-coordinatorlayout" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "androidx-swiperefreshlayout" }
+androidx-slidingpanelayout = { group = "androidx.slidingpanelayout", name = "slidingpanelayout", version.ref = "androidx-slidingpanelayout" }
+androidx-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout", version.ref = "androidx-drawerlayout" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "androidx-cardview" }
+androidx-viewpager = { group = "androidx.viewpager", name = "viewpager", version.ref = "androidx-viewpager" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "androidx-viewpager2" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidx-recyclerview" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "androidx-compose-ui" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-test-espresso-core" }
+android-lint = { group = "com.android.tools.lint", name = "lint", version.ref = "android-lint" }
+android-lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "android-lint" }
+android-lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "android-lint" }
+android-lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "android-lint" }

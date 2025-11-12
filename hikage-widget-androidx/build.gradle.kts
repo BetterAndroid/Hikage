@@ -1,19 +1,19 @@
 plugins {
-    autowire(libs.plugins.android.library)
-    autowire(libs.plugins.kotlin.android)
-    autowire(libs.plugins.maven.publish)
-    autowire(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.kotlin.ksp)
 }
 
-group = property.project.groupName
-version = property.project.hikage.widget.androidx.version
+group = gropify.project.groupName
+version = gropify.project.hikage.widget.androidx.version
 
 android {
-    namespace = property.project.hikage.widget.androidx.namespace
-    compileSdk = property.project.android.compileSdk
+    namespace = gropify.project.hikage.widget.androidx.namespace
+    compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {
-        minSdk = property.project.android.minSdk
+        minSdk = gropify.project.android.minSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -32,20 +32,20 @@ android {
 dependencies {
     ksp(projects.hikageCompiler)
 
-    api(androidx.appcompat.appcompat)
-    api(androidx.constraintlayout.constraintlayout)
-    api(androidx.coordinatorlayout.coordinatorlayout)
-    api(androidx.swiperefreshlayout.swiperefreshlayout)
-    api(androidx.slidingpanelayout.slidingpanelayout)
-    api(androidx.drawerlayout.drawerlayout)
-    api(androidx.cardview.cardview)
-    api(androidx.viewpager.viewpager)
-    api(androidx.viewpager2.viewpager2)
-    api(androidx.recyclerview.recyclerview)
+    api(libs.androidx.appcompat)
+    api(libs.androidx.constraintlayout)
+    api(libs.androidx.coordinatorlayout)
+    api(libs.androidx.swiperefreshlayout)
+    api(libs.androidx.slidingpanelayout)
+    api(libs.androidx.drawerlayout)
+    api(libs.androidx.cardview)
+    api(libs.androidx.viewpager)
+    api(libs.androidx.viewpager2)
+    api(libs.androidx.recyclerview)
 
     implementation(projects.hikageCore)
 
-    testImplementation(junit.junit)
-    androidTestImplementation(androidx.test.ext.junit)
-    androidTestImplementation(androidx.test.espresso.espresso.core)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

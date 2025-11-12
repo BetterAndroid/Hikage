@@ -1,19 +1,19 @@
 plugins {
-    autowire(libs.plugins.android.application)
-    autowire(libs.plugins.kotlin.android)
-    autowire(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
-    namespace = property.project.samples.app.packageName
-    compileSdk = property.project.android.compileSdk
+    namespace = gropify.project.samples.app.packageName
+    compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {
-        applicationId = property.project.samples.app.packageName
-        minSdk = property.project.android.minSdk
-        targetSdk = property.project.android.targetSdk
-        versionName = property.project.samples.app.versionName
-        versionCode = property.project.samples.app.versionCode
+        applicationId = gropify.project.samples.app.packageName
+        minSdk = gropify.project.android.minSdk
+        targetSdk = gropify.project.android.targetSdk
+        versionName = gropify.project.samples.app.versionName
+        versionCode = gropify.project.samples.app.versionCode
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,14 +43,14 @@ dependencies {
     implementation(projects.hikageWidgetAndroidx)
     implementation(projects.hikageWidgetMaterial)
 
-    implementation(com.highcapable.pangutext.pangutext.android)
-    implementation(com.highcapable.betterandroid.ui.component)
-    implementation(com.highcapable.betterandroid.ui.extension)
-    implementation(com.highcapable.betterandroid.system.extension)
-    implementation(androidx.core.core.ktx)
-    implementation(androidx.appcompat.appcompat)
+    implementation(libs.pangutext.android)
+    implementation(libs.betterandroid.ui.component)
+    implementation(libs.betterandroid.ui.extension)
+    implementation(libs.betterandroid.system.extension)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
-    testImplementation(junit.junit)
-    androidTestImplementation(androidx.test.ext.junit)
-    androidTestImplementation(androidx.test.espresso.espresso.core)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

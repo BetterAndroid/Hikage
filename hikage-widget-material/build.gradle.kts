@@ -1,19 +1,19 @@
 plugins {
-    autowire(libs.plugins.android.library)
-    autowire(libs.plugins.kotlin.android)
-    autowire(libs.plugins.maven.publish)
-    autowire(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.kotlin.ksp)
 }
 
-group = property.project.groupName
-version = property.project.hikage.widget.material.version
+group = gropify.project.groupName
+version = gropify.project.hikage.widget.material.version
 
 android {
-    namespace = property.project.hikage.widget.material.namespace
-    compileSdk = property.project.android.compileSdk
+    namespace = gropify.project.hikage.widget.material.namespace
+    compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {
-        minSdk = property.project.android.minSdk
+        minSdk = gropify.project.android.minSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -32,11 +32,11 @@ android {
 dependencies {
     ksp(projects.hikageCompiler)
 
-    api(com.google.android.material.material)
+    api(libs.material)
 
     implementation(projects.hikageCore)
 
-    testImplementation(junit.junit)
-    androidTestImplementation(androidx.test.ext.junit)
-    androidTestImplementation(androidx.test.espresso.espresso.core)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

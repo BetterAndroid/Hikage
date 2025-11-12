@@ -1,4 +1,5 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -7,19 +8,27 @@ pluginManagement {
     }
 }
 
-plugins {
-    id("com.highcapable.sweetdependency") version "1.0.4"
-    id("com.highcapable.sweetproperty") version "1.0.8"
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://raw.githubusercontent.com/HighCapable/maven-repository/main/repository/releases")
+    }
 }
 
-sweetProperty {
+plugins {
+    id("com.highcapable.gropify") version "1.0.0"
+}
+
+gropify {
     rootProject {
-        all {
-            isEnable = false
+        common {
+            isEnabled = false
         }
     }
 
-    project(
+    projects(
         ":hikage-core",
         ":hikage-core-lint",
         ":hikage-extension",
@@ -29,8 +38,16 @@ sweetProperty {
         ":hikage-widget-androidx",
         ":hikage-widget-material"
     ) {
-        sourcesCode {
-            isEnableRestrictedAccess = true
+        android {
+            isRestrictedAccessEnabled = true
+        }
+        jvm {
+            isRestrictedAccessEnabled = true
+        }
+    }
+    projects(":samples:app") {
+        android {
+            isEnabled = false
         }
     }
 }
