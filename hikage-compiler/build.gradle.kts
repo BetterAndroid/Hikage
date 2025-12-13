@@ -12,17 +12,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-kotlin {
-    jvmToolchain(17)
-    compilerOptions {
-        freeCompilerArgs = listOf(
-            "-Xno-param-assertions",
-            "-Xno-call-assertions",
-            "-Xno-receiver-assertions"
-        )
-    }
-}
-
 dependencies {
     compileOnly(libs.ksp.symbol.processing.api)
 
