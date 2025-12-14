@@ -1,8 +1,6 @@
 [versions]
-# noinspection NewerVersionAvailable, GradleDependency
-kotlin = "2.0.10"
-# noinspection GradleDependency
-ksp = "2.0.10-1.0.24"
+kotlin = "2.2.21"
+ksp = "2.2.20-2.0.3"
 auto-service-annotations = "1.1.1"
 auto-service-ksp = "1.2.0"
 agp = "8.13.2"
@@ -35,8 +33,7 @@ androidx-compose-ui = "1.10.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.3.0"
 androidx-test-espresso-core = "3.7.0"
-# noinspection GradleDependency
-android-lint = "31.9.0"
+android-lint = "31.13.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
