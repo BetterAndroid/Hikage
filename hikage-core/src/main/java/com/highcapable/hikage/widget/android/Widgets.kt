@@ -175,7 +175,7 @@ private object ViewFlipperDeclaration
 private object ViewAnimatorDeclaration
 
 @HikageViewDeclaration(SurfaceView::class)
-private object SurfaceVieweclaration
+private object SurfaceViewDeclaration
 
 @HikageViewDeclaration(VideoView::class)
 private object VideoViewDeclaration
