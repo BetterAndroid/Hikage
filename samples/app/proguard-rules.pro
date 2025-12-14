@@ -34,6 +34,10 @@
 -renamesourcefileattribute P
 -keepattributes SourceFile,Signature,LineNumberTable
 
+-keep,allowobfuscation class * extends android.view.View {
+    <init>(...);
+}
+
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
     public static *** throwUninitializedProperty(...);
     public static *** throwUninitializedPropertyAccessException(...);
