@@ -49,11 +49,11 @@ import com.highcapable.hikage.core.base.HikageView
  * @see Hikage.Performer.View
  */
 @Hikageable
-inline fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.ComposeView(
+fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.ComposeView(
     lparams: Hikage.LayoutParams? = null,
     id: String? = null,
     init: HikageView<ComposeView> = {},
-    noinline content: (@Composable () -> Unit)? = null
+    content: (@Composable () -> Unit)? = null
 ) {
     View<ComposeView>(lparams, id) {
         init(this)
