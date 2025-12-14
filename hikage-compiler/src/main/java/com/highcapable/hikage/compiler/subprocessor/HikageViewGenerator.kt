@@ -206,7 +206,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 addParameter(
                     ParameterSpec.builder(
                         name = "init",
-                        ViewLambdaClass.parameterizedBy(viewClass.second)
+                        type = ViewLambdaClass.parameterizedBy(viewClass.second),
+                        modifiers = listOf(KModifier.NOINLINE)
                     ).apply { 
                         if (!performer.annotation.requireInit) defaultValue("{}")
                     }.build()
@@ -215,7 +216,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     addParameter(
                         ParameterSpec.builder(
                             name = "performer",
-                            PerformerLambdaClass.parameterizedBy(it)
+                            type = PerformerLambdaClass.parameterizedBy(it),
+                            modifiers = listOf(KModifier.NOINLINE)
                         ).apply {
                             if (!performer.annotation.requirePerformer) defaultValue("{}")
                         }.build()

@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2025/2/27.
  */
-@file:Suppress("unused", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+@file:Suppress("unused")
 @file:JvmName("PopupWindowUtils")
 
 package com.highcapable.hikage.extension
@@ -38,7 +38,7 @@ import com.highcapable.kavaref.KavaRef.Companion.asResolver
  * @see Hikageable
  * @return [Hikage]
  */
-inline fun PopupWindow.setContentView(
+fun PopupWindow.setContentView(
     context: Context = requireContext(),
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>

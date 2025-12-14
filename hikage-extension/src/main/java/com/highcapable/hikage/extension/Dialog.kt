@@ -38,7 +38,7 @@ import androidx.appcompat.app.AlertDialog as AndroidXAlertDialog
  * @see Hikageable
  * @return [Hikage]
  */
-inline fun AlertDialog.setView(
+fun AlertDialog.setView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
 ) = Hikageable(context = context, factory = factory, performer = performer).apply { setView(root) }
@@ -62,7 +62,7 @@ fun AlertDialog.setView(delegate: Hikage.Delegate<*>) =
  * @see Hikageable
  * @return [AlertDialog.Builder]
  */
-inline fun AlertDialog.Builder.setView(
+fun AlertDialog.Builder.setView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
 ): AlertDialog.Builder = setView(Hikageable(context = context, factory = factory, performer = performer).root)
@@ -87,7 +87,7 @@ fun AlertDialog.Builder.setView(delegate: Hikage.Delegate<*>): AlertDialog.Build
  * @see Hikageable
  * @return [Hikage]
  */
-inline fun AndroidXAlertDialog.setView(
+fun AndroidXAlertDialog.setView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
 ) = Hikageable(context = context, factory = factory, performer = performer).apply { setView(root) }
@@ -111,7 +111,7 @@ fun AndroidXAlertDialog.setView(delegate: Hikage.Delegate<*>) =
  * @see Hikageable
  * @return [AndroidXAlertDialog.Builder]
  */
-inline fun AndroidXAlertDialog.Builder.setView(
+fun AndroidXAlertDialog.Builder.setView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
 ): AndroidXAlertDialog.Builder = setView(Hikageable(context = context, factory = factory, performer = performer).root)
@@ -136,7 +136,7 @@ fun AndroidXAlertDialog.Builder.setView(delegate: Hikage.Delegate<*>): AndroidXA
  * @see Hikageable
  * @return [Hikage]
  */
-inline fun Dialog.setContentView(
+fun Dialog.setContentView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
 ) = Hikageable(context = context, factory = factory, performer = performer).apply { setContentView(root) }

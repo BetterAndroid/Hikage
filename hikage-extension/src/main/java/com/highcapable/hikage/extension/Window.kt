@@ -36,7 +36,7 @@ import com.highcapable.hikage.core.base.Hikageable
  * @see Hikageable
  * @return [Hikage]
  */
-inline fun Window.setContentView(
+fun Window.setContentView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
 ) = Hikageable(context = context, factory = factory, performer = performer).apply { setContentView(root) }
