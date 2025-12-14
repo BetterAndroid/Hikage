@@ -16,9 +16,21 @@ Time zone of version release date: **UTC+8**
 
 :::
 
+::: tip
+
+To ensure consistency of automatically generated code, the versions of [hikage-core](#hikage-core) and [hikage-compiler](#hikage-compiler) modules will remain aligned.
+
+:::
+
 ## hikage-core
 
-### 1.0.2 | 2025.08.24 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.3 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Lint added recommended warning support for `WebView` and `SurfaceView`
+- Removed inline support for layout content DSL for performance optimization and to reduce unreasonable internal API exposure
+- Adapted to Kotlin 2.2+
+
+### 1.0.2 | 2025.08.24 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Migrated Java reflection related behaviors from [YukiReflection](https://github.com/HighCapable/YukiReflection) to [KavaRef](https://github.com/HighCapable/KavaRef)
 - Adapted to Android 16 (API 36), fixed the `XmlBlock` crash issue on Android 16
@@ -38,7 +50,12 @@ Time zone of version release date: **UTC+8**
 
 ## hikage-compiler
 
-### 1.0.1 | 2025.08.24 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.3 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Aligned version with [hikage-core](#hikage-core)
+- Adapted to the layout content DSL generation method after removing inline in [hikage-core](#hikage-core)
+
+### 1.0.1 | 2025.08.24 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Added support for the `final` parameter of `HikageView` and `HikageViewDeclaration`, please refer to the relevant usage in the documentation
 
@@ -48,7 +65,11 @@ Time zone of version release date: **UTC+8**
 
 ## hikage-extension
 
-### 1.0.1 | 2025.08.24 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.2 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Adapted to the layout content DSL usage after removing inline in [hikage-core](#hikage-core)
+
+### 1.0.1 | 2025.08.24 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Migrated Java reflection related behaviors from [YukiReflection](https://github.com/HighCapable/YukiReflection) to [KavaRef](https://github.com/HighCapable/KavaRef)
 - Added generic `ViewGroup.LayoutParams` support for `addView` in `ViewGroup`
@@ -59,7 +80,11 @@ Time zone of version release date: **UTC+8**
 
 ## hikage-extension-betterandroid
 
-### 1.0.1 | 2025.08.24 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.2 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Updated to follow the changes in [hikage-core](#hikage-core)
+
+### 1.0.1 | 2025.08.24 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Adapted to decoupled `ui-component` and `ui-component-adapter` in `BetterAndroid`
 
@@ -69,7 +94,11 @@ Time zone of version release date: **UTC+8**
 
 ## hikage-extension-compose
 
-### 1.0.0 | 2025.04.20 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.1 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Adapted to the layout content DSL usage after removing inline in [hikage-core](#hikage-core)
+
+### 1.0.0 | 2025.04.20 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - The first version is submitted to Maven
 
