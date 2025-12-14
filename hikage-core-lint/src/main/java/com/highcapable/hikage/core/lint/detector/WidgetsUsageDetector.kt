@@ -110,7 +110,9 @@ class WidgetsUsageDetector : Detector(), Detector.UastScanner {
             "GridLayout",
             "Switch",
             "ProgressBar",
-            "TableRow"
+            "TableRow",
+            "SurfaceView",
+            "WebView"
         )
     }
 
@@ -197,7 +199,7 @@ class WidgetsUsageDetector : Detector(), Detector.UastScanner {
                 val sourceText = callExpr.toUElement()?.asSourceString() ?: return
                 val callExprElement = callExpr.toUElement() ?: return
 
-                // Matchs '>' and like `View<TextView`'s length + 1.
+                // Matches '>' and like `View<TextView`'s length + 1.
                 val callExprLength = sourceText.split(">")[0].trim().length + 1
                 val nameLocation = context.getRangeLocation(callExprElement, fromDelta = 0, callExprLength)
 
