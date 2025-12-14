@@ -321,7 +321,7 @@ val textView = hikage.getOrNull<TextView>("my_text_view")
 ### 自定义布局组件
 
 Hikage 为 Android 基础的布局组件提供了组件类名对应的函数，你可以直接使用这些函数创建组件，而无需再使用泛型声明它们，如果你需要 Jetpack 或者 Material 提供的组件，
-可以引入 [hikage-widget-androidx](../library/hikage-widget-androidx.md) 或 [hikage-widget-material](../library/hikage-widget-material.md) 模块。
+可以引入 [hikage-widget-androidx](./hikage-widget-androidx) 或 [hikage-widget-material](./hikage-widget-material) 模块。
 
 > 示例如下
 
@@ -383,13 +383,13 @@ class MyCustomView(context: Context, attrs: AttributeSet? = null) : View(context
 inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomView(
     lparams: Hikage.LayoutParams? = null,
     id: String? = null,
-    init: HikageView<MyCustomView> = {},
+    noinline init: HikageView<MyCustomView> = {},
     // 如果此组件是容器，可以声明一个 `performer` 参数
     // performer: HikagePerformer<LP> = {}
 ) = View<MyCustomView>(lparams, id, init)
 ```
 
-每次都手动实现这样复杂的函数看起来会很繁琐，如果你希望能够自动生成组件函数，可以引入并参考 [hikage-compiler](../library/hikage-compiler.md) 模块。
+每次都手动实现这样复杂的函数看起来会很繁琐，如果你希望能够自动生成组件函数，可以引入并参考 [hikage-compiler](./hikage-compiler) 模块。
 
 ### 组合与拆分布局
 

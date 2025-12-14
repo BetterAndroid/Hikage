@@ -334,7 +334,7 @@ val textView = hikage.getOrNull<TextView>("my_text_view")
 Hikage provides functions corresponding to component class names for Android basic layout components.
 
 You can directly use these functions to create components without using generics to declare them. If you need components provided by Jetpack or Material,
-the [hikage-widget-androidx](../library/hikage-widget-androidx.md) or [hikage-widget-material](../library/hikage-widget-material.md) modules can be introduced.
+the [hikage-widget-androidx](./hikage-widget-androidx) or [hikage-widget-material](./hikage-widget-material) modules can be introduced.
 
 > The following example
 
@@ -398,14 +398,14 @@ class MyCustomView(context: Context, attrs: AttributeSet? = null) : View(context
 inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomView(
     lparams: Hikage.LayoutParams? = null,
     id: String? = null,
-    init: HikageView<MyCustomView> = {},
+    noinline init: HikageView<MyCustomView> = {},
     // If this component is a container, you can declare a `performer` parameter.
     // performer: HikagePerformer<LP> = {}
 ) = View<MyCustomView>(lparams, id, init)
 ```
 
 It would seem tedious to implement such complex functions manually every time.
-If you want to be able to automatically generate component functions, you can introduce and refer to the [hikage-compiler](../library/hikage-compiler.md) module.
+If you want to be able to automatically generate component functions, you can introduce and refer to the [hikage-compiler](./hikage-compiler) module.
 
 ### Combination and Disassembly Layout
 
