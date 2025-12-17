@@ -16,7 +16,12 @@
 
 ## hikage-core
 
-### 1.0.3 | 2025.12.14 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.0.4 | 2025.12.17 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+- 适配 `BetterAndroid` 新特性
+- 将 `LayoutParam` 的 `width` 和 `height` 默认值设置为 `null`
+
+### 1.0.3 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 - Lint 新增 `WebView` 、`SurfaceView` 的推荐警告支持
 - 出于性能优化考虑和减少不合理的内部 API 暴露性，移除了对布局内容 DSL 的内联支持
@@ -42,7 +47,11 @@
 
 ## hikage-compiler
 
-### 1.0.3 | 2025.12.14 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.0.4 | 2025.12.17 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+- 将版本对齐 [hikage-core](#hikage-core)
+
+### 1.0.3 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 - 将版本对齐 [hikage-core](#hikage-core)
 - 适配了 [hikage-core](#hikage-core) 移除内联后的布局内容 DSL 生成方式
@@ -57,7 +66,11 @@
 
 ## hikage-extension
 
-### 1.0.2 | 2025.12.14 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.0.3 | 2025.12.17 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+- 适配 `BetterAndroid` 新特性
+
+### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 - 适配了 [hikage-core](#hikage-core) 移除内联后的布局内容 DSL 使用方式
 
@@ -72,7 +85,11 @@
 
 ## hikage-extension-betterandroid
 
-### 1.0.2 | 2025.12.14 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.0.3 | 2025.12.17 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+- 适配 `BetterAndroid` 新特性
+
+### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 - 跟随 [hikage-core](#hikage-core) 变更进行一次更新
 
@@ -86,7 +103,11 @@
 
 ## hikage-extension-compose
 
-### 1.0.1 | 2025.12.14 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.0.2 | 2025.12.17 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+- 跟随 [hikage-core](#hikage-core) 变更进行一次更新
+
+### 1.0.1 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 - 适配了 [hikage-core](#hikage-core) 移除内联后的布局内容 DSL 使用方式
 

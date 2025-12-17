@@ -24,7 +24,12 @@ To ensure consistency of automatically generated code, the versions of [hikage-c
 
 ## hikage-core
 
-### 1.0.3 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.4 | 2025.12.17 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Adapted to `BetterAndroid` new features
+- Set the default values of `width` and `height` in `LayoutParam` to `null`
+
+### 1.0.3 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Lint added recommended warning support for `WebView` and `SurfaceView`
 - Removed inline support for layout content DSL for performance optimization and to reduce unreasonable internal API exposure
@@ -50,7 +55,11 @@ To ensure consistency of automatically generated code, the versions of [hikage-c
 
 ## hikage-compiler
 
-### 1.0.3 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.4 | 2025.12.17 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Aligned version with [hikage-core](#hikage-core)
+
+### 1.0.3 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Aligned version with [hikage-core](#hikage-core)
 - Adapted to the layout content DSL generation method after removing inline in [hikage-core](#hikage-core)
@@ -65,7 +74,11 @@ To ensure consistency of automatically generated code, the versions of [hikage-c
 
 ## hikage-extension
 
-### 1.0.2 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.3 | 2025.12.17 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Adapted to `BetterAndroid` new features
+
+### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Adapted to the layout content DSL usage after removing inline in [hikage-core](#hikage-core)
 
@@ -80,7 +93,11 @@ To ensure consistency of automatically generated code, the versions of [hikage-c
 
 ## hikage-extension-betterandroid
 
-### 1.0.2 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.3 | 2025.12.17 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Adapted to `BetterAndroid` new features
+
+### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Updated to follow the changes in [hikage-core](#hikage-core)
 
@@ -94,7 +111,11 @@ To ensure consistency of automatically generated code, the versions of [hikage-c
 
 ## hikage-extension-compose
 
-### 1.0.1 | 2025.12.14 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.2 | 2025.12.17 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+- Updated to follow the changes in [hikage-core](#hikage-core)
+
+### 1.0.1 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - Adapted to the layout content DSL usage after removing inline in [hikage-core](#hikage-core)
 
