@@ -81,9 +81,6 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         /** The Android widget class prefix. */
         internal const val ANDROID_WIDGET_CLASS_PREFIX = "android.widget."
 
-        /** The unspecified layout params value. */
-        private const val LayoutParamsUnspecified = LayoutParamsWrapContent - 1
-
         /** The view constructors map. */
         private val viewConstructors = mutableMapOf<String, ViewConstructor<*>>()
 
@@ -225,7 +222,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
      * @param resolver the constructor resolver.
      * @param parameterCount the parameter count.
      */
-    private inner class ViewConstructor<V : View>(
+    private class ViewConstructor<V : View>(
         private val resolver: ConstructorResolver<V>,
         private val parameterCount: Int
     ) {
@@ -852,8 +849,8 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          * @return [LayoutParams]
          */
         fun LayoutParams(
-            width: Int = LayoutParamsUnspecified,
-            height: Int = LayoutParamsUnspecified,
+            width: Int? = null,
+            height: Int? = null,
             matchParent: Boolean = false,
             widthMatchParent: Boolean = false,
             heightMatchParent: Boolean = false,
@@ -893,6 +890,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
      * @param attrs the attributes set.
      * @param viewClass the view class.
      */
+    @ConsistentCopyVisibility
     data class PerformerParams internal constructor(
         val id: String?,
         val attrs: AttributeSet,
@@ -916,8 +914,8 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
          * Builder params of body.
          */
         private class BodyBuilder(
-            val width: Int,
-            val height: Int,
+            val width: Int?,
+            val height: Int?,
             val matchParent: Boolean,
             val widthMatchParent: Boolean,
             val heightMatchParent: Boolean,
@@ -951,8 +949,8 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
                 current: Hikage,
                 lpClass: Class<LP>,
                 parent: ViewGroup?,
-                width: Int,
-                height: Int,
+                width: Int?,
+                height: Int?,
                 matchParent: Boolean,
                 widthMatchParent: Boolean,
                 heightMatchParent: Boolean,

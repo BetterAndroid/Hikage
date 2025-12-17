@@ -31,7 +31,7 @@ import android.content.res.loader.AssetsProvider
 import android.content.res.loader.ResourcesProvider
 import android.util.AttributeSet
 import androidx.annotation.StyleRes
-import com.highcapable.betterandroid.system.extension.tool.AndroidVersion
+import com.highcapable.betterandroid.system.extension.utils.AndroidVersion
 import com.highcapable.betterandroid.ui.extension.view.inflateOrNull
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.core.R
@@ -194,7 +194,7 @@ internal object XmlBlockBypass {
                 if (AndroidVersion.isAtLeast(AndroidVersion.BAKLAVA))
                     it.createQuietly(null, xmlBlock, false)
                 else it.createQuietly(null, xmlBlock)
-            } ?: error("Failed to create XmlBlock\$Parser.")
+            } ?: error($$"Failed to create XmlBlock$Parser.")
 
         isInitOnce = true
     }
