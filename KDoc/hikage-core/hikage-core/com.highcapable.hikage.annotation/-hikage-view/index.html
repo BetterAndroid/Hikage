@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>HikageView</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            hikage-core
+                    </a>
+            </div>
+            <div class="library-version">
+1.0.4            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":hikage-core:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="hikage-core::com.highcapable.hikage.annotation/HikageView///PointingToDeclaration//-1693899753">
+  <div class="breadcrumbs"><a href="../../../index.html">hikage-core</a><span class="delimiter">/</span><a href="../index.html">com.highcapable.hikage.annotation</a><span class="delimiter">/</span><span class="current">HikageView</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Hikage</span><wbr></wbr><span><span>View</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":hikage-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-target/index.html"><span class="token annotation builtin">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-c-l-a-s-s/index.html">AnnotationTarget.CLASS</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="index.html">HikageView</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>lparams<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator"> = </span>Any::class<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>alias<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;&quot;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>requireInit<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>requirePerformer<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>final<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Declare annotations to generate the <a href="../../com.highcapable.hikage.core/-hikage/-performer/index.html">Hikage.Performer</a> function for the specified <a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a> at compile time.</p><p class="paragraph">Usage:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">@HikageView(lparams = FrameLayout.LayoutParams::class, alias = &quot;MyView&quot;)<br>class MyView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {<br>    // ...<br>}</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>lparams</span></span></u></div></span></div><div><div class="title"><p class="paragraph">the layout params class, only <a href="https://developer.android.com/reference/kotlin/android/view/ViewGroup.html">ViewGroup</a> can be specified, after specifying, the <code class="lang-kotlin">performer</code> parameter will be generated for the function. The parameters must be a class inherited from <a href="https://developer.android.com/reference/kotlin/android/view/ViewGroup.LayoutParams.html">ViewGroup.LayoutParams</a>, if the current <a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a> does not inherit from <a href="https://developer.android.com/reference/kotlin/android/view/ViewGroup.html">ViewGroup</a>, this parameter will be ignored and warned.</p></div></div></div></div><div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>alias</span></span></u></div></span></div><div><div class="title"><p class="paragraph">the view's class name alias will naming the function, default is the class name.</p></div></div></div></div><div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>require</span><wbr></wbr><span><span>Init</span></span></u></div></span></div><div><div class="title"><p class="paragraph">whether to force the <code class="lang-kotlin">init</code> parameter to be called, default is false.</p></div></div></div></div><div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>require</span><wbr></wbr><span><span>Performer</span></span></u></div></span></div><div><div class="title"><p class="paragraph">whether to force the <code class="lang-kotlin">performer</code> parameter to be called, default is false, this parameter will be ignored when no <code class="lang-kotlin">performer</code> parameter is needed here.</p></div></div></div></div><div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>final</span></span></u></div></span></div><div><div class="title"><p class="paragraph">whether to declare this layout as &quot;final layout&quot;, default is false, that is, whether this layout inherits from or is <a href="https://developer.android.com/reference/kotlin/android/view/ViewGroup.html">ViewGroup</a>, the <code class="lang-kotlin">performer</code> parameter will not be generated. After set to <code class="lang-kotlin">true</code>, <a href="lparams.html">lparams</a> and <a href="require-performer.html">requirePerformer</a> will no longer be valid.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-868776022%2FProperties%2F-1693899753" anchor-label="alias" id="-868776022%2FProperties%2F-1693899753" data-filterable-set=":hikage-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="alias.html"><span><span>alias</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-868776022%2FProperties%2F-1693899753"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":hikage-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="alias.html">alias</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-87354556%2FProperties%2F-1693899753" anchor-label="final" id="-87354556%2FProperties%2F-1693899753" data-filterable-set=":hikage-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="final.html"><span><span>final</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-87354556%2FProperties%2F-1693899753"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":hikage-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="final.html">final</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-404823032%2FProperties%2F-1693899753" anchor-label="lparams" id="-404823032%2FProperties%2F-1693899753" data-filterable-set=":hikage-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="lparams.html"><span><span>lparams</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-404823032%2FProperties%2F-1693899753"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":hikage-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="lparams.html">lparams</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-352472123%2FProperties%2F-1693899753" anchor-label="requireInit" id="-352472123%2FProperties%2F-1693899753" data-filterable-set=":hikage-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="require-init.html"><span>require</span><wbr></wbr><span><span>Init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-352472123%2FProperties%2F-1693899753"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":hikage-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="require-init.html">requireInit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1994959977%2FProperties%2F-1693899753" anchor-label="requirePerformer" id="-1994959977%2FProperties%2F-1693899753" data-filterable-set=":hikage-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":hikage-core:dokkaHtml/release" data-filterable-set=":hikage-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="require-performer.html"><span>require</span><wbr></wbr><span><span>Performer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1994959977%2FProperties%2F-1693899753"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":hikage-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="require-performer.html">requirePerformer</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>Hikage | Apache-2.0 License | Copyright (C) 2019 HighCapable</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
