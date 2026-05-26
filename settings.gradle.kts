@@ -28,6 +28,12 @@ gropify {
         }
     }
 
+    projects(":samples:demo-android") {
+        android {
+            isEnabled = false
+        }
+    }
+
     projects(
         ":hikage-core",
         ":hikage-core-lint",
@@ -45,16 +51,11 @@ gropify {
             isRestrictedAccessEnabled = true
         }
     }
-    projects(":samples:app") {
-        android {
-            isEnabled = false
-        }
-    }
 }
 
 rootProject.name = "Hikage"
 
-include(":samples:app")
+include(":samples:demo-android")
 include(
     ":hikage-core",
     ":hikage-core-lint",
