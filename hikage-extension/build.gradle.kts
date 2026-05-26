@@ -29,8 +29,11 @@ dependencies {
 
     implementation(libs.kavaref.core)
     implementation(libs.kavaref.extension)
+
+    implementation(platform(libs.betterandroid.android.bom))
     implementation(libs.betterandroid.ui.extension)
     implementation(libs.betterandroid.system.extension)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)

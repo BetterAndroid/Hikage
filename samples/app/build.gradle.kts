@@ -33,6 +33,8 @@ android {
 dependencies {
     ksp(projects.hikageCompiler)
 
+    implementation(platform(libs.betterandroid.android.bom))
+
     implementation(projects.hikageCore)
     implementation(projects.hikageExtension)
     implementation(projects.hikageExtensionBetterandroid)

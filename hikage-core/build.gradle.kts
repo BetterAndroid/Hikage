@@ -30,12 +30,15 @@ dependencies {
 
     ksp(projects.hikageCompiler)
 
-    api(libs.betterandroid.ui.extension)
-
-    implementation(libs.hiddenapibypass)
     implementation(libs.kavaref.core)
     implementation(libs.kavaref.extension)
+
+    implementation(libs.hiddenapibypass)
+
+    implementation(platform(libs.betterandroid.android.bom))
+    api(libs.betterandroid.ui.extension)
     implementation(libs.betterandroid.system.extension)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
 

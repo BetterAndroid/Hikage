@@ -28,10 +28,8 @@ android {
 dependencies {
     implementation(projects.hikageCore)
 
-    implementation(libs.kavaref.core)
-    implementation(libs.kavaref.extension)
-    implementation(libs.betterandroid.ui.extension)
-    implementation(libs.betterandroid.system.extension)
+    implementation(platform(libs.betterandroid.android.bom))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.ui)

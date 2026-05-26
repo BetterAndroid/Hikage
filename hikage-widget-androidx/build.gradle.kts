@@ -40,6 +40,8 @@ dependencies {
 
     implementation(projects.hikageCore)
 
+    implementation(platform(libs.betterandroid.android.bom))
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
