@@ -29,7 +29,7 @@ import androidx.annotation.Keep
 /**
  * Just a view for obtaining [AttributeSet].
  *
- * **DONT USE THIS VIEW IN YOUR LAYOUT.**
+ * **DO NOT USE THIS VIEW IN YOUR LAYOUT.**
  */
 @Keep
 class HikageAttrsView internal constructor(context: Context, internal val attrs: AttributeSet?) : View(context, attrs)

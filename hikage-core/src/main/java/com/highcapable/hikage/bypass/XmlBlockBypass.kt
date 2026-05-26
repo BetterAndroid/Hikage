@@ -55,7 +55,7 @@ internal object XmlBlockBypass {
     /** The path used to load the apk assets represents an idmap file. */
     private const val FORMAT_IDMAP = 1
 
-    /** The path used to load the apk assets represents an resources.arsc file. */
+    /** The path used to load the apk assets represents a resources.arsc file. */
     private const val FORMAT_ARSC = 2
 
     /** The path used to load the apk assets represents a directory. */
@@ -100,7 +100,7 @@ internal object XmlBlockBypass {
     /** The apk assets class.  */
     private val ApkAssetsClass by lazyClass("android.content.res.ApkAssets")
 
-    /** The xml block class. */
+    /** The XML block class. */
     private val XmlBlockClass by lazyClass<AutoCloseable>("android.content.res.XmlBlock")
 
     /** Global pointer references object. */

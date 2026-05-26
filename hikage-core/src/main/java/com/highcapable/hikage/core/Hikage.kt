@@ -768,7 +768,7 @@ class Hikage private constructor(private val factories: List<HikageFactory>) {
         /**
          * Provide layout from another [Hikage].
          *
-         * - Note: [Hikage] view IDs will not copied to this layout
+         * - Note: [Hikage] view IDs will not copy to this layout
          *   when provides a complete [Hikage] instead of [Delegate].
          *
          * ```kotlin
