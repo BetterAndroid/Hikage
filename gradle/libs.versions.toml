@@ -11,8 +11,7 @@ kotlinpoet = "2.3.0"
 material = "1.11.0"
 betterandroid-android-bom = "1.1.0"
 hiddenapibypass = "6.1"
-kavaref-core = "1.0.2"
-kavaref-extension = "1.0.2"
+kavaref-bom = "1.0.3"
 pangutext-android = "1.0.5"
 # The project current support min sdk version is 21,
 # suppress the warning about using newer versions of dependencies that may require higher min sdk version.
@@ -56,8 +55,9 @@ betterandroid-ui-component-adapter = { group = "com.highcapable.betterandroid", 
 betterandroid-ui-extension = { group = "com.highcapable.betterandroid", name = "ui-extension" }
 betterandroid-system-extension = { group = "com.highcapable.betterandroid", name = "system-extension" }
 hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypass", version.ref = "hiddenapibypass" }
-kavaref-core = { group = "com.highcapable.kavaref", name = "kavaref-core", version.ref = "kavaref-core" }
-kavaref-extension = { group = "com.highcapable.kavaref", name = "kavaref-extension", version.ref = "kavaref-extension" }
+kavaref-bom = { group = "com.highcapable.kavaref", name = "kavaref-bom", version.ref = "kavaref-bom" }
+kavaref-core = { group = "com.highcapable.kavaref", name = "kavaref-core" }
+kavaref-extension = { group = "com.highcapable.kavaref", name = "kavaref-extension" }
 pangutext-android = { group = "com.highcapable.pangutext", name = "pangutext-android", version.ref = "pangutext-android" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }

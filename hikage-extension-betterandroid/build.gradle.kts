@@ -27,6 +27,7 @@ android {
 dependencies {
     implementation(projects.hikageCore)
 
+    implementation(platform(libs.kavaref.bom))
     implementation(libs.kavaref.core)
     implementation(libs.kavaref.extension)
 

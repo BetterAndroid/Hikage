@@ -30,6 +30,7 @@ dependencies {
 
     ksp(projects.hikageCompiler)
 
+    implementation(platform(libs.kavaref.bom))
     implementation(libs.kavaref.core)
     implementation(libs.kavaref.extension)
 
