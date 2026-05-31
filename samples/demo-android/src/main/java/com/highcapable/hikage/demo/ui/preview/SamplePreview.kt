@@ -28,6 +28,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.core.preview.HikagePreview
 import com.highcapable.hikage.widget.android.widget.Button
 import com.highcapable.hikage.widget.android.widget.LinearLayout

@@ -31,6 +31,7 @@ import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.highcapable.betterandroid.ui.extension.view.toast
+import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.demo.R
 import com.highcapable.hikage.demo.ui.base.BaseActivity
 import com.highcapable.hikage.extension.setContentView
