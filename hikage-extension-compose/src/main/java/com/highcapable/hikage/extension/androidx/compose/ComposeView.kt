@@ -27,6 +27,7 @@ package com.highcapable.hikage.extension.androidx.compose
 import android.view.ViewGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.highcapable.hikage.annotation.Hikageable
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageView
@@ -58,6 +59,8 @@ fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.ComposeView(
     content: (@Composable () -> Unit)? = null
 ) {
     View<ComposeView>(lparams, id) {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+
         init(this)
         content?.let { setContent(it) }
     }

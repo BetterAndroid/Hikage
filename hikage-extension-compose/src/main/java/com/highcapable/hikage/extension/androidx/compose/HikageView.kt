@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.viewinterop.NoOpUpdate
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
@@ -60,6 +61,8 @@ import com.highcapable.hikage.core.base.Hikageable
 @UiComposable
 fun HikageView(
     modifier: Modifier = Modifier,
+    onReset: ((View) -> Unit)? = null,
+    onRelease: (View) -> Unit = NoOpUpdate,
     update: (View) -> Unit = {},
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<ViewGroup.LayoutParams>
@@ -73,6 +76,8 @@ fun HikageView(
             ).root
         },
         modifier = modifier,
+        onReset = onReset,
+        onRelease = onRelease,
         update = update
     )
 }
@@ -87,6 +92,8 @@ fun HikageView(
 fun HikageView(
     delegate: Hikage.Delegate<*>,
     modifier: Modifier = Modifier,
+    onReset: ((View) -> Unit)? = null,
+    onRelease: (View) -> Unit = NoOpUpdate,
     update: (View) -> Unit = {}
 ) {
     AndroidView(
@@ -94,6 +101,8 @@ fun HikageView(
             delegate.create(context).root
         },
         modifier = modifier,
+        onReset = onReset,
+        onRelease = onRelease,
         update = update
     )
 }
