@@ -381,7 +381,7 @@ class MyCustomView(context: Context, attrs: AttributeSet? = null) : View(context
 // 函数的命名可以随意，但是建议使用大驼峰命名
 // 函数的签名部分需要固定声明为 `inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>`
 inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomView(
-    lparams: Hikage.LayoutParams? = null,
+    lparams: LayoutParams? = null,
     id: String? = null,
     noinline init: HikageView<MyCustomView> = {},
     // 如果此组件是容器，可以声明一个 `performer` 参数

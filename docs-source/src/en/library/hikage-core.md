@@ -396,7 +396,7 @@ class MyCustomView(context: Context, attrs: AttributeSet? = null) : View(context
 // The signature part of the function needs to be fixedly
 // declared as `inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>`.
 inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomView(
-    lparams: Hikage.LayoutParams? = null,
+    lparams: LayoutParams? = null,
     id: String? = null,
     noinline init: HikageView<MyCustomView> = {},
     // If this component is a container, you can declare a `performer` parameter.

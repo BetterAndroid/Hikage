@@ -88,7 +88,7 @@ dependencies {
 
 ## 功能介绍
 
-Hikage 的编译模块将在运行时自动生成代码，在更新后，请重新运行 `assembleDebug` 或 `assembleRelease` Task 以生成最新的代码。
+Hikage 的编译模块会在编译时自动生成代码，在更新后，请重新运行 `assembleDebug` 或 `assembleRelease` Task 以生成最新的代码。
 
 ### 生成布局组件
 

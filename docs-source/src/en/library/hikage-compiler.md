@@ -90,7 +90,7 @@ and change `<ksp-version>` to the KSP version corresponding to the Kotlin versio
 
 ## Function Introduction
 
-Hikage's compilation module will automatically generate code at runtime.
+Hikage's compilation module will automatically generate code at compile time.
 After update, please re-run the `assembleDebug` or `assembleRelease` task to generate the latest code.
 
 ### Generate Layout Components
