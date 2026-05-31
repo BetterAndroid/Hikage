@@ -436,6 +436,18 @@ Hikage 提供了两种状态，`NonNullState` 和 `NullableState`，分为持有
 
 不同于 Jetpack Compose 的重组 (Recompose)，Hikage 不会重组，状态通过监听与回调生效。
 
+在布局组件中推荐直接使用 `View.setState(...)` 绑定状态，它会在 `View` `attach` 到窗口时注册监听，并在 `detach` 时自动取消监听，再次 `attach` 时会重新注册并同步最新状态。
+
+如果你需要直接监听状态变化，`observe(...)` 会返回一个 `StateSubscription`，你可以通过调用 `cancel()` 主动取消监听。
+
+::: warning
+
+直接使用 `state.observe(...)`，或在非 `View` 对象上使用 `setState(...)` 时，监听会作为长生命周期订阅存在，不会自动跟随 `View` 的 `detach` 释放。
+
+如果监听目标可能早于状态对象销毁，请保存返回的 `StateSubscription` 并在不再需要时调用 `cancel()`。
+
+:::
+
 你可以在如下场景中使用这两种状态。
 
 > 示例如下

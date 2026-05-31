@@ -455,6 +455,21 @@ Hikage provides two states, `NonNullState` and `NullableState`, which are divide
 
 Unlike the recompose of Jetpack Compose, Hikage will not be recomposed, and the states takes effect through listening and callbacks.
 
+It is recommended to use `View.setState(...)` inside layout components.
+It subscribes the observer when the `View` is attached to window, automatically cancels it when detached,
+and subscribes again with the latest state when reattached.
+
+If you need to observe state changes directly, `observe(...)` will return a `StateSubscription`, and you can call `cancel()` to cancel it manually.
+
+::: warning
+
+When using `state.observe(...)` directly, or using `setState(...)` on a non-`View` object, the observer is a long lifecycle subscription
+and will not be automatically released with `View` detach.
+
+If the observer target may be destroyed before the state object, keep the returned `StateSubscription` and call `cancel()` when it is no longer needed.
+
+:::
+
 You can use both states in the following scenarios.
 
 > The following example
