@@ -31,6 +31,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSType
 import com.highcapable.hikage.compiler.DeclaredSymbol
 import com.highcapable.hikage.compiler.extension.ClassDetector
@@ -39,7 +40,9 @@ import com.highcapable.hikage.compiler.extension.getClassDeclaration
 import com.highcapable.hikage.compiler.extension.getOrNull
 import com.highcapable.hikage.compiler.extension.getSimpleNameString
 import com.highcapable.hikage.compiler.extension.getTypedSimpleName
+import com.highcapable.hikage.compiler.extension.isClass
 import com.highcapable.hikage.compiler.extension.isSubclassOf
+import com.highcapable.hikage.compiler.extension.ownerOf
 import com.highcapable.hikage.compiler.subprocessor.base.BaseSymbolProcessor
 import com.highcapable.hikage.generated.HikageCompilerProperties
 import com.squareup.kotlinpoet.AnnotationSpec
@@ -47,6 +50,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeVariableName
@@ -58,30 +62,34 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     private companion object {
 
         private const val PACKAGE_NAME_PREFIX = "com.highcapable.hikage.widget"
+        private const val VIEW_FUNCTION_ALIAS = "_View"
+        private const val VIEW_GROUP_FUNCTION_ALIAS = "_ViewGroup"
 
         val HikageableClass = ClassName(DeclaredSymbol.ANNOTATION_PACKAGE_NAME, DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS_NAME)
-        val HikageLparamClass = ClassName(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_LAYOUT_PARAMS_CLASS_NAME)
+        val LayoutParamClass = ClassName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, DeclaredSymbol.HIKAGE_LAYOUT_PARAMS_CLASS_NAME)
         val ViewGroupLpClass = ClassName(DeclaredSymbol.ANDROID_VIEW_PACKAGE_NAME, DeclaredSymbol.ANDROID_LAYOUT_PARAMS_CLASS_NAME)
-        val PerformerClass = ClassName(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_PERFORMER_CLASS_NAME)
+        val PerformerClass = ClassName(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_CLASS_NAME, "Performer")
         val ViewLambdaClass = ClassName(DeclaredSymbol.HIKAGE_BASE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_VIEW_LAMBDA_CLASS_NAME)
         val PerformerLambdaClass = ClassName(DeclaredSymbol.HIKAGE_BASE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_PERFORMER_LAMBDA_CLASS_NAME)
+        val ViewFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "View")
+        val ViewGroupFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "ViewGroup")
     }
 
-    private val performers = mutableListOf<Performer>()
+    private val generatedFileOwners = mutableMapOf<String, String>()
 
     override fun startProcess(resolver: Resolver) {
         Processor.init(logger, resolver)
 
-        val dependencies = Dependencies(aggregating = true, *resolver.getAllFiles().toList().toTypedArray())
+        val performers = mutableListOf<Performer>()
         resolver.getSymbolsWithAnnotation(HikageViewSpec.CLASS)
             .filterIsInstance<KSClassDeclaration>()
             .distinctBy { it.qualifiedName }
             .forEach { ksClass ->
-                ksClass.annotations.forEach {
+                ksClass.annotations.filter { it.isClass(HikageViewSpec.CLASS) }.forEach {
                     // Get annotation parameters.
                     val (annotation, declaration) = HikageViewSpec.create(resolver, it, ksClass)
 
-                    performers += Performer(annotation, declaration)
+                    performers += Performer(annotation, declaration, ksClass.containingFile, ksClass.ownerOf(HikageViewSpec.NAME))
                 }
             }
 
@@ -89,18 +97,18 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             .filterIsInstance<KSClassDeclaration>()
             .distinctBy { it.qualifiedName }
             .forEach { ksClass ->
-                ksClass.annotations.forEach {
+                ksClass.annotations.filter { it.isClass(HikageViewDeclarationSpec.CLASS) }.forEach {
                     // Get annotation parameters.
                     val (annotation, declaration) = HikageViewDeclarationSpec.create(resolver, it, ksClass)
 
-                    performers += Performer(annotation, declaration)
+                    performers += Performer(annotation, declaration, ksClass.containingFile, ksClass.ownerOf(HikageViewDeclarationSpec.NAME))
                 }
             }
 
-        processPerformer(dependencies)
+        processPerformer(performers, mutableSetOf())
     }
 
-    private fun processPerformer(dependencies: Dependencies) {
+    private fun processPerformer(performers: List<Performer>, roundGeneratedFiles: MutableSet<String>) {
         val duplicatedItems = performers.groupBy { it.declaration.key }.filter { it.value.size > 1 }.flatMap { it.value }
 
         require(duplicatedItems.isEmpty()) {
@@ -109,10 +117,10 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 "Duplicated Items:\n" +
                 duplicatedItems.joinToString("\n") { "${it.declaration}\n${it.declaration.locateDesc}" }
         }
-        performers.forEach { generateCodeFile(dependencies, it) }
+        performers.forEach { generateCodeFile(it, roundGeneratedFiles) }
     }
 
-    private fun generateCodeFile(dependencies: Dependencies, performer: Performer) {
+    private fun generateCodeFile(performer: Performer, roundGeneratedFiles: MutableSet<String>) {
         val classNameSet = performer.declaration.alias ?: performer.declaration.className
         val fileName = "_$classNameSet"
 
@@ -140,6 +148,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         }
 
         val packageName = "$PACKAGE_NAME_PREFIX.${performer.declaration.packageName}"
+        val hasPerformer = lparamsClass != null && !performer.annotation.final
+        val performFunctionAlias = if (hasPerformer) VIEW_GROUP_FUNCTION_ALIAS else VIEW_FUNCTION_ALIAS
         val fileSpec = FileSpec.builder(packageName, fileName).apply {
             addFileComment(
                 """
@@ -165,6 +175,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
 
             addImport(DeclaredSymbol.ANDROID_VIEW_PACKAGE_NAME, DeclaredSymbol.ANDROID_VIEW_GROUP_CLASS_NAME)
             addImport(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_CLASS_NAME)
+            addAliasedImport(if (hasPerformer) ViewGroupFunction else ViewFunction, performFunctionAlias)
 
             // Kotlin's import rule is to introduce the parent class that also needs to be introduced at the same time.
             // If a child class exists, it needs to import the parent class,
@@ -176,14 +187,12 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             lparamsClass?.second?.let { addAliasedImport(it, it.getTypedSimpleName()) }
 
             addAliasedImport(ViewGroupLpClass, ViewGroupLpClass.getTypedSimpleName())
-            addAliasedImport(HikageLparamClass, HikageLparamClass.getTypedSimpleName())
 
             addFunction(FunSpec.builder(classNameSet).apply {
                 addKdoc(
                     """
                       Resolve the [${performer.declaration.className}].
-                      @see ${performer.declaration.className}
-                      @see Hikage.Performer.${if (lparamsClass == null) "View" else "ViewGroup"}
+                      @see Hikage.Performer
                       @return [${performer.declaration.className}]
                     """.trimIndent()
                 )
@@ -194,7 +203,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 receiver(PerformerClass.parameterizedBy(TypeVariableName("LP")))
 
                 addParameter(
-                    ParameterSpec.builder(name = "lparams", HikageLparamClass.copy(nullable = true))
+                    ParameterSpec.builder(name = "lparams", LayoutParamClass.copy(nullable = true))
                         .defaultValue("null")
                         .build()
                 )
@@ -212,7 +221,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         if (!performer.annotation.requireInit) defaultValue("{}")
                     }.build()
                 )
-                lparamsClass?.second?.takeIf { !performer.annotation.final }?.let {
+                lparamsClass?.second?.takeIf { hasPerformer }?.let {
                     addParameter(
                         ParameterSpec.builder(
                             name = "performer",
@@ -222,18 +231,43 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                             if (!performer.annotation.requirePerformer) defaultValue("{}")
                         }.build()
                     )
-                    addStatement("return ViewGroup<${performer.declaration.className}, ${it.simpleName}>(lparams, id, init, performer)")
-                } ?: addStatement("return View<${performer.declaration.className}>(lparams, id, init)")
+                    addStatement(
+                        "return $performFunctionAlias(${performer.declaration.className}::class.java, " +
+                            "${it.simpleName}::class.java, lparams, id, init, performer)"
+                    )
+                } ?: addStatement("return $performFunctionAlias(${performer.declaration.className}::class.java, lparams, id, init)")
 
                 returns(viewClass.second)
             }.build())
         }.build()
 
-        // May already exists, no need to generate.
+        val generatedKey = "$packageName.$fileName"
+        if (!roundGeneratedFiles.add(generatedKey)) error(
+            "Generate Hikage performer \"$generatedKey\" failed, the output file already exists in this round. " +
+                "Please check whether the class name or alias is duplicated.\n${performer.declaration.locateDesc}"
+        )
+        generatedFileOwners[generatedKey]?.let {
+            if (it == performer.owner) return
+
+            error(
+                "Generate Hikage performer \"$generatedKey\" failed, the output file already exists in previous round. " +
+                    "Please check whether the class name or alias is duplicated.\n" +
+                    "Previous: $it\nCurrent: ${performer.owner}\n${performer.declaration.locateDesc}"
+            )
+        }
+        generatedFileOwners[generatedKey] = performer.owner
+
+        val dependencies = performer.sourceFile?.let { Dependencies(aggregating = false, it) }
+            ?: Dependencies(aggregating = false)
+
         runCatching {
             fileSpec.writeTo(codeGenerator, dependencies)
         }.onFailure { 
-            if (it !is FileAlreadyExistsException) throw it
+            if (it is FileAlreadyExistsException) error(
+                "Generate Hikage performer \"$generatedKey\" failed, the output file already exists. " +
+                    "Please check whether the class name or alias is duplicated.\n${performer.declaration.locateDesc}"
+            )
+            else throw it
         }
     }
 
@@ -428,6 +462,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
 
     private data class Performer(
         val annotation: HikageAnnotationSpec,
-        val declaration: ViewDeclaration
+        val declaration: ViewDeclaration,
+        val sourceFile: KSFile?,
+        val owner: String
     )
 }

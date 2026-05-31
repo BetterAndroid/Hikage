@@ -22,6 +22,7 @@
 package com.highcapable.hikage.compiler.extension
 
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
@@ -29,12 +30,18 @@ import com.google.devtools.ksp.symbol.KSValueArgument
 import com.squareup.kotlinpoet.ClassName
 
 fun KSDeclaration.getClassDeclaration(resolver: Resolver) =
-    if (this is KSClassDeclaration) this else qualifiedName?.let { resolver.getClassDeclarationByName(it) }
+    this as? KSClassDeclaration ?: qualifiedName?.let { resolver.getClassDeclarationByName(it) }
 
 fun KSDeclaration.getSimpleNameString(): String {
     val packageName = packageName.asString()
     return qualifiedName?.asString()?.replace("$packageName.", "") ?: simpleName.asString()
 }
+
+fun KSAnnotation.isClass(className: String) =
+    annotationType.resolve().declaration.qualifiedName?.asString() == className
+
+fun KSClassDeclaration.ownerOf(annotationName: String) =
+    "$annotationName: ${qualifiedName?.asString() ?: "<anonymous>"}"
 
 fun KSClassDeclaration.isSubclassOf(superType: KSType?): Boolean {
     if (superType == null) return false

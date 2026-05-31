@@ -32,10 +32,10 @@ import com.highcapable.hikage.core.Hikage
  * ```kotlin
  * @Hikageable
  * inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyView(
- *     lparams: Hikage.LayoutParams? = null,
+ *     lparams: LayoutParams? = null,
  *     id: String? = null,
  *     init: HikageView<MyView> = {}
- * ) = View<MyView>(id, init, lparams)
+ * ) = View<MyView>(lparams, id, init)
  * ```
  * @see Hikage.Performer
  */
