@@ -24,6 +24,7 @@
 
 package com.highcapable.hikage.core.runtime
 
+import android.view.View
 import com.highcapable.hikage.core.Hikage
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -32,6 +33,27 @@ import kotlin.reflect.KProperty
  * Definition a [Hikage] runtime state interface.
  */
 interface State<T> : ReadWriteProperty<Any?, T>
+
+/**
+ * Definition a [Hikage] runtime state observer.
+ */
+fun interface StateObserver<in T> {
+
+    /**
+     * Called when the state value changed.
+     * @param value the changed value.
+     */
+    fun onChanged(value: T)
+}
+
+/**
+ * Definition a [Hikage] runtime state subscription.
+ */
+fun interface StateSubscription {
+
+    /** Cancel the state observer subscription. */
+    fun cancel()
+}
 
 /**
  * Definition a [Hikage] runtime state interface for non-nullable type.
@@ -44,8 +66,16 @@ interface NonNullState<T> : State<T> {
     /**
      * Observe the state changes.
      * @param observer the observer to be notified when the state changes.
+     * @return [StateSubscription]
      */
-    fun observe(observer: (T) -> Unit)
+    fun observe(observer: StateObserver<T>): StateSubscription
+
+    /**
+     * Observe the state changes.
+     * @param observer the observer to be notified when the state changes.
+     * @return [StateSubscription]
+     */
+    fun observe(observer: (T) -> Unit) = observe(StateObserver { observer(it) })
 }
 
 /**
@@ -59,8 +89,16 @@ interface NullableState<T> : State<T?> {
     /**
      * Observe the state changes.
      * @param observer the observer to be notified when the state changes.
+     * @return [StateSubscription]
      */
-    fun observe(observer: (T?) -> Unit)
+    fun observe(observer: StateObserver<T?>): StateSubscription
+
+    /**
+     * Observe the state changes.
+     * @param observer the observer to be notified when the state changes.
+     * @return [StateSubscription]
+     */
+    fun observe(observer: (T?) -> Unit) = observe(StateObserver { observer(it) })
 }
 
 /**
@@ -73,13 +111,13 @@ class MutableState<T> private constructor() {
      */
     class NonNull<T> internal constructor(private var holder: T) : NonNullState<T> {
 
-        private val observers = mutableSetOf<(T) -> Unit>()
+        private val observers = mutableSetOf<StateObserver<T>>()
 
         override var value get() = holder
             set(value) {
                 if (holder == value) return
                 holder = value
-                observers.forEach { it(value) }
+                observers.toList().forEach { it.onChanged(value) }
             }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>) = value
@@ -88,9 +126,13 @@ class MutableState<T> private constructor() {
             this.value = value
         }
 
-        override fun observe(observer: (T) -> Unit) {
+        override fun observe(observer: StateObserver<T>): StateSubscription {
             observers += observer
-            observer(value)
+            observer.onChanged(value)
+
+            return StateSubscription {
+                observers -= observer
+            }
         }
     }
 
@@ -99,13 +141,13 @@ class MutableState<T> private constructor() {
      */
     class Nullable<T> internal constructor(private var holder: T?) : NullableState<T?> {
 
-        private val observers = mutableSetOf<(T?) -> Unit>()
+        private val observers = mutableSetOf<StateObserver<T?>>()
 
         override var value get() = holder
             set(value) {
                 if (holder == value) return
                 holder = value
-                observers.forEach { it(value) }
+                observers.toList().forEach { it.onChanged(value) }
             }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>) = value
@@ -114,9 +156,13 @@ class MutableState<T> private constructor() {
             this.value = value
         }
 
-        override fun observe(observer: (T?) -> Unit) {
+        override fun observe(observer: StateObserver<T?>): StateSubscription {
             observers += observer
-            observer(value)
+            observer.onChanged(value)
+
+            return StateSubscription {
+                observers -= observer
+            }
         }
     }
 }
@@ -151,12 +197,50 @@ fun <T> mutableStateOfNull(value: T? = null) = MutableState.Nullable(value)
  * // Modify the state.
  * text = "Hello Hikage!"
  * ```
+ *
+ * This function binds the state observer to the [View] lifecycle.
+ *
+ * The observer will be subscribed when the [View] is attached to window and automatically canceled when it is detached.
  * @param state the state to be set.
  * @param apply the apply body.
+ * @return [StateSubscription]
  */
-inline fun <T, R> R.setState(state: NonNullState<T>, crossinline apply: R.(T) -> Unit) {
-    state.observe {
+inline fun <T, R : View> R.setState(state: NonNullState<T>, crossinline apply: R.(T) -> Unit): StateSubscription {
+    var subscription: StateSubscription? = null
+    var isCanceled = false
+
+    val observer = StateObserver<T> {
         this.apply(it)
+    }
+    val listener = object : View.OnAttachStateChangeListener {
+
+        override fun onViewAttachedToWindow(view: View) {
+            if (subscription != null || isCanceled) return
+            val next = state.observe(observer)
+            if (isAttachedToWindow && !isCanceled) subscription = next
+            else next.cancel()
+        }
+
+        override fun onViewDetachedFromWindow(view: View) {
+            subscription?.cancel()
+            subscription = null
+        }
+    }
+
+    addOnAttachStateChangeListener(listener)
+    if (isAttachedToWindow) {
+        val next = state.observe(observer)
+        if (isAttachedToWindow && !isCanceled) subscription = next
+        else next.cancel()
+    } else apply(state.value)
+
+    return StateSubscription {
+        if (isCanceled) return@StateSubscription
+        isCanceled = true
+        subscription?.cancel()
+        subscription = null
+
+        removeOnAttachStateChangeListener(listener)
     }
 }
 
@@ -165,9 +249,70 @@ inline fun <T, R> R.setState(state: NonNullState<T>, crossinline apply: R.(T) ->
  * @see setState
  * @param state the state to be set.
  * @param apply the apply body.
+ * @return [StateSubscription]
  */
-inline fun <T, R> R.setState(state: NullableState<T>, crossinline apply: R.(T?) -> Unit) {
-    state.observe {
+inline fun <T, R : View> R.setState(state: NullableState<T>, crossinline apply: R.(T?) -> Unit): StateSubscription {
+    var subscription: StateSubscription? = null
+    var isCanceled = false
+
+    val observer = StateObserver<T?> {
         this.apply(it)
     }
+    val listener = object : View.OnAttachStateChangeListener {
+
+        override fun onViewAttachedToWindow(view: View) {
+            if (subscription != null || isCanceled) return
+            val next = state.observe(observer)
+            if (isAttachedToWindow && !isCanceled) subscription = next
+            else next.cancel()
+        }
+
+        override fun onViewDetachedFromWindow(view: View) {
+            subscription?.cancel()
+            subscription = null
+        }
+    }
+
+    addOnAttachStateChangeListener(listener)
+    if (isAttachedToWindow) {
+        val next = state.observe(observer)
+        if (isAttachedToWindow && !isCanceled) subscription = next
+        else next.cancel()
+    } else apply(state.value)
+
+    return StateSubscription {
+        if (isCanceled) return@StateSubscription
+        isCanceled = true
+        subscription?.cancel()
+        subscription = null
+
+        removeOnAttachStateChangeListener(listener)
+    }
 }
+
+/**
+ * Set the [Hikage] state value.
+ *
+ * This function creates a long lifecycle observer and will not be automatically canceled.
+ *
+ * If you use it with short lifecycle objects, keep the returned [StateSubscription] and call [StateSubscription.cancel] manually.
+ * @param state the state to be set.
+ * @param apply the apply body.
+ * @return [StateSubscription]
+ */
+inline fun <T, R> R.setState(state: NonNullState<T>, crossinline apply: R.(T) -> Unit) =
+    state.observe(StateObserver { this.apply(it) })
+
+/**
+ * Set the [Hikage] state value.
+ *
+ * This function creates a long lifecycle observer and will not be automatically canceled.
+ *
+ * If you use it with short lifecycle objects, keep the returned [StateSubscription] and call [StateSubscription.cancel] manually.
+ * @see setState
+ * @param state the state to be set.
+ * @param apply the apply body.
+ * @return [StateSubscription]
+ */
+inline fun <T, R> R.setState(state: NullableState<T>, crossinline apply: R.(T?) -> Unit) =
+    state.observe(StateObserver { this.apply(it) })
