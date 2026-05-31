@@ -58,8 +58,11 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         fun create(factories: List<HikageFactory>) = LayoutSession(factories)
     }
 
-    /** The performer set. */
-    private val performers = linkedSetOf<Hikage.Performer<*>>()
+    /** The performer count. */
+    private var performerCount = 0
+
+    /** The provided view count. */
+    private var providedViewCount = 0
 
     /** The view map. */
     private val views = linkedMapOf<String, View>()
@@ -105,12 +108,12 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [V]
      */
     fun <V : View> createView(viewClass: Class<V>, id: String?, context: Context, parent: ViewGroup?): V {
-        val attrs = createAttributeSet(context)
+        val attrs = lazy(LazyThreadSafetyMode.NONE) { createAttributeSet(context) }
 
         val view = createViewFromFactory(viewClass, id, context, attrs, parent) ?: getViewConstructor(viewClass)?.build(context, attrs)
         if (view == null) throw PerformerException(
             "Create view of type ${viewClass.name} failed. " +
-                "Please make sure the view class has a constructor with a single parameter of type Context."
+                "Please make sure the view class has a constructor with Context and AttributeSet or Context."
         )
 
         provideView(view, id)
@@ -127,6 +130,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         val (requireId, viewId) = generateViewId(id)
         view.id = viewId
         views[requireId] = view
+        providedViewCount++
 
         return requireId
     }
@@ -147,7 +151,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
     ): Hikage.Performer<LP> = PerformContextImpl(this, lpClass, parent, attachToParent, context).apply {
         // Init [XmlBlockBypass] if the context is not null.
         context?.let { XmlBlockBypass.init(it) }
-        performers.add(this)
+        performerCount++
     }
 
     /**
@@ -156,10 +160,10 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @param block the block.
      */
     inline fun requireNoPerformers(name: String, block: () -> Unit) {
-        val viewCount = views.size
+        val viewCount = providedViewCount
 
         block()
-        if (views.size != viewCount) throw PerformerException(
+        if (providedViewCount != viewCount) throw PerformerException(
             "Performers are not allowed to appear in $name DSL creation process."
         )
     }
@@ -176,14 +180,15 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         if (!embedded) return hikage
 
         val session = hikage.session
-        val duplicateId = session.viewIds.toList().firstOrNull { (k, _) -> viewIds.containsKey(k) }?.first
+        val duplicateId = session.viewIds.keys.firstOrNull { it in viewIds }
         if (duplicateId != null) throw PerformerException(
             "Embedded layout view IDs conflict, the view id \"$duplicateId\" is already exists."
         )
 
         viewIds.putAll(session.viewIds)
         views.putAll(session.views)
-        performers.addAll(session.performers)
+        performerCount += session.performerCount
+        providedViewCount += session.providedViewCount
 
         return hikage
     }
@@ -197,15 +202,12 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         viewConstructors[viewClass.name] as? ViewConstructor<V>? ?: run {
             var parameterCount = 0
 
-            val twoParams = viewClass.resolve()
-                .optional(silent = true)
-                .firstConstructorOrNull { parameters(Context::class, AttributeSet::class) }
-            val onceParam = viewClass.resolve()
-                .optional(silent = true)
-                .firstConstructorOrNull { parameters(Context::class) }
-
-            val constructor = onceParam?.apply { parameterCount = 1 }
-                ?: twoParams?.apply { parameterCount = 2 }
+            val resolver = viewClass.resolve().optional(silent = true)
+            val constructor = resolver.firstConstructorOrNull {
+                parameters(Context::class, AttributeSet::class)
+            }?.apply { parameterCount = 2 } ?: resolver.firstConstructorOrNull {
+                parameters(Context::class)
+            }?.apply { parameterCount = 1 }
 
             val viewConstructor = constructor?.let { ViewConstructor(it, parameterCount) }
             if (viewConstructor != null) viewConstructors[viewClass.name] = viewConstructor
@@ -226,14 +228,15 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         viewClass: Class<V>,
         id: String?,
         context: Context,
-        attrs: AttributeSet,
+        attrs: Lazy<AttributeSet>,
         parent: ViewGroup?
     ): V? {
+        if (factories.isEmpty()) return null
+
         var processed: V? = null
+        val params = Hikage.PerformerParams(id, attrs.value, viewClass as Class<View>)
 
         factories.forEach { factory ->
-            val params = Hikage.PerformerParams(id, attrs, viewClass as Class<View>)
-
             val view = factory(parent, processed, context, params)
             if (view != null && view.javaClass isNotSubclassOf viewClass) throw PerformerException(
                 "HikageFactory cannot cast the created view type \"${view.javaClass}\" to \"${viewClass.name}\", " +

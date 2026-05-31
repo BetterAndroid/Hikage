@@ -42,8 +42,8 @@ internal class ViewConstructor<V : View>(
      * @param attrs the attribute set.
      * @return [V] or null.
      */
-    fun build(context: Context, attrs: AttributeSet) = when (parameterCount) {
-        2 -> resolver.createQuietly(context, attrs)
+    fun build(context: Context, attrs: Lazy<AttributeSet>) = when (parameterCount) {
+        2 -> resolver.createQuietly(context, attrs.value)
         1 -> resolver.createQuietly(context)
         else -> null
     }
