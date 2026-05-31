@@ -12,7 +12,7 @@ material = "1.11.0"
 betterandroid-android-bom = "1.1.1"
 hiddenapibypass = "6.1"
 kavaref-bom = "1.0.3"
-pangutext-android = "1.0.5"
+pangutext-android = "1.0.6"
 # The project current support min sdk version is 21,
 # suppress the warning about using newer versions of dependencies that may require higher min sdk version.
 # noinspection GradleDependency
