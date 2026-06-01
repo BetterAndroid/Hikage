@@ -639,6 +639,19 @@ class MyLayoutPreview(context: Context, attrs: AttributeSet?) : HikagePreview(co
 
 然后在你当前的窗口右侧应该会出现预览窗格，打开后点击 “Build & Refresh”，等待编译完成后将会自动显示预览。
 
+如果你没有在右侧看到预览窗格，可以新建一个 XML 布局文件，在其中添加以下样板代码。
+
+> 示例如下
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<yourpackage.MyLayoutPreview xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+这个时候你应该就可以在右侧的预览窗格中看到预览了，如果你修改了布局代码，点击 “Build & Refresh” 后预览将会自动更新。
+
 ::: tip
 
 `HikagePreview` 实现了 `HikageBuilder` 接口，你可以在 `build` 方法中返回任意的 Hikage 布局以进行预览。

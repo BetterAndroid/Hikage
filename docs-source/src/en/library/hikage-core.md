@@ -668,6 +668,20 @@ class MyLayoutPreview(context: Context, attrs: AttributeSet?) : HikagePreview(co
 Then the preview pane should appear on the right side of your current window.
 After opening, click "Build & Refresh". The preview will be automatically displayed after the compilation is completed.
 
+If you do not see the preview pane on the right side, you can create a new XML layout file and add the following template code.
+
+> The following example
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<yourpackage.MyLayoutPreview xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+At this point, you should be able to see the preview in the preview pane on the right side.
+If you modify the layout code, click "Build & Refresh" and the preview will automatically update.
+
 :::tip
 
 `HikagePreview` implements the `HikageBuilder` interface, you can return any Hikage layout in the `build` method for preview.
