@@ -428,6 +428,42 @@ val subLayout = Hikageable<LinearLayout.LayoutParams> {
 }
 ```
 
+你还可以使用 Kotlin 的最新特性 **Context parameters** 来更加友好地实现组合布局。
+
+> 示例如下
+
+```kotlin
+Hikageable {
+    LinearLayout(
+        lparams = LayoutParams(matchParent = true),
+        init = {
+            orientation = LinearLayout.VERTICAL
+        }
+    ) {
+        TextView {
+            text = "Hello, World!"
+        }
+        // 组合子布局
+        SubTextView()
+    }
+}
+
+val SubTextView = Hikageable {
+    TextView {
+        textSize = 14f
+        text = "Hello, Sub World!"
+    }
+}
+```
+
+::: danger
+
+**Context parameters** 目前属于实验性功能，如需使用，请参考 [How to enable context parameters﻿](https://kotlinlang.org/docs/context-parameters.html#how-to-enable-context-parameters) 启用相关功能。
+
+此 API 将会跟随 Kotlin 语言的更新而进行调整和变化，不保证其稳定性，如果 Kotlin 官方移除了此特性此 API 也将会被移除。
+
+:::
+
 ### 状态管理
 
 Hikage 拥有与 Jetpack Compose 类似的状态管理解决方法，它可以轻松地设置布局组件的状态监听。

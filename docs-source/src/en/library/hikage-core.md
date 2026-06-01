@@ -447,6 +447,43 @@ val subLayout = Hikageable<LinearLayout.LayoutParams> {
 }
 ```
 
+You can also use Kotlin's **Context parameters** feature to make combined layouts feel more natural.
+
+> The following example
+
+```kotlin
+Hikageable {
+    LinearLayout(
+        lparams = LayoutParams(matchParent = true),
+        init = {
+            orientation = LinearLayout.VERTICAL
+        }
+    ) {
+        TextView {
+            text = "Hello, World!"
+        }
+        // Combined sublayout.
+        SubTextView()
+    }
+}
+
+val SubTextView = Hikageable {
+    TextView {
+        textSize = 14f
+        text = "Hello, Sub World!"
+    }
+}
+```
+
+::: danger
+
+The **Context parameters** feature is currently experimental. If you want to use it,
+please refer to [How to enable context parameters](https://kotlinlang.org/docs/context-parameters.html#how-to-enable-context-parameters) to enable the relevant compiler feature.
+
+This API will continue to evolve with Kotlin language updates and is not guaranteed to remain stable. If Kotlin removes this feature in the future, this API will also be removed.
+
+:::
+
 ### State Management
 
 Hikage has a similar state management workaround to Jetpack Compose, which makes it easy to set up state listening for layout components.
