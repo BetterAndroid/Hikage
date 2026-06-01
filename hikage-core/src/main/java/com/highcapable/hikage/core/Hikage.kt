@@ -24,7 +24,6 @@
 package com.highcapable.hikage.core
 
 import android.content.Context
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +35,6 @@ import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.PerformerException
 import com.highcapable.hikage.core.extension.ResourcesScope
 import com.highcapable.hikage.core.layout.session.LayoutSession
-import java.io.Serializable
 import kotlin.reflect.KClass
 
 /**
@@ -238,19 +236,6 @@ class Hikage private constructor(internal val session: LayoutSession) {
          */
         fun actualViewId(id: String): Int
     }
-
-    /**
-     * The parameters of the [Performer].
-     * @param id the view ID.
-     * @param attrs the attributes set.
-     * @param viewClass the view class.
-     */
-    @ConsistentCopyVisibility
-    data class PerformerParams internal constructor(
-        val id: String?,
-        val attrs: AttributeSet,
-        val viewClass: KClass<View>
-    ) : Serializable
 
     /**
      * The delegate for [Hikage].

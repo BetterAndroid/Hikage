@@ -20,34 +20,52 @@
  * This file is created by fankes on 2025/3/4.
  */
 @file:Suppress("unused", "FunctionName")
-@file:JvmName("HikageFactory")
+@file:JvmName("HikageFactoryUtils")
 
 package com.highcapable.hikage.core.base
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.highcapable.hikage.bypass.createViewFromBridgeInflaterOrNull
 import com.highcapable.hikage.core.Hikage
+import kotlin.reflect.KClass
 
 /**
- * The [Hikage] factory type.
- *
- * - `parent` the parent view group.
- * - `base` the base view (from previous [HikageFactory] processed, if not will null).
- * - `context` the view context.
- * - `params` the parameters.
+ * The [Hikage] factory interface.
  */
-typealias HikageFactory = (parent: ViewGroup?, base: View?, context: Context, params: Hikage.PerformerParams) -> View?
+fun interface HikageFactory {
 
-/**
- * Create a [Hikage] factory.
- * @param createView the view creator.
- * @return [HikageFactory]
- */
-@JvmSynthetic
-fun HikageFactory(createView: HikageFactory) = createView
+    /**
+     * Create factory view.
+     * @param parent the parent view group.
+     * @param base the base view (from previous [HikageFactory] processed, if not will null).
+     * @param context the view context.
+     * @param params the parameters.
+     * @return [View] or null.
+     */
+    fun createView(
+        parent: ViewGroup?,
+        base: View?,
+        context: Context,
+        params: Params
+    ): View?
+
+    /**
+     * The parameters of the [HikageFactory].
+     * @param id the view ID.
+     * @param attrs the attributes set.
+     * @param viewClass the view class.
+     */
+    @ConsistentCopyVisibility
+    data class Params internal constructor(
+        val id: String?,
+        val attrs: AttributeSet,
+        val viewClass: KClass<out View>
+    )
+}
 
 /**
  * Create a [Hikage] factory from [LayoutInflater].

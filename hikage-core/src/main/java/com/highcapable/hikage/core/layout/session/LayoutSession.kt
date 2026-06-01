@@ -235,10 +235,10 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         if (factories.isEmpty()) return null
 
         var processed: V? = null
-        val params = Hikage.PerformerParams(id, attrs.value, viewClass as KClass<View>)
+        val params = HikageFactory.Params(id, attrs.value, viewClass as KClass<View>)
 
         factories.forEach { factory ->
-            val view = factory(parent, processed, context, params)
+            val view = factory.createView(parent, processed, context, params)
             if (view != null && view::class isNotSubclassOf viewClass) throw PerformerException(
                 "HikageFactory cannot cast the created view type \"${view::class}\" to \"${viewClass.qualifiedName ?: "<unknown>"}\", " +
                     "please confirm that the view type you created is correct."
