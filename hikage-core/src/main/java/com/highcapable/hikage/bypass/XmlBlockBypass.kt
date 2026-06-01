@@ -109,6 +109,10 @@ internal object XmlBlockBypass {
     /** Global pointer references object. */
     private var blockParser: AutoCloseable? = null
 
+    /** Whether the XML block constructor requires keeping the native block alive. */
+    private val isBaklavaXmlBlockConstructor
+        get() = AndroidVersion.isAtLeast(AndroidVersion.BAKLAVA) && AndroidVersion.isLessThan(AndroidVersion.CINNAMON_BUN)
+
     /** Whether the initialization is done once. */
     private var isInitOnce = false
 
@@ -187,11 +191,11 @@ internal object XmlBlockBypass {
             .processor(resolver)
             .optional()
             .firstConstructorOrNull {
-                if (AndroidVersion.isAtLeast(AndroidVersion.BAKLAVA))
+                if (isBaklavaXmlBlockConstructor)
                     parameters(AssetManager::class, Long::class, Boolean::class)
                 else parameters(AssetManager::class, Long::class)
             }?.let {
-                if (AndroidVersion.isAtLeast(AndroidVersion.BAKLAVA))
+                if (isBaklavaXmlBlockConstructor)
                     it.createQuietly(null, xmlBlock, false)
                 else it.createQuietly(null, xmlBlock)
             } ?: error($$"Failed to create XmlBlock$Parser.")
