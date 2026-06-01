@@ -28,6 +28,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.highcapable.hikage.bypass.createViewFromBridgeInflaterOrNull
 import com.highcapable.hikage.core.Hikage
 
 /**
@@ -57,11 +58,14 @@ fun HikageFactory(createView: HikageFactory) = createView
  */
 @JvmSynthetic
 fun HikageFactory(inflater: LayoutInflater) = HikageFactory { parent, base, context, params ->
-    base ?: inflater.factory2?.onCreateView(parent, params.viewClass.java.name.let {
+    val name = params.viewClass.java.name.let {
         if (it.startsWith(Hikage.ANDROID_WIDGET_CLASS_PREFIX))
             it.replace(Hikage.ANDROID_WIDGET_CLASS_PREFIX, "")
         else it
-    }, context, params.attrs)
+    }
+
+    base ?: inflater.factory2?.onCreateView(parent, name, context, params.attrs)
+        ?: inflater.createViewFromBridgeInflaterOrNull(name, params.attrs)
 }
 
 /**
