@@ -57,7 +57,7 @@ fun HikageFactory(createView: HikageFactory) = createView
  */
 @JvmSynthetic
 fun HikageFactory(inflater: LayoutInflater) = HikageFactory { parent, base, context, params ->
-    base ?: inflater.factory2?.onCreateView(parent, params.viewClass.name.let {
+    base ?: inflater.factory2?.onCreateView(parent, params.viewClass.java.name.let {
         if (it.startsWith(Hikage.ANDROID_WIDGET_CLASS_PREFIX))
             it.replace(Hikage.ANDROID_WIDGET_CLASS_PREFIX, "")
         else it

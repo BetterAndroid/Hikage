@@ -36,7 +36,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.PerformerException
-import com.highcapable.kavaref.extension.classOf
+import kotlin.reflect.KClass
 
 /**
  * Provide a new [View] instance [V].
@@ -48,7 +48,7 @@ import com.highcapable.kavaref.extension.classOf
  */
 @Hikageable
 fun <V : View, LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.View(
-    viewClass: Class<V>,
+    viewClass: KClass<V>,
     lparams: LayoutParams? = null,
     id: String? = null,
     init: HikageView<V> = {}
@@ -66,7 +66,7 @@ fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.View(
     lparams: LayoutParams? = null,
     id: String? = null,
     init: HikageView<View> = {}
-) = View(classOf<View>(), lparams, id, init)
+) = resolveContext().View(lparams, id, init)
 
 /**
  * Provide a new [ViewGroup] instance [VG].
@@ -84,8 +84,8 @@ fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.View(
  */
 @Hikageable
 fun <VG : ViewGroup, NLP : ViewGroup.LayoutParams, LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.ViewGroup(
-    viewClass: Class<VG>,
-    childLpClass: Class<NLP>,
+    viewClass: KClass<VG>,
+    childLpClass: KClass<NLP>,
     lparams: LayoutParams? = null,
     id: String? = null,
     init: HikageView<VG> = {},
@@ -105,7 +105,7 @@ fun <VG : ViewGroup, NLP : ViewGroup.LayoutParams, LP : ViewGroup.LayoutParams> 
  */
 @Hikageable
 fun <VG : ViewGroup, LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.ViewGroup(
-    viewClass: Class<VG>,
+    viewClass: KClass<VG>,
     lparams: LayoutParams? = null,
     id: String? = null,
     init: HikageView<VG> = {},
@@ -242,7 +242,7 @@ inline fun <reified V : View> Hikage.Performer<*>.View(
     lparams: LayoutParams? = null,
     id: String? = null,
     noinline init: HikageView<V> = {}
-) = View(classOf<V>(), lparams, id, init)
+) = View(V::class, lparams, id, init)
 
 /**
  * Provide a new [ViewGroup] instance [VG].
@@ -263,7 +263,7 @@ inline fun <reified VG : ViewGroup, reified NLP : ViewGroup.LayoutParams> Hikage
     id: String? = null,
     noinline init: HikageView<VG> = {},
     noinline performer: HikagePerformer<NLP> = {}
-) = ViewGroup(classOf<VG>(), classOf<NLP>(), lparams, id, init, performer)
+) = ViewGroup(VG::class, NLP::class, lparams, id, init, performer)
 
 /**
  * Provide a new [ViewGroup] instance [VG].
@@ -281,7 +281,7 @@ inline fun <reified VG : ViewGroup> Hikage.Performer<*>.ViewGroup(
     id: String? = null,
     noinline init: HikageView<VG> = {},
     noinline performer: HikagePerformer<ViewGroup.LayoutParams> = {}
-) = ViewGroup(classOf<VG>(), lparams, id, init, performer)
+) = ViewGroup(VG::class, lparams, id, init, performer)
 
 /**
  * Provide layout from [ViewBinding].

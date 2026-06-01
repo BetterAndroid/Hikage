@@ -36,8 +36,8 @@ import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.PerformerException
 import com.highcapable.hikage.core.extension.ResourcesScope
 import com.highcapable.hikage.core.layout.session.LayoutSession
-import com.highcapable.kavaref.extension.classOf
 import java.io.Serializable
+import kotlin.reflect.KClass
 
 /**
  * The Hikage core layout builder.
@@ -79,7 +79,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
             attachToParent: Boolean = parent != null,
             noinline factory: HikageFactoryBuilder.() -> Unit = {},
             noinline performer: HikagePerformer<LP>
-        ) = create(classOf<LP>(), context, parent, attachToParent, factory, performer)
+        ) = create(LP::class, context, parent, attachToParent, factory, performer)
 
         /**
          * Create a new [Hikage].
@@ -96,7 +96,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
             attachToParent: Boolean = parent != null,
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<ViewGroup.LayoutParams>
-        ) = create(classOf<ViewGroup.LayoutParams>(), context, parent, attachToParent, factory, performer)
+        ) = create(ViewGroup.LayoutParams::class, context, parent, attachToParent, factory, performer)
 
         /**
          * Create a new [Hikage].
@@ -109,7 +109,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
          * @return [Hikage]
          */
         fun <LP : ViewGroup.LayoutParams> create(
-            lpClass: Class<LP>,
+            lpClass: KClass<LP>,
             context: Context,
             parent: ViewGroup? = null,
             attachToParent: Boolean = parent != null,
@@ -133,7 +133,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
         inline fun <reified LP : ViewGroup.LayoutParams> build(
             noinline factory: HikageFactoryBuilder.() -> Unit = {},
             noinline performer: HikagePerformer<LP>
-        ) = build(classOf<LP>(), factory, performer)
+        ) = build(LP::class, factory, performer)
 
         /**
          * Create a new [Hikage.Delegate].
@@ -144,7 +144,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
         fun build(
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<ViewGroup.LayoutParams>
-        ) = build(classOf<ViewGroup.LayoutParams>(), factory, performer)
+        ) = build(ViewGroup.LayoutParams::class, factory, performer)
 
         /**
          * Create a new [Hikage.Delegate].
@@ -154,7 +154,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
          * @return [Hikage.Delegate]<[LP]>
          */
         fun <LP : ViewGroup.LayoutParams> build(
-            lpClass: Class<LP>,
+            lpClass: KClass<LP>,
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<LP>
         ) = Delegate(lpClass, factory, performer)
@@ -185,7 +185,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
      * @return [V]
      */
     inline fun <reified V : View> root() = root as? V?
-        ?: throw PerformerException("Root view is not a type of ${classOf<V>().name}.")
+        ?: throw PerformerException("Root view is not a type of ${V::class.qualifiedName}.")
 
     /**
      * Get the view by [id].
@@ -209,7 +209,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
      */
     @JvmName("getTyped")
     inline fun <reified V : View> get(id: String) = get(id) as? V
-        ?: throw PerformerException("View with id \"$id\" is not a ${classOf<V>().name}.")
+        ?: throw PerformerException("View with id \"$id\" is not a ${V::class.qualifiedName}.")
 
     /**
      * Get the view by [id] via [V].
@@ -249,7 +249,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
     data class PerformerParams internal constructor(
         val id: String?,
         val attrs: AttributeSet,
-        val viewClass: Class<View>
+        val viewClass: KClass<View>
     ) : Serializable
 
     /**
@@ -259,7 +259,7 @@ class Hikage private constructor(internal val session: LayoutSession) {
      * @param performer the performer body.
      */
     class Delegate<LP : ViewGroup.LayoutParams> internal constructor(
-        private val lpClass: Class<LP>,
+        private val lpClass: KClass<LP>,
         private val factory: HikageFactoryBuilder.() -> Unit = {},
         private val performer: HikagePerformer<LP>
     ) {

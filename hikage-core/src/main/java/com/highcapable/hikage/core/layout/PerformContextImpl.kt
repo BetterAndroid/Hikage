@@ -50,7 +50,7 @@ import com.highcapable.hikage.core.base.LayoutParamsBody
 import com.highcapable.hikage.core.base.PerformerException
 import com.highcapable.hikage.core.base.ProvideException
 import com.highcapable.hikage.core.layout.session.LayoutSession
-import com.highcapable.kavaref.extension.classOf
+import kotlin.reflect.KClass
 
 /**
  * The [Hikage]'s performer context of layout build [LP].
@@ -63,7 +63,7 @@ import com.highcapable.kavaref.extension.classOf
  */
 internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
     private val session: LayoutSession,
-    private val lpClass: Class<LP>,
+    private val lpClass: KClass<LP>,
     internal val parent: ViewGroup?,
     private val attachToParent: Boolean,
     private val baseContext: Context? = null
@@ -102,7 +102,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
     private var provideCount = 0
 
     override fun <V : View> View(
-        viewClass: Class<V>,
+        viewClass: KClass<V>,
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<V>
@@ -111,7 +111,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         val view = session.createView(viewClass, id, context, parent)
         view.layoutParams = lpDelegate.create()
 
-        session.requireNoPerformers(viewClass.name) { view.init() }
+        session.requireNoPerformers(viewClass.qualifiedName) { view.init() }
         startProvide(id, viewClass)
         addToParentIfRequired(view)
 
@@ -122,11 +122,11 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<View>
-    ) = View(classOf<View>(), lparams, id, init)
+    ) = View(View::class, lparams, id, init)
 
     override fun <VG : ViewGroup, NLP : ViewGroup.LayoutParams> ViewGroup(
-        viewClass: Class<VG>,
-        childLpClass: Class<NLP>,
+        viewClass: KClass<VG>,
+        childLpClass: KClass<NLP>,
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<VG>,
@@ -136,7 +136,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         val view = session.createView(viewClass, id, context, parent)
         view.layoutParams = lpDelegate.create()
 
-        session.requireNoPerformers(viewClass.name) { view.init() }
+        session.requireNoPerformers(viewClass.qualifiedName) { view.init() }
         startProvide(id, viewClass)
         addToParentIfRequired(view)
         session.newPerformer(childLpClass, view).apply(performer)
@@ -145,12 +145,12 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
     }
 
     override fun <VG : ViewGroup> ViewGroup(
-        viewClass: Class<VG>,
+        viewClass: KClass<VG>,
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<VG>,
         performer: HikagePerformer<ViewGroup.LayoutParams>
-    ) = ViewGroup(viewClass, classOf<ViewGroup.LayoutParams>(), lparams, id, init, performer)
+    ) = ViewGroup(viewClass, ViewGroup.LayoutParams::class, lparams, id, init, performer)
 
     override fun Layout(
         @LayoutRes resId: Int,
@@ -159,7 +159,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
     ): View {
         val view = context.layoutInflater.inflate(resId, parent, attachToRoot = false)
 
-        startProvide(id, view.javaClass, view)
+        startProvide(id, view::class, view)
         lparams?.create()?.let { view.layoutParams = it }
         session.provideView(view, id)
         addToParentIfRequired(view)
@@ -175,7 +175,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         val viewBinding = bindingBuilder.inflate(context.layoutInflater, parent, attachToParent = false)
         val view = viewBinding.root
 
-        startProvide(id, view.javaClass, view)
+        startProvide(id, view::class, view)
         if (view.parent != null) throw ProvideException(
             "The ViewBinding($view) already has a parent, " +
                 "it may have been created using layout root node <merge> or <include>, cannot be provided."
@@ -195,7 +195,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
     ): View {
         if (view.parent != null) throw ProvideException("The view $view already has a parent, cannot be provided.")
 
-        startProvide(id, view.javaClass, view)
+        startProvide(id, view::class, view)
         val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, view.layoutParams)
         view.layoutParams = lpDelegate.create()
 
@@ -211,7 +211,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         id: String?
     ): Hikage {
         val view = hikage.root
-        startProvide(id, view.javaClass, view)
+        startProvide(id, view::class, view)
 
         val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, view.layoutParams)
         if (view.parent != null) throw ProvideException(
@@ -260,11 +260,11 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
      * @param viewClass the view class.
      * @param view the view instance.
      */
-    private fun <V : View> startProvide(id: String?, viewClass: Class<V>, view: V? = null) {
+    private fun <V : View> startProvide(id: String?, viewClass: KClass<out V>, view: V? = null) {
         provideCount++
 
         if (provideCount > 1 && (parent == null || !attachToParent)) throw ProvideException(
-            "Provide view ${view?.javaClass ?: viewClass}(${id?.let { "\"$it\"" } ?: "<anonymous>"}) failed. ${
+            "Provide view ${view?.let { it::class } ?: viewClass}(${id?.let { "\"$it\"" } ?: "<anonymous>"}) failed. ${
                 if (parent == null) "No parent view group found"
                 else "Parent view group declares attachToParent = false"
             }, you can only provide one view for the root view."

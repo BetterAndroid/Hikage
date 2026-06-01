@@ -34,6 +34,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.LayoutParamsBody
+import kotlin.reflect.KClass
 
 /**
  * The perform context of layout build [LP].
@@ -50,7 +51,7 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
      */
     @Hikageable
     fun <V : View> View(
-        viewClass: Class<V>,
+        viewClass: KClass<V>,
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<V>
@@ -86,8 +87,8 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
      */
     @Hikageable
     fun <VG : ViewGroup, NLP : ViewGroup.LayoutParams> ViewGroup(
-        viewClass: Class<VG>,
-        childLpClass: Class<NLP>,
+        viewClass: KClass<VG>,
+        childLpClass: KClass<NLP>,
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<VG>,
@@ -107,7 +108,7 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
      */
     @Hikageable
     fun <VG : ViewGroup> ViewGroup(
-        viewClass: Class<VG>,
+        viewClass: KClass<VG>,
         lparams: LayoutParams?,
         id: String?,
         init: HikageView<VG>,

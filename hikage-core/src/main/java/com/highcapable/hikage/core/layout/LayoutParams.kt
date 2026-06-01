@@ -33,6 +33,7 @@ import com.highcapable.hikage.core.layout.session.LayoutSession
 import com.highcapable.kavaref.KavaRef.Companion.asResolver
 import com.highcapable.kavaref.extension.createInstanceOrNull
 import com.highcapable.kavaref.resolver.MethodResolver
+import kotlin.reflect.KClass
 
 /**
  * The [Hikage.Performer] layout params.
@@ -43,7 +44,7 @@ import com.highcapable.kavaref.resolver.MethodResolver
  */
 class LayoutParams private constructor(
     private val session: LayoutSession,
-    private val lpClass: Class<ViewGroup.LayoutParams>,
+    private val lpClass: KClass<ViewGroup.LayoutParams>,
     private val parent: ViewGroup?
 ) {
 
@@ -76,7 +77,7 @@ class LayoutParams private constructor(
     internal companion object {
 
         /** The [ViewGroup.generateLayoutParams] method resolver map. */
-        private val generateLayoutParamsResolvers = mutableMapOf<Class<out ViewGroup>, MethodResolver<ViewGroup>?>()
+        private val generateLayoutParamsResolvers = mutableMapOf<KClass<out ViewGroup>, MethodResolver<ViewGroup>?>()
 
         /**
          * Create a new [LayoutParams].
@@ -87,7 +88,7 @@ class LayoutParams private constructor(
          */
         fun <LP : ViewGroup.LayoutParams> from(
             session: LayoutSession,
-            lpClass: Class<LP>,
+            lpClass: KClass<LP>,
             parent: ViewGroup?,
             width: Int?,
             height: Int?,
@@ -95,7 +96,7 @@ class LayoutParams private constructor(
             widthMatchParent: Boolean,
             heightMatchParent: Boolean,
             body: LayoutParamsBody<LP>
-        ) = LayoutParams(session, lpClass as Class<ViewGroup.LayoutParams>, parent).apply {
+        ) = LayoutParams(session, lpClass as KClass<ViewGroup.LayoutParams>, parent).apply {
             bodyBuilder = BodyBuilder(
                 width, height, matchParent, widthMatchParent, heightMatchParent,
                 body as LayoutParamsBody<ViewGroup.LayoutParams>
@@ -112,11 +113,11 @@ class LayoutParams private constructor(
          */
         fun <LP : ViewGroup.LayoutParams> from(
             session: LayoutSession,
-            lpClass: Class<LP>,
+            lpClass: KClass<LP>,
             parent: ViewGroup?,
             delegate: LayoutParams?,
             lparams: ViewGroup.LayoutParams? = null
-        ) = LayoutParams(session, lpClass as Class<ViewGroup.LayoutParams>, parent).apply {
+        ) = LayoutParams(session, lpClass as KClass<ViewGroup.LayoutParams>, parent).apply {
             wrapperBuilder = WrapperBuilder(delegate, lparams)
         }
 
@@ -126,7 +127,7 @@ class LayoutParams private constructor(
          * @return [MethodResolver] or null.
          */
         private fun ViewGroup.generateLayoutParamsResolver(): MethodResolver<ViewGroup>? {
-            val viewClass = javaClass
+            val viewClass = this::class
             if (generateLayoutParamsResolvers.containsKey(viewClass))
                 return generateLayoutParamsResolvers[viewClass]
 
@@ -167,7 +168,7 @@ class LayoutParams private constructor(
 
         return bodyBuilder?.let {
             val lparams = ViewLayoutParams(lpClass, it.width, it.height, it.matchParent, it.widthMatchParent, it.heightMatchParent)
-            session.requireNoPerformers(lparams.javaClass.name) { it.body(lparams) }
+            session.requireNoPerformers(lparams::class.qualifiedName) { it.body(lparams) }
 
             lparams
         } ?: wrapperBuilder?.let {

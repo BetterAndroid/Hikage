@@ -232,10 +232,10 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         }.build()
                     )
                     addStatement(
-                        "return $performFunctionAlias(${performer.declaration.className}::class.java, " +
-                            "${it.simpleName}::class.java, lparams, id, init, performer)"
+                        "return $performFunctionAlias(${performer.declaration.className}::class, " +
+                            "${it.simpleName}::class, lparams, id, init, performer)"
                     )
-                } ?: addStatement("return $performFunctionAlias(${performer.declaration.className}::class.java, lparams, id, init)")
+                } ?: addStatement("return $performFunctionAlias(${performer.declaration.className}::class, lparams, id, init)")
 
                 returns(viewClass.second)
             }.build())
