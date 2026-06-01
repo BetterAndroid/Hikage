@@ -307,6 +307,7 @@ inline fun <reified VB : ViewBinding> Hikage.Performer<*>.Layout(
  * default is true.
  * @return [Hikage]
  */
+@Hikageable
 context(performer: Hikage.Performer<LP>)
 operator fun <LP : ViewGroup.LayoutParams> Hikage.Delegate<*>.invoke(
     lparams: LayoutParams? = null,
