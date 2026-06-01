@@ -12,6 +12,8 @@ This is a Hikage extension dependency for Jetpack Compact component-related feat
 
 You can add this module to your project using the following method.
 
+We recommend that you first refer to [hikage-bom](./hikage-bom.md) to use BOM for unified version management.
+
 ### Version Catalog (Recommended)
 
 Add dependency in your project's `gradle/libs.versions.toml`.

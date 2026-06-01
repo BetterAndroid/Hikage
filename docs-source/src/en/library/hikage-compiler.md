@@ -12,6 +12,8 @@ This is a Hikage automatic compilation module.
 
 You can add this module to your project using the following method.
 
+We recommend that you first refer to [hikage-bom](./hikage-bom.md) to use BOM for unified version management.
+
 ::: warning
 
 You need to integrate the [Google KSP](https://github.com/google/ksp/releases) plugin in your project that is suitable for the current Kotlin version of your project.

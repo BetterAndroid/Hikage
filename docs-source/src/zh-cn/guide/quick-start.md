@@ -57,6 +57,15 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 你可以点击下方对应的模块前往查看详细的功能介绍。
 
+::: tip 版本说明
+
+从 `1.1.0` 起，`Hikage` 开始采用统一版本进行发布，通常情况下你只需要关注同一个主版本即可，你也可以直接参考下方的 [hikage-bom](../library/hikage-bom.md) 使用 BOM 统一管理依赖版本。
+
+详情请见 [更新日志](../about/changelog.md)。
+
+:::
+
+- [hikage-bom](../library/hikage-bom.md)
 - [hikage-core](../library/hikage-core.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-extension](../library/hikage-extension.md)

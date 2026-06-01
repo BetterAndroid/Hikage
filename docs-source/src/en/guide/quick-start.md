@@ -60,6 +60,17 @@ The project is divided into multiple modules. You can choose the module you wish
 
 Click the corresponding module below to view detailed feature descriptions.
 
+::: tip Version Notes
+
+Starting from `1.1.0`, `Hikage` started using unified versioning for releases.
+In most cases, you only need to pay attention to the same major version.
+You can also refer to the [hikage-bom](../library/hikage-bom.md) below to use BOM for unified dependency version management.
+
+For details, please see the [changelog](../about/changelog.md).
+
+:::
+
+- [hikage-bom](../library/hikage-bom.md)
 - [hikage-core](../library/hikage-core.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-extension](../library/hikage-extension.md)

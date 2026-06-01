@@ -12,6 +12,8 @@
 
 你可以使用如下方式将此模块添加到你的项目中。
 
+我们推荐你优先参考 [hikage-bom](./hikage-bom.md) 使用 BOM 统一管理版本。
+
 ::: warning
 
 此模块依赖于 Jetpack Compose 编译插件，请确保你的项目中已经集成了 Jetpack Compose 相关依赖，详情请参考 [这里](https://developer.android.com/develop/ui/compose/compiler)。

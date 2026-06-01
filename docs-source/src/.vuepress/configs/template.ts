@@ -11,6 +11,7 @@ const navigationLinks = {
         '/guide/quick-start'
     ],
     library: [
+        '/library/hikage-bom',
         '/library/hikage-core',
         '/library/hikage-compiler',
         '/library/hikage-extension',

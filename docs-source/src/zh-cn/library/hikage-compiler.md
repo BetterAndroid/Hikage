@@ -12,6 +12,8 @@
 
 你可以使用如下方式将此模块添加到你的项目中。
 
+我们推荐你优先参考 [hikage-bom](./hikage-bom.md) 使用 BOM 统一管理版本。
+
 ::: warning
 
 你需要在你的项目中集成适合于你项目当前 Kotlin 版本的 [Google KSP](https://github.com/google/ksp/releases) 插件。
