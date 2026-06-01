@@ -5,7 +5,7 @@ plugins {
 }
 
 group = gropify.project.groupName
-version = gropify.project.hikage.widget.material.version
+version = gropify.project.hikage.bom.version
 
 android {
     namespace = gropify.project.hikage.widget.material.namespace

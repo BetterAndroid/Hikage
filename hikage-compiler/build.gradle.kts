@@ -5,7 +5,7 @@ plugins {
 }
 
 group = gropify.project.groupName
-version = gropify.project.hikage.compiler.version
+version = gropify.project.hikage.bom.version
 
 dependencies {
     compileOnly(libs.ksp.symbol.processing.api)

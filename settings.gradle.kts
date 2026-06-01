@@ -34,13 +34,19 @@ gropify {
         }
     }
 
+    projects(":hikage-bom") {
+        jvm {
+            isEnabled = false
+        }
+    }
+
     projects(
         ":hikage-core",
         ":hikage-core-lint",
+        ":hikage-compiler",
         ":hikage-extension",
         ":hikage-extension-compose",
         ":hikage-extension-betterandroid",
-        ":hikage-compiler",
         ":hikage-widget-androidx",
         ":hikage-widget-material"
     ) {
@@ -56,13 +62,14 @@ gropify {
 rootProject.name = "Hikage"
 
 include(":samples:demo-android")
+include(":hikage-bom")
 include(
     ":hikage-core",
     ":hikage-core-lint",
+    ":hikage-compiler",
     ":hikage-extension",
     ":hikage-extension-compose",
     ":hikage-extension-betterandroid",
-    ":hikage-compiler",
     ":hikage-widget-androidx",
     ":hikage-widget-material"
 )

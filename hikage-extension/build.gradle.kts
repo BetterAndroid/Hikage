@@ -5,7 +5,7 @@ plugins {
 }
 
 group = gropify.project.groupName
-version = gropify.project.hikage.extension.version
+version = gropify.project.hikage.bom.version
 
 android {
     namespace = gropify.project.hikage.extension.namespace

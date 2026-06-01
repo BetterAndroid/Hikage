@@ -80,13 +80,13 @@ libraryProjects {
         }
 
         configure<MavenPublishBaseExtension> {
-            if (name != Libraries.HIKAGE_COMPILER)
+            if (name != Libraries.HIKAGE_BOM && name != Libraries.HIKAGE_COMPILER)
                 configure(AndroidSingleVariantLibrary(JavadocJar.None(), SourcesJar.Sources()))
         }
 
         // Only apply to publishable tasks.
         if (gradle.startParameter.taskNames.any { it.startsWith("publish") })
-            if (name != Libraries.HIKAGE_COMPILER)
+            if (name != Libraries.HIKAGE_BOM && name != Libraries.HIKAGE_COMPILER)
                 configure<LibraryExtension> {
                     sourceSets.configureEach {
                         // Add KSP generated sources to the source set.
@@ -124,20 +124,49 @@ libraryProjects {
     }
 }
 
+registerAggregatePublishTask(
+    name = "publishBomToMavenLocal",
+    description = "Publishes the BOM and all modules to the local Maven cache.",
+    taskName = "publishToMavenLocal",
+    projectNames = Libraries.entries
+)
+
+registerAggregatePublishTask(
+    name = "publishBomToMavenCentral",
+    description = "Publishes the BOM and all modules to the Maven Central repository.",
+    taskName = "publishMavenPublicationToMavenCentralRepository",
+    projectNames = Libraries.entries
+)
+
+registerAggregatePublishTask(
+    name = "publishBomToHighCapableMavenReleases",
+    description = "Publishes the BOM and all modules to the HighCapableMavenReleases repository.",
+    taskName = "publishAllPublicationsToHighCapableMavenReleasesRepository",
+    projectNames = Libraries.entries
+)
+
+registerAggregatePublishTask(
+    name = "publishBomToHighCapableMavenSnapShots",
+    description = "Publishes the BOM and all modules to the HighCapableMavenSnapShots repository.",
+    taskName = "publishAllPublicationsToHighCapableMavenSnapShotsRepository",
+    projectNames = Libraries.entries
+)
+
+fun registerAggregatePublishTask(name: String, description: String, taskName: String, projectNames: List<String>) {
+    tasks.register(name) {
+        this.group = "publishing"
+        this.description = description
+        dependsOn(projectNames.map { ":$it:$taskName" })
+    }
+}
+
 fun libraryProjects(action: Action<in Project>) {
-    val libraries = listOf(
-        Libraries.HIKAGE_CORE,
-        Libraries.HIKAGE_EXTENSION,
-        Libraries.HIKAGE_EXTENSION_COMPOSE,
-        Libraries.HIKAGE_EXTENSION_BETTERANDROID,
-        Libraries.HIKAGE_COMPILER,
-        Libraries.HIKAGE_WIDGET_ANDROIDX,
-        Libraries.HIKAGE_WIDGET_MATERIAL
-    )
+    val libraries = Libraries.entries
     allprojects { if (libraries.contains(name)) action.execute(this) }
 }
 
 object Libraries {
+    const val HIKAGE_BOM = "hikage-bom"
     const val HIKAGE_CORE = "hikage-core"
     const val HIKAGE_EXTENSION = "hikage-extension"
     const val HIKAGE_EXTENSION_COMPOSE = "hikage-extension-compose"
@@ -145,4 +174,15 @@ object Libraries {
     const val HIKAGE_COMPILER = "hikage-compiler"
     const val HIKAGE_WIDGET_ANDROIDX = "hikage-widget-androidx"
     const val HIKAGE_WIDGET_MATERIAL = "hikage-widget-material"
+
+    val entries = listOf(
+        HIKAGE_BOM,
+        HIKAGE_CORE,
+        HIKAGE_EXTENSION,
+        HIKAGE_EXTENSION_COMPOSE,
+        HIKAGE_EXTENSION_BETTERANDROID,
+        HIKAGE_COMPILER,
+        HIKAGE_WIDGET_ANDROIDX,
+        HIKAGE_WIDGET_MATERIAL
+    )
 }
