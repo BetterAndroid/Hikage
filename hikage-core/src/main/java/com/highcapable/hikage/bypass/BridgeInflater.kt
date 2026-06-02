@@ -19,6 +19,8 @@
  *
  * This file is created by fankes on 2026/6/1.
  */
+@file:JvmName("BridgeInflaterUtils")
+
 package com.highcapable.hikage.bypass
 
 import android.util.AttributeSet
