@@ -9,7 +9,7 @@ maven-publish = "0.36.0"
 kotlinpoet = "2.3.0"
 # noinspection GradleDependency
 material = "1.11.0"
-betterandroid-android-bom = "1.1.1"
+betterandroid-android-bom = "1.1.2"
 hiddenapibypass = "6.1"
 kavaref-bom = "1.0.3"
 pangutext-android = "1.0.6"
