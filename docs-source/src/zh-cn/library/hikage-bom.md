@@ -35,6 +35,7 @@ hikage-widget-material = { module = "com.highcapable.hikage:hikage-widget-materi
 implementation(platform(libs.hikage.bom))
 
 // 请在应用了 KSP 插件的模块中使用
+ksp(platform(libs.hikage.bom))
 ksp(libs.hikage.compiler)
 
 implementation(libs.hikage.core)
@@ -55,6 +56,7 @@ implementation(libs.hikage.widget.material)
 implementation(platform("com.highcapable.hikage:hikage-bom:<version>"))
 
 // 请在应用了 KSP 插件的模块中使用
+ksp(platform("com.highcapable.hikage:hikage-bom:<version>"))
 ksp("com.highcapable.hikage:hikage-compiler")
 
 implementation("com.highcapable.hikage:hikage-core")
@@ -66,6 +68,13 @@ implementation("com.highcapable.hikage:hikage-widget-material")
 ```
 
 请将 `<version>` 修改为此文档顶部显示的版本。
+
+::: warning
+
+`ksp` 是独立的 Gradle 依赖配置，`implementation(platform(...))` 不会自动管理 `ksp(...)` 中的依赖版本。
+如果你需要使用 `hikage-compiler`，请同时在 `ksp` 配置中引入 `hikage-bom`。
+
+:::
 
 ## 功能介绍
 

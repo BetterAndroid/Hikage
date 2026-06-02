@@ -35,6 +35,7 @@ Configure dependency in your project's `build.gradle.kts`.
 implementation(platform(libs.hikage.bom))
 
 // Please use in the module where the KSP plugin is applied.
+ksp(platform(libs.hikage.bom))
 ksp(libs.hikage.compiler)
 
 implementation(libs.hikage.core)
@@ -55,6 +56,7 @@ Configure dependency in your project's `build.gradle.kts`.
 implementation(platform("com.highcapable.hikage:hikage-bom:<version>"))
 
 // Please use in the module where the KSP plugin is applied.
+ksp(platform("com.highcapable.hikage:hikage-bom:<version>"))
 ksp("com.highcapable.hikage:hikage-compiler")
 
 implementation("com.highcapable.hikage:hikage-core")
@@ -66,6 +68,13 @@ implementation("com.highcapable.hikage:hikage-widget-material")
 ```
 
 Please change `<version>` to the version displayed at the top of this document.
+
+::: warning
+
+`ksp` is an independent Gradle dependency configuration, so `implementation(platform(...))` does not manage dependency versions declared in `ksp(...)`.
+If you need to use `hikage-compiler`, also add `hikage-bom` to the `ksp` configuration.
+
+:::
 
 ## Function Introduction
 
