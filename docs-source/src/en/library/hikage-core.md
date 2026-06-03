@@ -480,15 +480,6 @@ val SubTextView = Hikageable {
 }
 ```
 
-::: danger
-
-The **Context parameters** feature is currently experimental. If you want to use it,
-please refer to [How to enable context parameters](https://kotlinlang.org/docs/context-parameters.html#how-to-enable-context-parameters) to enable the relevant compiler feature.
-
-This API will continue to evolve with Kotlin language updates and is not guaranteed to remain stable. If Kotlin removes this feature in the future, this API will also be removed.
-
-:::
-
 ### XML Attribute Set
 
 Hikage supports passing in the XML attribute set via the parameter `attrs` when creating a component. These attribute values will be parsed dynamically at runtime and set to the component, and it will only take effect once when the component is created.

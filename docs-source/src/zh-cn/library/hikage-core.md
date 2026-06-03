@@ -461,14 +461,6 @@ val SubTextView = Hikageable {
 }
 ```
 
-::: danger
-
-**Context parameters** 目前属于实验性功能，如需使用，请参考 [How to enable context parameters﻿](https://kotlinlang.org/docs/context-parameters.html#how-to-enable-context-parameters) 启用相关功能。
-
-此 API 将会跟随 Kotlin 语言的更新而进行调整和变化，不保证其稳定性，如果 Kotlin 官方移除了此特性此 API 也将会被移除。
-
-:::
-
 ### XML 属性集合
 
 Hikage 支持通过参数 `attrs` 在创建组件时传入 XML 属性集合，这些属性值将在运行时动态解析并设置到组件上，它仅会在组件创建时生效一次。
