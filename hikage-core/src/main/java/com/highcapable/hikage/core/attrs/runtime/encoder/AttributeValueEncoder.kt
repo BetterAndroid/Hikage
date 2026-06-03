@@ -85,7 +85,9 @@ internal object AttributeValueEncoder {
 
     private fun encodeRawInt(context: Context, attr: AttributeItem, value: Int): EncodedAttributeValue {
         val format = AttributeBagResolver.formatOf(context, attr)
-            ?: return EncodedAttributeValue(TypedValue.TYPE_INT_DEC, value, -1)
+        if (value.isResourceId(context) && format?.acceptsRawInt() != true)
+            return EncodedAttributeValue(TypedValue.TYPE_REFERENCE, value, -1)
+        if (format == null) return EncodedAttributeValue(TypedValue.TYPE_INT_DEC, value, -1)
 
         return when {
             format and (AttributeBagResolver.TYPE_ENUM or AttributeBagResolver.TYPE_FLAGS) != 0 ->
@@ -101,6 +103,14 @@ internal object AttributeValueEncoder {
             else -> EncodedAttributeValue(TypedValue.TYPE_INT_DEC, value, -1)
         }
     }
+
+    private fun Int.acceptsRawInt() = this and (
+        AttributeBagResolver.TYPE_ENUM or
+            AttributeBagResolver.TYPE_FLAGS or
+            AttributeBagResolver.TYPE_COLOR or
+            AttributeBagResolver.TYPE_DIMENSION or
+            AttributeBagResolver.TYPE_INTEGER
+    ) != 0
 
     private fun encodeString(
         context: Context,
