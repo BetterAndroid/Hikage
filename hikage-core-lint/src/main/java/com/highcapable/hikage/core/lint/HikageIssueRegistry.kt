@@ -26,6 +26,7 @@ package com.highcapable.hikage.core.lint
 import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
+import com.highcapable.hikage.core.lint.detector.HikageAttributeDetector
 import com.highcapable.hikage.core.lint.detector.HikageSafeTypeCastDetector
 import com.highcapable.hikage.core.lint.detector.HikageableBeyondScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageableFunctionsDetector
@@ -35,6 +36,9 @@ import com.highcapable.hikage.generated.HikageCoreLintProperties
 class HikageIssueRegistry : IssueRegistry() {
 
     override val issues get() = listOf(
+        HikageAttributeDetector.MISSING_NAMESPACE_ISSUE,
+        HikageAttributeDetector.DUPLICATE_ISSUE,
+        HikageAttributeDetector.NAMESPACE_ISSUE,
         HikageableBeyondScopeDetector.ISSUE,
         HikageableFunctionsDetector.ISSUE,
         HikageSafeTypeCastDetector.ISSUE,

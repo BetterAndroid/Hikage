@@ -80,7 +80,7 @@ object ClassDetector {
         "throw", "throws", "transient", "try", "void", "volatile", "while"
     )
 
-    private val invalidPattern = "^(\\d.*|.*[^A-Za-z0-9_\$].*)$".toRegex()
+    private val invalidPattern = "^(\\d.*|.*[^A-Za-z0-9_$].*)$".toRegex()
 
     fun verify(name: String) = name !in javaKeywords && !invalidPattern.matches(name)
 }

@@ -29,8 +29,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.highcapable.hikage.bypass.createViewFromBridgeInflaterOrNull
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.layout.bypass.createViewFromBridgeInflaterOrNull
 import kotlin.reflect.KClass
 
 /**
@@ -46,12 +46,7 @@ fun interface HikageFactory {
      * @param params the parameters.
      * @return [View] or null.
      */
-    fun createView(
-        parent: ViewGroup?,
-        base: View?,
-        context: Context,
-        params: Params
-    ): View?
+    fun createView(parent: ViewGroup?, base: View?, context: Context, params: Params): View?
 
     /**
      * The parameters of the [HikageFactory].

@@ -44,6 +44,7 @@ import com.highcapable.betterandroid.ui.extension.component.base.toPx
 import com.highcapable.betterandroid.ui.extension.view.inflate
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.attrs.HikageAttribute
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.LayoutParamsBody
@@ -105,10 +106,11 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         viewClass: KClass<V>,
         lparams: LayoutParams?,
         id: String?,
+        attrs: HikageAttribute,
         init: HikageView<V>
     ): V {
         val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams)
-        val view = session.createView(viewClass, id, context, parent)
+        val view = session.createView(viewClass, id, context, attrs, parent)
         view.layoutParams = lpDelegate.create()
 
         session.requireNoPerformers(viewClass.qualifiedName) { view.init() }
@@ -121,19 +123,21 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
     override fun View(
         lparams: LayoutParams?,
         id: String?,
+        attrs: HikageAttribute,
         init: HikageView<View>
-    ) = View(View::class, lparams, id, init)
+    ) = View(View::class, lparams, id, attrs, init)
 
     override fun <VG : ViewGroup, NLP : ViewGroup.LayoutParams> ViewGroup(
         viewClass: KClass<VG>,
         childLpClass: KClass<NLP>,
         lparams: LayoutParams?,
         id: String?,
+        attrs: HikageAttribute,
         init: HikageView<VG>,
         performer: HikagePerformer<NLP>
     ): VG {
         val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams)
-        val view = session.createView(viewClass, id, context, parent)
+        val view = session.createView(viewClass, id, context, attrs, parent)
         view.layoutParams = lpDelegate.create()
 
         session.requireNoPerformers(viewClass.qualifiedName) { view.init() }
@@ -148,9 +152,10 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         viewClass: KClass<VG>,
         lparams: LayoutParams?,
         id: String?,
+        attrs: HikageAttribute,
         init: HikageView<VG>,
         performer: HikagePerformer<ViewGroup.LayoutParams>
-    ) = ViewGroup(viewClass, ViewGroup.LayoutParams::class, lparams, id, init, performer)
+    ) = ViewGroup(viewClass, ViewGroup.LayoutParams::class, lparams, id, attrs, init, performer)
 
     override fun Layout(
         @LayoutRes resId: Int,

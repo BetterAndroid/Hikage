@@ -71,6 +71,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val PerformerClass = ClassName(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_CLASS_NAME, "Performer")
         val ViewLambdaClass = ClassName(DeclaredSymbol.HIKAGE_BASE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_VIEW_LAMBDA_CLASS_NAME)
         val PerformerLambdaClass = ClassName(DeclaredSymbol.HIKAGE_BASE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_PERFORMER_LAMBDA_CLASS_NAME)
+        val AttributeClass = ClassName(DeclaredSymbol.HIKAGE_ATTRS_PACKAGE_NAME, DeclaredSymbol.HIKAGE_ATTRIBUTE_LAMBDA_CLASS_NAME)
         val ViewFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "View")
         val ViewGroupFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "ViewGroup")
     }
@@ -214,10 +215,17 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 )
                 addParameter(
                     ParameterSpec.builder(
+                        name = "attrs",
+                        type = AttributeClass,
+                        modifiers = listOf(KModifier.NOINLINE)
+                    ).defaultValue("{}").build()
+                )
+                addParameter(
+                    ParameterSpec.builder(
                         name = "init",
                         type = ViewLambdaClass.parameterizedBy(viewClass.second),
                         modifiers = listOf(KModifier.NOINLINE)
-                    ).apply { 
+                    ).apply {
                         if (!performer.annotation.requireInit) defaultValue("{}")
                     }.build()
                 )
@@ -233,9 +241,9 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     )
                     addStatement(
                         "return $performFunctionAlias(${performer.declaration.className}::class, " +
-                            "${it.simpleName}::class, lparams, id, init, performer)"
+                            "${it.simpleName}::class, lparams, id, attrs, init, performer)"
                     )
-                } ?: addStatement("return $performFunctionAlias(${performer.declaration.className}::class, lparams, id, init)")
+                } ?: addStatement("return $performFunctionAlias(${performer.declaration.className}::class, lparams, id, attrs, init)")
 
                 returns(viewClass.second)
             }.build())

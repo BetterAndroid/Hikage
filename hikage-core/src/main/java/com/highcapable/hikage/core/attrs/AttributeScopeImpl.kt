@@ -17,31 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2025/2/26.
+ * This file is created by fankes on 2026/6/2.
  */
-@file:JvmName("ExceptionsUtils")
+package com.highcapable.hikage.core.attrs
 
-package com.highcapable.hikage.core.base
-
-import android.util.AttributeSet
+import com.highcapable.hikage.core.Hikage
 
 /**
- * The exception to performing view.
- * @param message the exception message.
+ * The [Hikage]'s [AttributeScope] collector.
+ * @param namespace the namespace name.
+ * @param context the attribute context.
  */
-@PublishedApi
-internal class PerformerException(message: String) : Exception(message)
+internal class AttributeScopeImpl(
+    private val namespace: String,
+    private val context: AttributeContextImpl
+) : AttributeScope {
 
-/**
- * The exception to providing view.
- * @param message the exception message.
- */
-@PublishedApi
-internal class ProvideException(message: String) : Exception(message)
-
-/**
- * The exception to processing attributes (an [AttributeSet]).
- * @param message the exception message.
- */
-@PublishedApi
-internal class XmlParserException(message: String) : Exception(message)
+    override fun set(name: String, value: String) = context.set(namespace, name, value)
+    override fun set(name: String, value: Int) = context.set(namespace, name, value)
+    override fun set(name: String, value: Boolean) = context.set(namespace, name, value)
+}

@@ -21,8 +21,10 @@
  */
 @file:JvmName("BridgeInflaterUtils")
 
-package com.highcapable.hikage.bypass
+package com.highcapable.hikage.core.layout.bypass
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -62,4 +64,26 @@ internal fun LayoutInflater.createViewFromBridgeInflaterOrNull(name: String, att
     }
 
     return resolver?.copy()?.of(this)?.invokeQuietly<View>(name, attrs)
+}
+
+/**
+ * Whether the [Context] is provided by Android Studio layout preview.
+ * @receiver the context.
+ * @return [Boolean]
+ */
+internal fun Context.isLayoutPreview() = findLayoutPreviewContext() != null
+
+/**
+ * Find the Android Studio layout preview base context.
+ * @receiver the context.
+ * @return [Context] or null.
+ */
+internal fun Context.findLayoutPreviewContext(): Context? {
+    var current: Context? = this
+    while (current != null) {
+        if (current.javaClass.simpleName == "BridgeContext") return current
+        current = (current as? ContextWrapper)?.baseContext
+    }
+
+    return null
 }

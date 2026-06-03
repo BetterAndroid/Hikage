@@ -17,19 +17,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2025/2/28.
+ * This file is created by fankes on 2026/6/2.
  */
-package com.highcapable.hikage.bypass
+package com.highcapable.hikage.core.attrs
 
-import android.content.Context
-import android.util.AttributeSet
-import android.view.View
-import androidx.annotation.Keep
+import com.highcapable.hikage.core.Hikage
 
 /**
- * Just a view for obtaining [AttributeSet].
- *
- * **DO NOT USE THIS VIEW IN YOUR LAYOUT.**
+ * The [Hikage.Attribute]'s context for collecting attributes.
  */
-@Keep
-class HikageAttrsView internal constructor(context: Context, internal val attrs: AttributeSet?) : View(context, attrs)
+internal interface AttributeContext : AttributeScope {
+
+    /**
+     * Declare attributes under a namespace.
+     * @param name the namespace name.
+     * @return [AttributeScope]
+     */
+    fun namespace(name: String): AttributeScope
+}

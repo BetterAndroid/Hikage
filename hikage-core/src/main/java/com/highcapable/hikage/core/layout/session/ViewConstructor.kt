@@ -25,6 +25,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import com.highcapable.kavaref.resolver.ConstructorResolver
+import java.lang.reflect.InvocationTargetException
 
 /**
  * The view constructor class.
@@ -42,9 +43,13 @@ internal class ViewConstructor<V : View>(
      * @param attrs the attribute set.
      * @return [V] or null.
      */
-    fun build(context: Context, attrs: Lazy<AttributeSet>) = when (parameterCount) {
-        2 -> resolver.createQuietly(context, attrs.value)
-        1 -> resolver.createQuietly(context)
-        else -> null
+    fun build(context: Context, attrs: Lazy<AttributeSet>) = try {
+        when (parameterCount) {
+            2 -> resolver.create(context, attrs.value)
+            1 -> resolver.create(context)
+            else -> null
+        }
+    } catch (e: InvocationTargetException) {
+        throw e.targetException ?: e.cause ?: e
     }
 }

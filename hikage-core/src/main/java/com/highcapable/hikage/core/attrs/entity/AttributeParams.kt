@@ -17,31 +17,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2025/2/26.
+ * This file is created by fankes on 2026/6/3.
  */
-@file:JvmName("ExceptionsUtils")
+package com.highcapable.hikage.core.attrs.entity
 
-package com.highcapable.hikage.core.base
-
-import android.util.AttributeSet
+import com.highcapable.hikage.core.Hikage
 
 /**
- * The exception to performing view.
- * @param message the exception message.
+ * A resolved [Hikage] attribute parameters.
  */
-@PublishedApi
-internal class PerformerException(message: String) : Exception(message)
+internal interface AttributeParams {
 
-/**
- * The exception to providing view.
- * @param message the exception message.
- */
-@PublishedApi
-internal class ProvideException(message: String) : Exception(message)
+    /**
+     * The namespace name of the attribute,
+     * which is used to resolve the attribute name and value.
+     */
+    val namespace: String
 
-/**
- * The exception to processing attributes (an [AttributeSet]).
- * @param message the exception message.
- */
-@PublishedApi
-internal class XmlParserException(message: String) : Exception(message)
+    /**
+     * The attribute name,
+     * which is used to resolve the attribute value.
+     */
+    val name: String
+}

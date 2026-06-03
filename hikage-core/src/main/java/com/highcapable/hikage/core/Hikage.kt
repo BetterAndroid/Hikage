@@ -225,6 +225,11 @@ class Hikage private constructor(internal val session: LayoutSession) {
     fun getActualViewId(id: String) = session.getActualViewId(id)
 
     /**
+     * The [Hikage] attribute scope.
+     */
+    interface Attribute
+
+    /**
      * The [Hikage] performer scope interface.
      */
     interface Performer<LP : ViewGroup.LayoutParams> : DisplayDensity, ResourcesScope {

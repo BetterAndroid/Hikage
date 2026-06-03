@@ -17,31 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2025/2/26.
+ * This file is created by fankes on 2026/6/3.
  */
-@file:JvmName("ExceptionsUtils")
-
-package com.highcapable.hikage.core.base
-
-import android.util.AttributeSet
+package com.highcapable.hikage.core.attrs.runtime.entity
 
 /**
- * The exception to performing view.
- * @param message the exception message.
+ * The encoded result of an attribute value, mapping to a binary `Res_value`.
+ * @param dataType the `Res_value` data type (one of [android.util.TypedValue].TYPE_*).
+ * @param data the `Res_value` data.
+ * @param rawIndex the string pool index of the raw value, or -1 if there is no raw value.
  */
-@PublishedApi
-internal class PerformerException(message: String) : Exception(message)
-
-/**
- * The exception to providing view.
- * @param message the exception message.
- */
-@PublishedApi
-internal class ProvideException(message: String) : Exception(message)
-
-/**
- * The exception to processing attributes (an [AttributeSet]).
- * @param message the exception message.
- */
-@PublishedApi
-internal class XmlParserException(message: String) : Exception(message)
+internal class EncodedAttributeValue(
+    val dataType: Int,
+    val data: Int,
+    val rawIndex: Int
+)
