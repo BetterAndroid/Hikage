@@ -27,6 +27,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
+import com.highcapable.hikage.core.attrs.android
 import com.highcapable.hikage.core.base.Hikageable
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.core.preview.HikagePreview
@@ -44,10 +45,14 @@ class SamplePreview(context: Context, attrs: AttributeSet) : HikagePreview(conte
                 gravity = Gravity.CENTER
             }
         ) {
-            TextView {
-                text = "Hello, World!"
-                textSize = 20f
-            }
+            TextView(
+                attrs = {
+                    android {
+                        set("text", "Hello, World!")
+                        set("textSize", "20sp")
+                    }
+                }
+            )
             Button(
                 lparams = LayoutParams {
                     topMargin = 20.dp

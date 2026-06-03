@@ -31,6 +31,8 @@ import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.highcapable.betterandroid.ui.extension.view.toast
+import com.highcapable.hikage.core.attrs.android
+import com.highcapable.hikage.core.attrs.app
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.demo.R
 import com.highcapable.hikage.demo.ui.base.BaseActivity
@@ -63,8 +65,10 @@ class MainActivity : BaseActivity() {
             ) {
                 MaterialToolbar(
                     lparams = LayoutParams(widthMatchParent = true),
-                    init = {
-                        title = stringResource(R.string.app_name)
+                    attrs = {
+                        app {
+                            set("title", R.string.app_name)
+                        }
                     }
                 )
                 LinearLayout(
@@ -95,9 +99,9 @@ class MainActivity : BaseActivity() {
                         lparams = LayoutParams(widthMatchParent = true) {
                             topMargin = 12.dp
                         },
-                        init = {
-                            hint = stringResource(R.string.text_password)
-                            endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
+                        attrs = {
+                            android.set("hint", R.string.text_password)
+                            app.set("endIconMode", TextInputLayout.END_ICON_PASSWORD_TOGGLE)
                         }
                     ) {
                         TextInputEditText(
