@@ -194,11 +194,12 @@ The basic parameters of the `View` function are the following three, and the `Vi
 
 If the generic type is not declared, the default is to use `android.view.View` as the object type created.
 
-| Parameter Name | Description                                                                   |
-| -------------- | ----------------------------------------------------------------------------- |
-| `lparams`      | Layout parameter, i.e. `ViewGroup.LayoutParams`, created using `LayoutParams` |
-| `id`           | Used to find the ID of the created object, defined using a string             |
-| `init`         | The initialization method body of `View`, passed as the last DSL parameter    |
+| Parameter Name | Description                                                                     |
+| -------------- | ------------------------------------------------------------------------------- |
+| `lparams`      | Layout parameter, i.e. `ViewGroup.LayoutParams`, created using `LayoutParams`   |
+| `id`           | Used to find the ID of the created object, defined using a string               |
+| `attrs`        | The XML attribute set for creating the `View`, created using `Hikage.Attribute` |
+| `init`         | The initialization method body of `View`, passed as the last DSL parameter      |
 
 > The following example
 
@@ -223,12 +224,13 @@ It must declare a generic type because `ViewGroup` is an abstract class and requ
 
 `ViewGroup.LayoutParams` is used by default when not declared.
 
-| Parameter Name | Description                                                                   |
-| -------------- | ----------------------------------------------------------------------------- |
-| `lparams`      | Layout parameter, i.e. `ViewGroup.LayoutParams`, created using `LayoutParams` |
-| `id`           | Used to find the ID of the created object, defined using a string             |
-| `init`         | The initialization method body of `ViewGroup`, passed in as DSL parameter     |
-| `performer`    | `Hikage.Performer` object, passed as the last DSL parameter                   |
+| Parameter Name | Description                                                                          |
+| -------------- | ------------------------------------------------------------------------------------ |
+| `lparams`      | Layout parameter, i.e. `ViewGroup.LayoutParams`, created using `LayoutParams`        |
+| `id`           | Used to find the ID of the created object, defined using a string                    |
+| `attrs`        | The XML attribute set for creating the `ViewGroup`, created using `Hikage.Attribute` |
+| `init`         | The initialization method body of `ViewGroup`, passed in as DSL parameter            |
+| `performer`    | `Hikage.Performer` object, passed as the last DSL parameter                          |
 
 The function of the `performer` parameter is to pass a new `Hikage.Performer` object downward as the creator of the sub-layout.
 
@@ -400,10 +402,11 @@ class MyCustomView(context: Context, attrs: AttributeSet? = null) : View(context
 inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomView(
     lparams: LayoutParams? = null,
     id: String? = null,
+    noinline attrs: HikageAttribute = {},
     noinline init: HikageView<MyCustomView> = {},
     // If this component is a container, you can declare a `performer` parameter.
     // performer: HikagePerformer<LP> = {}
-) = View<MyCustomView>(lparams, id, init)
+) = View<MyCustomView>(lparams, id, attrs, init)
 ```
 
 It would seem tedious to implement such complex functions manually every time.
@@ -483,6 +486,109 @@ The **Context parameters** feature is currently experimental. If you want to use
 please refer to [How to enable context parameters](https://kotlinlang.org/docs/context-parameters.html#how-to-enable-context-parameters) to enable the relevant compiler feature.
 
 This API will continue to evolve with Kotlin language updates and is not guaranteed to remain stable. If Kotlin removes this feature in the future, this API will also be removed.
+
+:::
+
+### XML Attribute Set
+
+Hikage supports passing in the XML attribute set via the parameter `attrs` when creating a component. These attribute values will be parsed dynamically at runtime and set to the component, and it will only take effect once when the component is created.
+
+Hikage supports most of the attributes defined by XML, which is very friendly to some old custom components that cannot modify attributes dynamically. You can directly use XML attributes to set their values without having to consider using reflection or exposing extra setter methods in your component.
+
+For example, in the following example, we can use the `android:text` attribute through `HikageAttribute` to set the text content of `TextView`.
+
+> The following example
+
+```kotlin
+TextView(
+    attrs = {
+        // Declare the "android" namespace.
+        android {
+            // The following is equivalent to android:text="Hello, World!".
+            set("text", "Hello, World!")
+        }
+    }
+) {
+    // Dynamically set content will overwrite XML attribute values.
+    text = "Hello, World!"
+}
+```
+
+`HikageAttribute` is the core DSL template for Hikage to build an XML attribute set. Each namespace provides an `AttributeScope`, in which you can use the `set` method to set the attribute value. The first parameter of the `set` method is the attribute name, and the second parameter is the attribute value.
+
+You can directly use the namespace approach to set property values as in the example above.
+
+> The following example
+
+```kotlin
+val myAttrs = HikageAttribute {
+    // Declare your own namespace.
+    namespace("myScope") {
+        // The following is equivalent to myScope:myKey="My Value".
+        set("myKey", "My Value")
+    }
+    // Use the namespace of the current project.
+    app {
+        // The following is equivalent to app:myKey="My Value".
+        set("myKey", "My Value")
+    }
+}
+
+// Then set to the component.
+MyView(attrs = myAttrs)
+```
+
+You can also choose not to use the namespace DSL to set each attribute value independently.
+
+> The following example
+
+```kotlin
+val myAttrs = HikageAttribute {
+    // The following is equivalent to myScope:myKey="My Value".
+    set("myScope:myKey", "My Value")
+    // Or
+    namespace("myScope").set("myKey", "My Value")
+}
+```
+
+The second parameter of the `set` method provides three types: `String`, `Int`, and `Boolean`, which correspond to the three basic types of XML attribute values. Hikage will parse and set them dynamically based on the attribute's type.
+
+> The following example
+
+```kotlin
+val myAttrs = HikageAttribute {
+    android {
+        // Set the property value of the String type.
+        set("text", "Hello, World!")
+        // Use an integer scheme to set the color property.
+        set("textColor", Color.RED)
+        // Use a hexadecimal string scheme to set the color property.
+        set("textColor", "#FFFF0000")
+        // Use a boolean value to set the property value.
+        set("enabled", true)
+        // Declare a resource ID as a property value.
+        set("background", "@drawable/my_background")
+        // Use the resource ID directly as a property value.
+        set("background", R.drawable.my_background)
+        // Use an integer scheme to set padding.
+        set("padding", 16.dp)
+        // Use a string scheme to set padding.
+        set("padding", "16dp")
+    }
+}
+
+// Then set to the component.
+TextView(attrs = myAttrs)
+```
+::: warning
+
+When you set an attribute value, Hikage will dynamically parse and set it according to the type of the attribute. If the type of the attribute value you provide does not match the actual type of the attribute, it may cause an exception or fail silently at runtime.
+
+Hikage cannot guarantee that it can always correctly identify and parse dynamic type projection, please ensure that the provided property value type matches the actual type of the property and prefer to use a string to set the property value to avoid potential problems.
+
+The attribute value does not support dynamic modification after it is set. This is a design limitation of Android XML attributes, not a design defect of Hikage.
+
+Android XML attributes do not allow duplicate names, so you cannot set the same attribute multiple times in `HikageAttribute`, even if their namespaces are different.
 
 :::
 

@@ -6,33 +6,6 @@
 
 > 这里收录了 `Hikage` 可能会在后期添加的功能。
 
-### 处理 AttrtibuteSet
-
-`Hikage` 未来将会支持处理 `AttributeSet` 来对接 XML 原始的属性以实现接管一些并未在代码中对布局属性开放自定义的第三方组件。
-
-`Hikage` 目前已经支持自动化创建 `XmlBlock`，但尚未支持直接处理自定义的 `AttributeSet`，因为其历史遗留问题和处理难度较高，可能会折中考虑后期是否要继续完善此功能。
-
-> 示例如下
-
-```kotlin
-TextView(
-    id = "text_view",
-    // 通过 AttributeSet 传入的属性
-    attrs = {
-        namespace("android") {
-            set("text", "Hello, World!")
-            set("textSize", "16sp")
-            set("gravity", "center")
-        }
-    }
-) {
-    // 通过代码传入的属性
-    text = "Hello, World!"
-    textSize = 16f
-    gravity = Gravity.CENTER
-}
-```
-
 ### 生成组件 ID
 
 `Hikage` 未来可能会根据需求支持生成使用字符串自定义的组件 ID 的直接调用功能。

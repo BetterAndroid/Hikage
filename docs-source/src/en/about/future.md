@@ -6,35 +6,6 @@
 
 > Features that `Hikage` may add later are included here.
 
-### Process AttributeSet
-
-`Hikage` will support processing `AttributeSet` in the future to interface with the original XML properties to implement the takeover
-of some third-party components that are not open to customization of layout properties in the code.
-
-`Hikage` currently supports automated creation of `XmlBlock`, but does not support the direct processing
-of customized `AttributeSet`. Because of its historical problems and high processing difficulty, it may be considered whether to continue to improve this function in later stages.
-
-> The following example
-
-```kotlin
-TextView(
-    id = "text_view",
-    // Attributes passed through AttributeSet.
-    attrs = {
-        namespace("android") {
-            set("text", "Hello, World!")
-            set("textSize", "16sp")
-            set("gravity", "center")
-        }
-    }
-) {
-    // Attributes passed through code.
-    text = "Hello, World!"
-    textSize = 16f
-    gravity = Gravity.CENTER
-}
-```
-
 ### Generate Components ID
 
 `Hikage` may support the direct call function to generate component IDs customized with strings as required in the future.
