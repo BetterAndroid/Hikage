@@ -1,6 +1,6 @@
 [versions]
-kotlin = "2.3.21"
-ksp = "2.3.7"
+kotlin = "2.4.0"
+ksp = "2.3.9"
 auto-service-annotations = "1.1.1"
 auto-service-ksp = "1.2.0"
 agp = "9.2.1"
