@@ -50,7 +50,6 @@ allprojects {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
             freeCompilerArgs.addAll(
-                "-Xcontext-parameters",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-Xno-param-assertions",
                 "-Xno-call-assertions",
