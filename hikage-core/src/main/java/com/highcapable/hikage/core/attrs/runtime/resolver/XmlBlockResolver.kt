@@ -200,7 +200,10 @@ internal object XmlBlockResolver : AttributeSetResolver {
                         parameters(String::class, Boolean::class, Boolean::class, Boolean::class)
                         modifiers(Modifiers.NATIVE)
                     }?.invokeQuietly(sourceDir, false, false, false)
-            else -> error("Unsupported Android version.")
+            else -> {
+                isInitOnce = true
+                return
+            }
         } as? Long? ?: error("Failed to create ApkAssets.")
 
         blockParser = createXmlBlockFromApkAssets(xmlBlock ?: error("Failed to create ApkAssets."))
