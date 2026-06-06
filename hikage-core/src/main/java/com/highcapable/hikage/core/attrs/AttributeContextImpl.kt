@@ -31,7 +31,7 @@ import com.highcapable.hikage.core.attrs.entity.AttributeName
 internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
 
     /** The collected attributes. */
-    private var attrs = sequenceOf<AttributeItem>()
+    private val attrs = mutableListOf<AttributeItem>()
 
     override fun namespace(name: String) = AttributeScopeImpl(name, this)
 
@@ -72,5 +72,5 @@ internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
      * Build the collected attributes into a list.
      * @return [List]<[AttributeItem]>
      */
-    fun build() = attrs.toList()
+    fun build(): List<AttributeItem> = attrs
 }
