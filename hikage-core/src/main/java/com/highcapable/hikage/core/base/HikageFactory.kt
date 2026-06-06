@@ -104,7 +104,7 @@ class HikageFactoryBuilder private constructor() {
      * @param factory the factory.
      */
     fun add(factory: HikageFactory) {
-        factories.add(factory)
+        this.factories.add(factory)
     }
 
     /**
@@ -120,5 +120,5 @@ class HikageFactoryBuilder private constructor() {
      * @return <[List]>[HikageFactory]
      */
     @JvmSynthetic
-    internal fun build() = factories.toList()
+    internal fun build(): List<HikageFactory> = factories
 }
