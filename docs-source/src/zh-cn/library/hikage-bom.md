@@ -18,6 +18,9 @@
 [versions]
 hikage-bom = "<version>"
 
+[plugins]
+hikage = { id = "com.highcapable.hikage", version.ref = "hikage-bom" }
+
 [libraries]
 hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
@@ -31,10 +34,19 @@ hikage-widget-material = { module = "com.highcapable.hikage:hikage-widget-materi
 
 在你的项目 `build.gradle.kts` 中配置依赖。
 
+> 应用插件
+
+```kotlin
+alias(libs.plugins.hikage)
+```
+
+> 应用依赖
+
 ```kotlin
 implementation(platform(libs.hikage.bom))
 
 // 请在应用了 KSP 插件的模块中使用
+// 如果你使用了插件，将不再需要手动引入以下两行依赖
 ksp(platform(libs.hikage.bom))
 ksp(libs.hikage.compiler)
 
@@ -52,10 +64,19 @@ implementation(libs.hikage.widget.material)
 
 在你的项目 `build.gradle.kts` 中配置依赖。
 
+> 应用插件
+
+```kotlin
+id("com.highcapable.hikage") version "<version>"
+```
+
+> 应用依赖
+
 ```kotlin
 implementation(platform("com.highcapable.hikage:hikage-bom:<version>"))
 
 // 请在应用了 KSP 插件的模块中使用
+// 如果你使用了插件，将不再需要手动引入以下两行依赖
 ksp(platform("com.highcapable.hikage:hikage-bom:<version>"))
 ksp("com.highcapable.hikage:hikage-compiler")
 
@@ -74,6 +95,8 @@ implementation("com.highcapable.hikage:hikage-widget-material")
 `ksp` 是独立的 Gradle 依赖配置，`implementation(platform(...))` 不会自动管理 `ksp(...)` 中的依赖版本。
 如果你需要使用 `hikage-compiler`，请同时在 `ksp` 配置中引入 `hikage-bom`。
 
+我们推荐你优先使用 [hikage-gradle-plugin](./hikage-gradle-plugin.md) 来进行更简便的配置。
+
 :::
 
 ## 功能介绍
@@ -83,6 +106,7 @@ implementation("com.highcapable.hikage:hikage-widget-material")
 目前它会管理以下模块的版本：
 
 - [hikage-core](./hikage-core.md)
+- [hikage-gradle-plugin](./hikage-gradle-plugin.md)
 - [hikage-compiler](./hikage-compiler.md)
 - [hikage-extension](./hikage-extension.md)
 - [hikage-extension-betterandroid](./hikage-extension-betterandroid.md)

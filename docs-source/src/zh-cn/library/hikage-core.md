@@ -394,7 +394,11 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomVi
 ) = View<MyCustomView>(lparams, id, attrs, init)
 ```
 
-每次都手动实现这样复杂的函数看起来会很繁琐，如果你希望能够自动生成组件函数，可以引入并参考 [hikage-compiler](./hikage-compiler) 模块。
+::: tip
+
+每次都手动实现这样复杂的函数看起来会很繁琐，如果你希望能够自动生成组件函数，可以引入并参考 [hikage-gradle-plugin](./hikage-gradle-plugin)，或者手动引入 [hikage-compiler](./hikage-compiler) 模块。
+
+:::
 
 ### 组合与拆分布局
 
@@ -556,7 +560,7 @@ TextView(attrs = myAttrs)
 
 当你设置一个属性值时，Hikage 会根据属性的类型进行动态解析和设置，如果你提供的属性值类型与属性的实际类型不匹配，可能会导致运行时抛出异常或者静默失败。
 
-Hikage 不能保证每次都能正确识别并解析动态类型的投射，请确保你提供的属性值类型与属性的实际类型相匹配并尽量优先使用字符串设置属性值，以避免潜在的问题。
+Hikage 对于解析动态类型的投射可能存在一些局限性，请确保你提供的属性值类型与属性的实际类型相匹配并尽量优先使用字符串设置属性值，以避免潜在的问题。
 
 属性值在设置后不支持动态修改，这是 Android XML 属性的设计限制，不是 Hikage 的设计缺陷。
 
@@ -575,14 +579,6 @@ Hikage 提供了两种状态，`NonNullState` 和 `NullableState`，分为持有
 在布局组件中推荐直接使用 `View.setState(...)` 绑定状态，它会在 `View` `attach` 到窗口时注册监听，并在 `detach` 时自动取消监听，再次 `attach` 时会重新注册并同步最新状态。
 
 如果你需要直接监听状态变化，`observe(...)` 会返回一个 `StateSubscription`，你可以通过调用 `cancel()` 主动取消监听。
-
-::: warning
-
-直接使用 `state.observe(...)`，或在非 `View` 对象上使用 `setState(...)` 时，监听会作为长生命周期订阅存在，不会自动跟随 `View` 的 `detach` 释放。
-
-如果监听目标可能早于状态对象销毁，请保存返回的 `StateSubscription` 并在不再需要时调用 `cancel()`。
-
-:::
 
 你可以在如下场景中使用这两种状态。
 
@@ -635,6 +631,14 @@ val myLayout = Hikageable {
 
 在点击按钮时，我们修改 `mTextState` 的值为 `"Hello, Hikage!"`，`mDrawState` 的值为属性资源 `R.drawable.ic_my_drawable`，
 这时 `TextView` 和 `ImageView` 的文本和图片将会自动更新。
+
+::: warning
+
+直接使用 `state.observe(...)`，或在非 `View` 对象上使用 `setState(...)` 时，监听会作为长生命周期订阅存在，不会自动跟随 `View` 的 `detach` 释放。
+
+如果监听目标可能早于状态对象销毁，请保存返回的 `StateSubscription` 并在不再需要时调用 `cancel()`。
+
+:::
 
 ### 自定义布局装载器
 

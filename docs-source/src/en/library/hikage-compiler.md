@@ -8,9 +8,15 @@
 
 This is a Hikage automatic compilation module.
 
+::: tip
+
+Usually, you can use [hikage-gradle-plugin](./hikage-gradle-plugin.md) first to wire this module automatically.
+
+:::
+
 ## Configure Dependency
 
-You can add this module to your project using the following method.
+If you want to take over KSP and compiler dependencies manually, you can add this module to your project using the following method.
 
 We recommend that you first refer to [hikage-bom](./hikage-bom.md) to use BOM for unified version management.
 

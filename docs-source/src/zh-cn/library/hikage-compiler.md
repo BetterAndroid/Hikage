@@ -8,9 +8,15 @@
 
 这是 Hikage 的自动化编译模块。
 
+::: tip
+
+通常情况下，你可以优先使用 [hikage-gradle-plugin](./hikage-gradle-plugin.md) 自动装配此模块。
+
+:::
+
 ## 配置依赖
 
-你可以使用如下方式将此模块添加到你的项目中。
+如果你希望手动接管 KSP 与编译器依赖，可以使用如下方式将此模块添加到你的项目中。
 
 我们推荐你优先参考 [hikage-bom](./hikage-bom.md) 使用 BOM 统一管理版本。
 

@@ -72,6 +72,7 @@ For details, please see the [changelog](../about/changelog.md).
 
 - [hikage-bom](../library/hikage-bom.md)
 - [hikage-core](../library/hikage-core.md)
+- [hikage-gradle-plugin](../library/hikage-gradle-plugin.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-extension](../library/hikage-extension.md)
 - [hikage-extension-betterandroid](../library/hikage-extension-betterandroid.md)

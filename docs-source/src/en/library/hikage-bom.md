@@ -18,6 +18,9 @@ Add dependency in your project's `gradle/libs.versions.toml`.
 [versions]
 hikage-bom = "<version>"
 
+[plugins]
+hikage = { id = "com.highcapable.hikage", version.ref = "hikage-bom" }
+
 [libraries]
 hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
@@ -31,10 +34,20 @@ hikage-widget-material = { module = "com.highcapable.hikage:hikage-widget-materi
 
 Configure dependency in your project's `build.gradle.kts`.
 
+> Apply Plugin
+
+```kotlin
+alias(libs.plugins.hikage)
+```
+
+> Apply Dependency
+
 ```kotlin
 implementation(platform(libs.hikage.bom))
 
 // Please use in the module where the KSP plugin is applied.
+// If you are using the plugin,
+// you will no longer need to manually include the following two dependencies.
 ksp(platform(libs.hikage.bom))
 ksp(libs.hikage.compiler)
 
@@ -52,10 +65,20 @@ Please change `<version>` to the version displayed at the top of this document.
 
 Configure dependency in your project's `build.gradle.kts`.
 
+> Apply Plugin
+
+```kotlin
+id("com.highcapable.hikage") version "<version>"
+```
+
+> Apply Dependency
+
 ```kotlin
 implementation(platform("com.highcapable.hikage:hikage-bom:<version>"))
 
 // Please use in the module where the KSP plugin is applied.
+// If you are using the plugin,
+// you will no longer need to manually include the following two dependencies.
 ksp(platform("com.highcapable.hikage:hikage-bom:<version>"))
 ksp("com.highcapable.hikage:hikage-compiler")
 
@@ -74,6 +97,8 @@ Please change `<version>` to the version displayed at the top of this document.
 `ksp` is an independent Gradle dependency configuration, so `implementation(platform(...))` does not manage dependency versions declared in `ksp(...)`.
 If you need to use `hikage-compiler`, also add `hikage-bom` to the `ksp` configuration.
 
+We recommend you to use [hikage-gradle-plugin](./hikage-gradle-plugin.md) for easier configuration.
+
 :::
 
 ## Function Introduction
@@ -83,6 +108,7 @@ If you need to use `hikage-compiler`, also add `hikage-bom` to the `ksp` configu
 It currently manages the versions of the following modules:
 
 - [hikage-core](./hikage-core.md)
+- [hikage-gradle-plugin](./hikage-gradle-plugin.md)
 - [hikage-compiler](./hikage-compiler.md)
 - [hikage-extension](./hikage-extension.md)
 - [hikage-extension-betterandroid](./hikage-extension-betterandroid.md)

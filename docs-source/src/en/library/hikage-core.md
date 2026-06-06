@@ -409,8 +409,13 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomVi
 ) = View<MyCustomView>(lparams, id, attrs, init)
 ```
 
+::: tip
+
 It would seem tedious to implement such complex functions manually every time.
-If you want to be able to automatically generate component functions, you can introduce and refer to the [hikage-compiler](./hikage-compiler) module.
+If you want to be able to automatically generate component functions,
+you can introduce and refer to the [hikage-gradle-plugin](./hikage-gradle-plugin), or manually introduce the [hikage-compiler](./hikage-compiler) module.
+
+:::
 
 ### Combination and Disassembly Layout
 
@@ -575,7 +580,7 @@ TextView(attrs = myAttrs)
 
 When you set an attribute value, Hikage will dynamically parse and set it according to the type of the attribute. If the type of the attribute value you provide does not match the actual type of the attribute, it may cause an exception or fail silently at runtime.
 
-Hikage cannot guarantee that it can always correctly identify and parse dynamic type projection, please ensure that the provided property value type matches the actual type of the property and prefer to use a string to set the property value to avoid potential problems.
+Hikage may have some limitations in parsing dynamic type casting, please make sure that the type of the attribute value you provide matches the actual type of the attribute and try to use strings to set attribute values preferentially to avoid potential issues.
 
 The attribute value does not support dynamic modification after it is set. This is a design limitation of Android XML attributes, not a design defect of Hikage.
 
@@ -596,15 +601,6 @@ It subscribes the observer when the `View` is attached to window, automatically 
 and subscribes again with the latest state when reattached.
 
 If you need to observe state changes directly, `observe(...)` will return a `StateSubscription`, and you can call `cancel()` to cancel it manually.
-
-::: warning
-
-When using `state.observe(...)` directly, or using `setState(...)` on a non-`View` object, the observer is a long lifecycle subscription
-and will not be automatically released with `View` detach.
-
-If the observer target may be destroyed before the state object, keep the returned `StateSubscription` and call `cancel()` when it is no longer needed.
-
-:::
 
 You can use both states in the following scenarios.
 
@@ -657,6 +653,15 @@ Then continue to declare a nullable state `mDrawState` with `null` using `mutabl
 
 When clicking the button, we modify the value of `mTextState` to `"Hello, Hikage!"` and the value of `mDrawState` is the property resource `R.drawable.ic_my_drawable`.
 At this time, the text and images of `TextView` and `ImageView` will be automatically updated.
+
+::: warning
+
+When using `state.observe(...)` directly, or using `setState(...)` on a non-`View` object, the observer is a long lifecycle subscription
+and will not be automatically released with `View` detach.
+
+If the observer target may be destroyed before the state object, keep the returned `StateSubscription` and call `cancel()` when it is no longer needed.
+
+:::
 
 ### Custom Layout Factory
 
