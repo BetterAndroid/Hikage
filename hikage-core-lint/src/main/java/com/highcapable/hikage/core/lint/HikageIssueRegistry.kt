@@ -31,7 +31,7 @@ import com.highcapable.hikage.core.lint.detector.HikageSafeTypeCastDetector
 import com.highcapable.hikage.core.lint.detector.HikageableBeyondScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageableFunctionsDetector
 import com.highcapable.hikage.core.lint.detector.WidgetsUsageDetector
-import com.highcapable.hikage.generated.HikageCoreLintProperties
+import com.highcapable.hikage.generated.HikageProperties
 
 class HikageIssueRegistry : IssueRegistry() {
 
@@ -45,12 +45,12 @@ class HikageIssueRegistry : IssueRegistry() {
         WidgetsUsageDetector.ISSUE
     )
 
-    override val minApi = HikageCoreLintProperties.PROJECT_HIKAGE_CORE_LINT_MIN_API
+    override val minApi = HikageProperties.PROJECT_HIKAGE_CORE_LINT_MIN_API
     override val api = CURRENT_API
     override val vendor = Vendor(
-        vendorName = HikageCoreLintProperties.PROJECT_NAME,
-        identifier = HikageCoreLintProperties.PROJECT_HIKAGE_CORE_LINT_IDENTIFIER,
-        feedbackUrl = "${HikageCoreLintProperties.PROJECT_URL}/issues",
-        contact = HikageCoreLintProperties.PROJECT_URL
+        vendorName = HikageProperties.PROJECT_NAME,
+        identifier = HikageProperties.PROJECT_HIKAGE_CORE_LINT_IDENTIFIER,
+        feedbackUrl = "${HikageProperties.PROJECT_URL}/issues",
+        contact = HikageProperties.PROJECT_URL
     )
 }

@@ -22,6 +22,19 @@ plugins {
 }
 
 gropify {
+    global {
+        android {
+            includeKeys("^project\\..*$".toRegex())
+            className = rootProject.name
+            isRestrictedAccessEnabled = true
+        }
+        jvm {
+            includeKeys("^project\\..*$".toRegex())
+            className = rootProject.name
+            isRestrictedAccessEnabled = true
+        }
+    }
+
     rootProject {
         common {
             isEnabled = false
@@ -39,24 +52,6 @@ gropify {
             isEnabled = false
         }
     }
-
-    projects(
-        ":hikage-core",
-        ":hikage-core-lint",
-        ":hikage-compiler",
-        ":hikage-extension",
-        ":hikage-extension-compose",
-        ":hikage-extension-betterandroid",
-        ":hikage-widget-androidx",
-        ":hikage-widget-material"
-    ) {
-        android {
-            isRestrictedAccessEnabled = true
-        }
-        jvm {
-            isRestrictedAccessEnabled = true
-        }
-    }
 }
 
 rootProject.name = "Hikage"
@@ -64,9 +59,12 @@ rootProject.name = "Hikage"
 include(":samples:demo-android")
 include(":hikage-bom")
 include(
+    ":hikage-compiler",
+    ":hikage-gradle-plugin"
+)
+include(
     ":hikage-core",
     ":hikage-core-lint",
-    ":hikage-compiler",
     ":hikage-extension",
     ":hikage-extension-compose",
     ":hikage-extension-betterandroid",

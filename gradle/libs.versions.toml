@@ -44,7 +44,9 @@ maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publ
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 ksp-symbol-processing-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+ksp-symbol-processing-gradle-plugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "ksp" }
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto-service-annotations" }
 auto-service-ksp = { group = "dev.zacsweers.autoservice", name = "auto-service-ksp", version.ref = "auto-service-ksp" }
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
@@ -52,7 +54,8 @@ kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref 
 betterandroid-android-bom = { group = "com.highcapable.betterandroid", name = "android-bom", version.ref = "betterandroid-android-bom" }
 betterandroid-ui-component = { group = "com.highcapable.betterandroid", name = "ui-component" }
 betterandroid-ui-component-adapter = { group = "com.highcapable.betterandroid", name = "ui-component-adapter" }
-betterandroid-ui-extension = { group = "com.highcapable.betterandroid", name = "ui-extension" }
+# API usage of ui-extension must specify the version.
+betterandroid-ui-extension = { group = "com.highcapable.betterandroid", name = "ui-extension", version.ref = "betterandroid-android-bom" }
 betterandroid-system-extension = { group = "com.highcapable.betterandroid", name = "system-extension" }
 hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypass", version.ref = "hiddenapibypass" }
 kavaref-bom = { group = "com.highcapable.kavaref", name = "kavaref-bom", version.ref = "kavaref-bom" }

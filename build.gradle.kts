@@ -79,20 +79,19 @@ libraryProjects {
         }
 
         configure<MavenPublishBaseExtension> {
-            if (name != Libraries.HIKAGE_BOM && name != Libraries.HIKAGE_COMPILER)
+            if (name !in Libraries.infraLibs)
                 configure(AndroidSingleVariantLibrary(JavadocJar.None(), SourcesJar.Sources()))
         }
 
         // Only apply to publishable tasks.
         if (gradle.startParameter.taskNames.any { it.startsWith("publish") })
-            if (name != Libraries.HIKAGE_BOM && name != Libraries.HIKAGE_COMPILER)
-                configure<LibraryExtension> {
-                    sourceSets.configureEach {
-                        // Add KSP generated sources to the source set.
-                        val kspSources = layout.buildDirectory.dir("generated/ksp/release").get().asFile
-                        if (kspSources.exists()) kotlin.directories += kspSources.path
-                    }
+            if (name !in Libraries.infraLibs) configure<LibraryExtension> {
+                sourceSets.configureEach {
+                    // Add KSP generated sources to the source set.
+                    val kspSources = layout.buildDirectory.dir("generated/ksp/release").get().asFile
+                    if (kspSources.exists()) kotlin.directories += kspSources.path
                 }
+            }
     }
 
     plugins.withId(dokkaPluginId) {
@@ -166,21 +165,29 @@ fun libraryProjects(action: Action<in Project>) {
 
 object Libraries {
     const val HIKAGE_BOM = "hikage-bom"
+    const val HIKAGE_GRADLE_PLUGIN = "hikage-gradle-plugin"
+    const val HIKAGE_COMPILER = "hikage-compiler"
     const val HIKAGE_CORE = "hikage-core"
     const val HIKAGE_EXTENSION = "hikage-extension"
     const val HIKAGE_EXTENSION_COMPOSE = "hikage-extension-compose"
     const val HIKAGE_EXTENSION_BETTERANDROID = "hikage-extension-betterandroid"
-    const val HIKAGE_COMPILER = "hikage-compiler"
     const val HIKAGE_WIDGET_ANDROIDX = "hikage-widget-androidx"
     const val HIKAGE_WIDGET_MATERIAL = "hikage-widget-material"
 
+    val infraLibs = listOf(
+        HIKAGE_BOM,
+        HIKAGE_GRADLE_PLUGIN,
+        HIKAGE_COMPILER
+    )
+
     val entries = listOf(
         HIKAGE_BOM,
+        HIKAGE_GRADLE_PLUGIN,
+        HIKAGE_COMPILER,
         HIKAGE_CORE,
         HIKAGE_EXTENSION,
         HIKAGE_EXTENSION_COMPOSE,
         HIKAGE_EXTENSION_BETTERANDROID,
-        HIKAGE_COMPILER,
         HIKAGE_WIDGET_ANDROIDX,
         HIKAGE_WIDGET_MATERIAL
     )
