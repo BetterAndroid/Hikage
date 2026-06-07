@@ -29,16 +29,16 @@ import android.content.res.AssetManager
 import android.content.res.XmlResourceParser
 import android.content.res.loader.AssetsProvider
 import android.content.res.loader.ResourcesProvider
-import androidx.annotation.StyleRes
+import androidx.annotation.LayoutRes
 import com.highcapable.betterandroid.system.extension.utils.AndroidVersion
 import com.highcapable.hikage.bypass.HiddenApiResolver
+import com.highcapable.hikage.core.R
 import com.highcapable.hikage.core.attrs.entity.AttributeItem
 import com.highcapable.hikage.core.attrs.runtime.builder.BinaryXmlBuilder
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.condition.type.Modifiers
 import com.highcapable.kavaref.extension.lazyClass
 import org.xmlpull.v1.XmlPullParser
-import android.R as Android_R
 
 /**
  * The resolver for creating [XmlResourceParser] from `XmlBlock`.
@@ -215,18 +215,16 @@ internal object XmlBlockResolver : AttributeSetResolver {
     /**
      * Create a new empty parser.
      * @param context the context.
-     * @param resId the style resource id, default is [Android_R.style.Widget].
+     * @param sourceResId the source layout resource id.
      * @return [XmlResourceParser]
      */
-    fun newParser(context: Context, @StyleRes resId: Int = Android_R.style.Widget): XmlResourceParser {
+    fun newParser(context: Context, @LayoutRes sourceResId: Int = R.layout.layout_hikage_view_tree_node): XmlResourceParser {
         initParser(context.applicationContext.applicationInfo)
 
         return if (AndroidVersion.isAtLeast(AndroidVersion.P)) {
             if (!isInitOnce) return createEmptyParser(context)
 
-            val parser = blockParser?.let {
-                newParser?.copy()?.of(it)?.invokeQuietly<XmlResourceParser>(resId)
-            }
+            val parser = blockParser?.let { createParserOf(it, sourceResId) }
             parser ?: createEmptyParser(context)
         } else createEmptyParser(context)
     }
@@ -288,10 +286,11 @@ internal object XmlBlockResolver : AttributeSetResolver {
     /**
      * Create an [XmlResourceParser] from the given `XmlBlock` [block] instance.
      * @param block the `XmlBlock` instance.
+     * @param sourceResId the source layout resource id.
      * @return [XmlResourceParser] or null.
      */
-    private fun createParserOf(block: Any): XmlResourceParser? =
-        newParser?.copy()?.of(block)?.invokeQuietly<XmlResourceParser>(0)
+    private fun createParserOf(block: Any, @LayoutRes sourceResId: Int = R.layout.layout_hikage_view_tree_node): XmlResourceParser? =
+        newParser?.copy()?.of(block)?.invokeQuietly<XmlResourceParser>(sourceResId)
             ?: newParserEmptyArg?.copy()?.of(block)?.invokeQuietly<XmlResourceParser>()
 
     /**
