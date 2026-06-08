@@ -54,7 +54,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 ```
 
-## Functional Overview
+## Features Overview
 
 The project is divided into multiple modules. You can choose the module you wish to include as a dependency in your project, but be sure to include the **hikage-core** module.
 
