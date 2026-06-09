@@ -3,9 +3,14 @@
 > In most scenarios, app packages can be compressed through obfuscation.
 > Here is an introduction to how to configure obfuscation rules.
 
-`Hikage` itself does not require additional configuration of obfuscation rules, since `View` objects created by Hikage do not need to be defined in XML, they can be equally obfuscated.
+`Hikage` itself does not require additional obfuscation rules. Since `View` objects created by Hikage do not need to be declared in XML, their class names can also be obfuscated.
 
-However, please note that if a custom `View` is not defined in XML, the latest R8 rules will choose to obfuscate it. To prevent the constructor from being lost, you still need to add the following rules to avoid problems.
+## Keep Custom Constructors
+
+If a custom `View` is not declared in XML, R8 may remove constructors that it cannot discover directly.
+To let Hikage continue creating custom `View`s through the `(Context)` or `(Context, AttributeSet)` constructors, add the following rule.
+
+This rule keeps only the constructors and still allows class names to be obfuscated.
 
 ```
 -keep,allowobfuscation class * extends android.view.View {
@@ -13,8 +18,49 @@ However, please note that if a custom `View` is not defined in XML, the latest R
 }
 ```
 
-If `Hikage` itself encounters problems after being obfuscated, you can use the following more aggressive rules to prevent `Hikage` from being obfuscated.
+If you provide a custom `ViewGroup.LayoutParams` and it is only created through Hikage's `LayoutParams` DSL,
+you also need to keep its constructors.
 
 ```
--keep class com.highcapable.hikage.**
+-keep,allowobfuscation class * extends android.view.ViewGroup$LayoutParams {
+    <init>(...);
+}
 ```
+
+## HikageAttribute String References
+
+`HikageAttribute` string resource references follow the same form as XML.
+
+```kotlin
+HikageAttribute {
+    app {
+        set("dataSets", "@array/simple_string_data")
+    }
+}
+```
+
+This form resolves resources by name at runtime. R8 code obfuscation does not affect it,
+but if you have `isShrinkResources = true` configured and the target resource is only referenced through this string,
+the resource shrinker may consider it unused and remove it.
+
+You can solve this problem by using direct resource ID references.
+
+```kotlin
+HikageAttribute {
+    app {
+        set("dataSets", R.array.simple_string_data)
+    }
+}
+```
+
+If you must keep the XML-style string reference, add a resource keep file in the app module, for example `res/raw/my_res_keep.xml`.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@array/simple_string_data" />
+```
+
+The same applies to custom `attrs.xml` enum, flag, and reference values
+that are only reached through dynamic strings.
+Use resource IDs where possible, or keep the corresponding resources with `tools:keep`.
