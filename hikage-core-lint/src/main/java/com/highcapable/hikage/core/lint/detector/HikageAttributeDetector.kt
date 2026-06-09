@@ -31,15 +31,19 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
+import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.uast.UCallExpression
+import org.jetbrains.uast.toUElementOfType
 
 class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
@@ -84,9 +88,25 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             )
         )
 
+        val INEFFECTIVE_LAYOUT_ATTRIBUTE_ISSUE = Issue.create(
+            id = "IneffectiveHikageLayoutAttribute",
+            briefDescription = "Hikage layout attribute ineffective.",
+            explanation = "Attributes with the `layout_` prefix have no effect when `lparams` is specified in the same view declaration.",
+            category = Category.CORRECTNESS,
+            priority = 5,
+            severity = Severity.WARNING,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
         private const val NAMESPACE_FUNCTION = "namespace"
         private const val SET_FUNCTION = "set"
         private const val HIKAGE_ATTRIBUTE_FUNCTION = "HikageAttribute"
+        private const val ATTRS_ARGUMENT = "attrs"
+        private const val LPARAMS_ARGUMENT = "lparams"
+        private const val LAYOUT_ATTRIBUTE_PREFIX = "layout_"
         private const val ANDROID_NAMESPACE = "android"
         private const val APP_NAMESPACE = "app"
         private const val ATTRS_UTILS_SUFFIX = ".attrs.HikageAttributeUtils"
@@ -99,12 +119,13 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
     override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
 
         private val attributes = hashMapOf<PsiElement, MutableMap<String, PsiElement>>()
+        private val reportedLayoutAttributes = hashSetOf<PsiElement>()
 
         override fun visitCallExpression(node: UCallExpression) {
             val callExpr = node.sourcePsi as? KtCallExpression ?: return
             val method = node.resolve() ?: return
 
-            startLint(context, node, callExpr, method, attributes)
+            startLint(context, node, callExpr, method, attributes, reportedLayoutAttributes)
         }
     }
 
@@ -113,7 +134,8 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         node: UCallExpression,
         callExpr: KtCallExpression,
         method: PsiMethod,
-        attributes: MutableMap<PsiElement, MutableMap<String, PsiElement>>
+        attributes: MutableMap<PsiElement, MutableMap<String, PsiElement>>,
+        reportedLayoutAttributes: MutableSet<PsiElement>
     ) {
         when {
             method.isHikageNamespaceFunction() -> visitAndReportNamespaceShortcut(context, callExpr)
@@ -123,6 +145,8 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
         if (method.isHikageRootSetFunction() || method.isHikageScopeSetFunction())
             visitAndReportDuplicate(context, node, callExpr, attributes)
+
+        if (method.hasHikageable()) visitAndReportIneffectiveLayoutAttributes(context, callExpr, method, reportedLayoutAttributes)
     }
 
     private fun visitAndReportNamespaceShortcut(context: JavaContext, callExpr: KtCallExpression) {
@@ -211,6 +235,38 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         )
     }
 
+    private fun visitAndReportIneffectiveLayoutAttributes(
+        context: JavaContext,
+        callExpr: KtCallExpression,
+        method: PsiMethod,
+        reportedLayoutAttributes: MutableSet<PsiElement>
+    ) {
+        val lparamsArg = callExpr.findArgument(method, LPARAMS_ARGUMENT) ?: return
+        val lparamsExpr = lparamsArg.getArgumentExpression() ?: return
+        if (lparamsExpr.text == "null") return
+
+        val attrsArg = callExpr.findArgument(method, ATTRS_ARGUMENT) ?: return
+        val attrsExpr = attrsArg.getArgumentExpression() ?: return
+        val inlineLambda = attrsExpr as? KtLambdaExpression
+        if (inlineLambda != null) {
+            context.reportIneffectiveLayoutAttributes(inlineLambda.collectLayoutAttributeReports(), reportedLayoutAttributes)
+            return
+        }
+
+        val reusableLambda = attrsExpr.resolveAttributeLambda() ?: return
+        val reports = reusableLambda.collectLayoutAttributeReports()
+        if (reports.isEmpty()) return
+
+        val location = context.getLocation(attrsExpr)
+        context.report(
+            INEFFECTIVE_LAYOUT_ATTRIBUTE_ISSUE,
+            attrsExpr,
+            location,
+            message = "Attributes in `${attrsExpr.text}` with the `layout_` prefix have no effect because `lparams` is specified."
+        )
+        context.reportIneffectiveLayoutAttributes(reports, reportedLayoutAttributes)
+    }
+
     private fun visitAndReportDuplicate(
         context: JavaContext,
         node: UCallExpression,
@@ -233,6 +289,23 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         )
     }
 
+    private fun JavaContext.reportIneffectiveLayoutAttributes(
+        reports: List<LayoutAttributeReport>,
+        reportedLayoutAttributes: MutableSet<PsiElement>
+    ) {
+        reports.forEach {
+            if (!reportedLayoutAttributes.add(it.element)) return@forEach
+
+            val location = getLocation(it.element)
+            report(
+                INEFFECTIVE_LAYOUT_ATTRIBUTE_ISSUE,
+                it.element,
+                location,
+                message = "Attribute `${it.name}` has no effect because `lparams` is specified."
+            )
+        }
+    }
+
     private fun PsiMethod.isHikageNamespaceFunction() =
         name == NAMESPACE_FUNCTION && containingClass?.qualifiedName == attrsUtilsClassName
 
@@ -251,6 +324,18 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
     private val attrsPackageName
         get() = DeclaredSymbol.HIKAGE_CLASS.removeSuffix(HIKAGE_CLASS_SUFFIX) + ".attrs"
 
+    private fun KtCallExpression.findArgument(method: PsiMethod, name: String): KtValueArgument? {
+        val parameters = method.parameterList.parameters
+        val arguments = valueArgumentList?.arguments ?: emptyList()
+        val namedArg = arguments.firstOrNull { it.getArgumentName()?.asName?.identifier == name }
+        if (namedArg != null) return namedArg
+
+        return arguments.firstOrNull {
+            val index = arguments.indexOf(it)
+            parameters.getOrNull(index)?.name == name
+        }
+    }
+
     private fun KtCallExpression.namespaceShortcutReplacement(namespace: String): String? {
         if (calleeExpression?.text != NAMESPACE_FUNCTION) return null
         if ((valueArgumentList?.arguments?.size ?: 0) != 1) return null
@@ -267,6 +352,48 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         val name = substring(separator + 1)
         if (namespace.isEmpty() || name.isEmpty()) return null
         return name
+    }
+
+    private tailrec fun KtExpression.resolveAttributeLambda(visited: MutableSet<PsiElement> = hashSetOf()): KtLambdaExpression? {
+        if (!visited.add(this)) return null
+
+        return when (this) {
+            is KtLambdaExpression -> this
+            is KtCallExpression -> attributeLambda()
+            is KtNameReferenceExpression -> {
+                val property = references.firstOrNull()?.resolve() as? KtProperty ?: return null
+                if (!visited.add(property)) return null
+                property.initializer?.resolveAttributeLambda(visited)
+            }
+            else -> null
+        }
+    }
+
+    private fun KtCallExpression.attributeLambda(): KtLambdaExpression? {
+        if (calleeExpression?.text != HIKAGE_ATTRIBUTE_FUNCTION) return null
+        return lambdaArguments.lastOrNull()?.getLambdaExpression()
+    }
+
+    private fun KtLambdaExpression.collectLayoutAttributeReports(): List<LayoutAttributeReport> {
+        val reports = mutableListOf<LayoutAttributeReport>()
+
+        fun visit(element: PsiElement) {
+            val callExpr = element as? KtCallExpression
+            val method = callExpr?.toUElementOfType<UCallExpression>()?.resolve()
+            val isHikageSet = method?.isHikageRootSetFunction() == true || method?.isHikageScopeSetFunction() == true
+            val attrName = callExpr?.takeIf { isHikageSet }?.firstStringLiteralText()
+            val attrKey = attrName?.attributeKey()
+            if (attrKey?.startsWith(LAYOUT_ATTRIBUTE_PREFIX) == true) {
+                val attrNameExpr = callExpr.valueArguments.firstOrNull()?.getArgumentExpression()
+                if (attrNameExpr != null)
+                    reports.add(LayoutAttributeReport(attrKey, attrNameExpr))
+            }
+
+            element.children.forEach { visit(it) }
+        }
+
+        visit(this)
+        return reports
     }
 
     private fun KtCallExpression.findAttributeRoot(): PsiElement? {
@@ -357,4 +484,9 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
         return text.substring(1, text.length - 1)
     }
+
+    private data class LayoutAttributeReport(
+        val name: String,
+        val element: PsiElement
+    )
 }

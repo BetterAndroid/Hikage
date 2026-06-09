@@ -39,6 +39,7 @@ class HikageIssueRegistry : IssueRegistry() {
         HikageAttributeDetector.MISSING_NAMESPACE_ISSUE,
         HikageAttributeDetector.DUPLICATE_ISSUE,
         HikageAttributeDetector.NAMESPACE_ISSUE,
+        HikageAttributeDetector.INEFFECTIVE_LAYOUT_ATTRIBUTE_ISSUE,
         HikageableBeyondScopeDetector.ISSUE,
         HikageableFunctionsDetector.ISSUE,
         HikageSafeTypeCastDetector.ISSUE,
