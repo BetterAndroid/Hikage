@@ -22,7 +22,8 @@ const navigationLinks = {
         '/library/hikage-widget-material'
     ],
     config: [
-        '/config/r8-proguard'
+        '/config/r8-proguard',
+        '/config/lint-rules'
     ],
     about: [
         '/about/changelog',
