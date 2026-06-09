@@ -16,9 +16,9 @@ The following are all Lint rules currently in effect (Only effective for Kotlin 
 | [DuplicateHikageAttribute](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)                     | `CORRECTNESS` | `ERROR`   | `6`      | Attributes declared in the same attribute scope must not use duplicate keys.                                  |
 | [ReplaceWithHikageAttributeNamespaceShortcuts](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt) | `USABILITY`   | `WARNING` | `5`      | Use Hikage attribute namespace shortcuts and keep attribute names consistent with their namespace scope.      |
 | [IneffectiveHikageLayoutAttribute](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)             | `CORRECTNESS` | `WARNING` | `5`      | Attributes with the `layout_` prefix have no effect when `lparams` is specified in the same view declaration. |
-| [HikageableBeyondScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableBeyondScopeDetector.kt)                  | `COMPLIANCE`  | `ERROR`   | `10`     | Functions marked with `@Hikageable` can only be passed in `Hikage.Performer`.                                 |
-| [HikageableFunctions](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableFunctionsDetector.kt)                      | `COMPLIANCE`  | `ERROR`   | `10`     | Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.              |
-| [UseHikageSafeTypeCast](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageSafeTypeCastDetector.kt)                     | `COMPLIANCE`  | `WARNING` | `5`      | Recommended to use `hikage.get<YourView>("your_id")` instead of `hikage["your_id"] as YourView`.              |
+| [HikageableBeyondScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableBeyondScopeDetector.kt)                  | `CORRECTNESS` | `ERROR`   | `10`     | Functions marked with `@Hikageable` can only be passed in `Hikage.Performer`.                                 |
+| [HikageableFunctions](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableFunctionsDetector.kt)                      | `CORRECTNESS` | `ERROR`   | `10`     | Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.              |
+| [ReplaceWithHikageSafeTypeCast](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageSafeTypeCastDetector.kt)             | `USABILITY`   | `WARNING` | `5`      | Recommended to use `hikage.get<YourView>("your_id")` instead of `hikage["your_id"] as YourView`.              |
 | [ReplaceWithHikageWidgets](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/WidgetsUsageDetector.kt)                        | `USABILITY`   | `WARNING` | `5`      | Use the built-in widget function component provided by Hikage like `TextView(...)` instead.                   |
 
 </div>
@@ -33,7 +33,7 @@ If you want to disable a specific rule or change its severity, you can create a 
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="ReplaceWithHikageWidgets" severity="ignore" />
-    <issue id="UseHikageSafeTypeCast" severity="error" />
+    <issue id="ReplaceWithHikageSafeTypeCast" severity="error" />
 </lint>
 ```
 
@@ -52,7 +52,7 @@ You can also control them directly in Gradle.
 android {
     lint {
         disable += "ReplaceWithHikageWidgets"
-        warning += "UseHikageSafeTypeCast"
+        warning += "ReplaceWithHikageSafeTypeCast"
         error += "HikageableFunctions"
     }
 }
