@@ -23,6 +23,7 @@
 
 package com.highcapable.hikage.core.layout
 
+import android.util.AttributeSet
 import android.view.ViewGroup
 import com.highcapable.betterandroid.ui.extension.view.LayoutParamsWrapContent
 import com.highcapable.betterandroid.ui.extension.view.ViewLayoutParams
@@ -65,7 +66,8 @@ class LayoutParams private constructor(
      */
     private class WrapperBuilder(
         val delegate: LayoutParams?,
-        val lparams: ViewGroup.LayoutParams?
+        val lparams: ViewGroup.LayoutParams?,
+        val attrs: Lazy<AttributeSet>?
     )
 
     /** The layout params body. */
@@ -78,6 +80,9 @@ class LayoutParams private constructor(
 
         /** The [ViewGroup.generateLayoutParams] method resolver map. */
         private val generateLayoutParamsResolvers = mutableMapOf<KClass<out ViewGroup>, MethodResolver<ViewGroup>?>()
+
+        /** The [ViewGroup.generateLayoutParams] method resolver map with [AttributeSet]. */
+        private val generateLayoutParamsWithAttributeSetResolvers = mutableMapOf<KClass<out ViewGroup>, MethodResolver<ViewGroup>?>()
 
         /**
          * Create a new [LayoutParams].
@@ -109,6 +114,7 @@ class LayoutParams private constructor(
          * @param parent the parent view group.
          * @param delegate the delegate.
          * @param lparams the another layout params.
+         * @param attrs the layout params attributes.
          * @return [LayoutParams]
          */
         fun <LP : ViewGroup.LayoutParams> from(
@@ -116,9 +122,10 @@ class LayoutParams private constructor(
             lpClass: KClass<LP>,
             parent: ViewGroup?,
             delegate: LayoutParams?,
-            lparams: ViewGroup.LayoutParams? = null
+            lparams: ViewGroup.LayoutParams? = null,
+            attrs: Lazy<AttributeSet>? = null
         ) = LayoutParams(session, lpClass as KClass<ViewGroup.LayoutParams>, parent).apply {
-            wrapperBuilder = WrapperBuilder(delegate, lparams)
+            wrapperBuilder = WrapperBuilder(delegate, lparams, attrs)
         }
 
         /**
@@ -140,13 +147,35 @@ class LayoutParams private constructor(
 
             return resolver
         }
+
+        /**
+         * Get [ViewGroup.generateLayoutParams] method resolver with [AttributeSet].
+         * @receiver the parent view group.
+         * @return [MethodResolver] or null.
+         */
+        private fun ViewGroup.generateLayoutParamsWithAttributeSetResolver(): MethodResolver<ViewGroup>? {
+            val viewClass = this::class
+            if (generateLayoutParamsWithAttributeSetResolvers.containsKey(viewClass))
+                return generateLayoutParamsWithAttributeSetResolvers[viewClass]
+
+            val resolver = asResolver().optional(silent = true).firstMethodOrNull {
+                name = "generateLayoutParams"
+                parameters(AttributeSet::class)
+                superclass()
+            }
+            generateLayoutParamsWithAttributeSetResolvers[viewClass] = resolver
+
+            return resolver
+        }
     }
 
     /**
      * Create a default layout params.
      * @return [ViewGroup.LayoutParams]
      */
-    private fun createDefaultLayoutParams(lparams: ViewGroup.LayoutParams? = null): ViewGroup.LayoutParams {
+    private fun createDefaultLayoutParams(lparams: ViewGroup.LayoutParams? = null, attrs: Lazy<AttributeSet>? = null): ViewGroup.LayoutParams {
+        if (lparams != null && lpClass.isInstance(lparams)) return lparams
+
         val wrapped = lparams?.let {
             parent?.generateLayoutParamsResolver()
                 ?.copy()?.of(parent)
@@ -154,6 +183,11 @@ class LayoutParams private constructor(
         } ?: lparams
 
         return wrapped
+            ?: attrs?.let {
+                parent?.generateLayoutParamsWithAttributeSetResolver()
+                    ?.copy()?.of(parent)
+                    ?.invokeQuietly<ViewGroup.LayoutParams>(it.value)
+            }
             // Build a default.
             ?: lpClass.createInstanceOrNull(LayoutParamsWrapContent, LayoutParamsWrapContent)
             ?: throw PerformerException("Create default layout params failed.")
@@ -173,8 +207,7 @@ class LayoutParams private constructor(
             lparams
         } ?: wrapperBuilder?.let {
             val lparams = it.delegate?.create() ?: it.lparams
-
-            createDefaultLayoutParams(lparams)
+            createDefaultLayoutParams(lparams, it.attrs)
         } ?: throw PerformerException("Internal error of build layout params.")
     }
 }

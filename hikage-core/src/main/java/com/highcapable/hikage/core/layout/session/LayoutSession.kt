@@ -100,9 +100,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * Provide the parent [ViewGroup] as the root view.
      * @param parent the parent view group.
      */
-    fun provideParent(parent: ViewGroup) {
-        provideView(parent, generateRandomViewId())
-    }
+    fun provideParent(parent: ViewGroup) = provideView(parent, generateRandomViewId())
 
     /**
      * Create a new [View] via [V].
@@ -113,17 +111,9 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @param parent the parent view group.
      * @return [V]
      */
-    fun <V : View> createView(viewClass: KClass<V>, id: String?, context: Context, attrs: HikageAttribute, parent: ViewGroup?): V {
-        val resolver = AttributeSetResolver.from(context)
-        val attributeSet = lazy(LazyThreadSafetyMode.NONE) { resolver.newAttributeSet(context, attrs.build()) }
-
-        val view = try {
-            createViewFromFactory(viewClass, id, context, attributeSet, parent)
-                ?: getViewConstructor(viewClass)?.build(context, attributeSet)
-        } finally {
-            if (attributeSet.isInitialized())
-                (attributeSet.value as? XmlResourceParser)?.let { resolver.release(it) }
-        }
+    fun <V : View> createView(viewClass: KClass<V>, id: String?, context: Context, attrs: Lazy<AttributeSet>, parent: ViewGroup?): V {
+        val view = createViewFromFactory(viewClass, id, context, attrs, parent)
+            ?: getViewConstructor(viewClass)?.build(context, attrs)
         if (view == null) throw PerformerException(
             "Create view of type ${viewClass.qualifiedName} failed. " +
                 "Please make sure the view class has a constructor with Context and AttributeSet or Context."
@@ -131,6 +121,25 @@ internal class LayoutSession private constructor(private val factories: List<Hik
 
         provideView(view, id)
         return view
+    }
+
+    /**
+     * Process with a new [AttributeSet] built from [attrs].
+     * @param context the context.
+     * @param attrs the attributes body.
+     * @param block the block to run.
+     * @return [R]
+     */
+    fun <R> process(context: Context, attrs: HikageAttribute, block: (Lazy<AttributeSet>) -> R): R {
+        val resolver = AttributeSetResolver.from(context)
+        val attributeSet = lazy(LazyThreadSafetyMode.NONE) { resolver.newAttributeSet(context, attrs.build()) }
+
+        return try {
+            block(attributeSet)
+        } finally {
+            if (attributeSet.isInitialized())
+                (attributeSet.value as? XmlResourceParser)?.let { resolver.release(it) }
+        }
     }
 
     /**
