@@ -72,7 +72,7 @@ internal object BinaryXmlBuilder {
      * Build the binary XML document.
      * @param context the context.
      * @param attrs the attributes.
-     * @param resolver the enum/flag resolver.
+     * @param resolver the framework symbol resolver.
      * @return [ByteArray]
      * @throws XmlParserException if an attribute name is duplicated or a value cannot be encoded.
      */
@@ -86,7 +86,7 @@ internal object BinaryXmlBuilder {
      * Build the binary XML document from parser-independent [attrs].
      * @param context the context.
      * @param attrs the resolved attributes.
-     * @param resolver the enum/flag resolver.
+     * @param resolver the framework symbol resolver.
      * @return [ByteArray]
      */
     private fun buildResolved(

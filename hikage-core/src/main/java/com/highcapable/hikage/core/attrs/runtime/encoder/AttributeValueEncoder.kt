@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
  * Supported string forms:
  * - `@[pkg:]type/name` / `@null` -> reference
  * - `?[pkg:]attr/name` -> attribute reference
- * - enum/flag symbols (via [EnumFlagResolver]) -> integer
+ * - framework / enum / flag symbols (via [EnumFlagResolver]) -> integer
  * - `#RGB` / `#ARGB` / `#RRGGBB` / `#AARRGGBB` -> color
  * - `true` / `false` -> boolean
  * - `16dp` / `16dip` / `16sp` / `16px` / `16pt` / `16in` / `16mm` -> dimension
@@ -66,7 +66,7 @@ internal object AttributeValueEncoder {
      * Encode the given [attr].
      * @param context the context (for resolving resource ids).
      * @param attr the attribute.
-     * @param resolver the enum/flag resolver.
+     * @param resolver the framework symbol resolver.
      * @param intern the string pool interning function (string -> pool index).
      * @return [EncodedAttributeValue]
      * @throws XmlParserException if the value cannot be encoded.
@@ -139,7 +139,7 @@ internal object AttributeValueEncoder {
     }
 
     /**
-     * Resolve an enum/flag value, or null if [attr] is not an enum/flag attribute (fall through to
+     * Resolve a symbol value, or null if [attr] is not a symbol attribute (fall through to
      * generic parsing).
      *
      * Resolution is layered: the built-in (T1) [resolver] is tried first for framework attributes, then
@@ -148,7 +148,9 @@ internal object AttributeValueEncoder {
      * @return [Int] or null.
      */
     private fun resolveEnumFlag(context: Context, attr: AttributeItem, value: String, resolver: EnumFlagResolver): Int? {
-        val isT1 = resolver.isEnumFlag(attr.name)
+        // T1 only applies to framework attributes, otherwise custom attributes with the same name would
+        // be incorrectly treated as Android framework symbols.
+        val isT1 = namespaceToPackage(context, attr.namespace) == "android" && resolver.isEnumFlag(attr.name)
         val isT2 = !isT1 && AttributeBagResolver.isEnumFlag(context, attr)
         if (!isT1 && !isT2) return null
 

@@ -21,18 +21,19 @@
  */
 package com.highcapable.hikage.core.attrs.runtime.resolver
 
+import android.view.ViewGroup
 import com.highcapable.hikage.core.base.XmlParserException
 
 /**
  * The built-in (T1) [EnumFlagResolver].
  *
- * Covers the common framework enum/flag attributes. The integer values below are part of the
- * Android resource ABI (changing them would break every compiled APK), so hard-coding them is safe.
+ * Covers the common framework symbols. The integer values below are part of the Android resource ABI
+ * (changing them would break every compiled APK), so hard-coding them is safe.
  */
 internal object BuiltInEnumFlagResolver : EnumFlagResolver {
 
     /**
-     * An enum/flag attribute definition.
+     * A symbol attribute definition.
      * @param isFlag whether multiple symbols may be combined with `|`.
      * @param symbols the symbol -> int mapping.
      */
@@ -64,15 +65,70 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
         )
     )
 
+    /** enum, [ViewGroup.LayoutParams] values. */
+    private val layoutSize = Def(
+        isFlag = false,
+        symbols = mapOf(
+            "fill_parent" to -1,
+            "match_parent" to -1,
+            "wrap_content" to -2
+        )
+    )
+
     /**
-     * The table of known enum/flag attributes. The keys are the attribute names without namespace
-     * prefixes, e.g. "gravity" not "android:gravity". The values are the definitions of how to
-     * resolve the symbols for that attribute.
+     * The table of known framework symbol attributes. The keys are the attribute names without namespace
+     * prefixes, e.g. "gravity" not "android:gravity". The values are the definitions of how to resolve
+     * the symbols for that attribute.
      */
     private val table = buildMap {
+        put("layout_width", layoutSize)
+        put("layout_height", layoutSize)
+        put("dropDownWidth", layoutSize)
+        put("dropDownHeight", layoutSize)
+
+        // enum, action bar size accepts wrap_content besides dimensions.
+        put("actionBarSize", Def(false, mapOf("wrap_content" to 0)))
+
+        // enum, GridView.AUTO_FIT.
+        put("numColumns", Def(false, mapOf("auto_fit" to -1)))
+
+        // enum, TextView marquee repeat forever.
+        put("marqueeRepeatLimit", Def(false, mapOf("marquee_forever" to -1)))
+
+        // enum, Animation.INFINITE.
+        put("repeatCount", Def(false, mapOf("infinite" to -1)))
+
         put("gravity", gravity)
         put("layout_gravity", gravity)
         put("foregroundGravity", gravity)
+
+        // enum, View scrollbar style flags.
+        put(
+            "scrollbarStyle",
+            Def(
+                false,
+                mapOf(
+                    "insideOverlay" to 0x00000000,
+                    "insideInset" to 0x01000000,
+                    "outsideOverlay" to 0x02000000,
+                    "outsideInset" to 0x03000000
+                )
+            )
+        )
+
+        // flag, View fading edge directions.
+        val fadingEdge = Def(true, mapOf("none" to 0x00000000, "horizontal" to 0x00001000, "vertical" to 0x00002000))
+        put("fadingEdge", fadingEdge)
+        put("requiresFadingEdge", fadingEdge)
+
+        // enum, View overscroll mode.
+        put("overScrollMode", Def(false, mapOf("always" to 0, "ifContentScrolls" to 1, "never" to 2)))
+
+        // enum, View vertical scrollbar position.
+        put("verticalScrollbarPosition", Def(false, mapOf("defaultPosition" to 0, "left" to 1, "right" to 2)))
+
+        // enum, View layer type.
+        put("layerType", Def(false, mapOf("none" to 0, "software" to 1, "hardware" to 2)))
 
         // enum, LinearLayout.HORIZONTAL / VERTICAL
         put("orientation", Def(false, mapOf("horizontal" to 0, "vertical" to 1)))
@@ -150,6 +206,8 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
                     "textMultiLine" to 0x00020001,
                     "textImeMultiLine" to 0x00040001,
                     "textNoSuggestions" to 0x00080001,
+                    "textEnableTextConversionSuggestions" to 0x00100001,
+                    "textEnableTextSuggestionSelected" to 0x00200000,
                     "textUri" to 0x00000011,
                     "textEmailAddress" to 0x00000021,
                     "textEmailSubject" to 0x00000031,
@@ -208,18 +266,18 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
 
     override fun resolve(attrName: String, value: String): Int {
         val def = table[attrName] ?: throw XmlParserException(
-            "Attribute \"$attrName\" is not a known enum/flag attribute."
+            "Attribute \"$attrName\" is not a known framework symbol attribute."
         )
         val parts = value.split('|').map { it.trim() }.filter { it.isNotEmpty() }
-        if (parts.isEmpty()) throw XmlParserException("Empty enum/flag value for attribute \"$attrName\".")
+        if (parts.isEmpty()) throw XmlParserException("Empty symbol value for attribute \"$attrName\".")
         if (!def.isFlag && parts.size > 1) throw XmlParserException(
-            "Attribute \"$attrName\" is an enum and cannot combine multiple symbols with \"|\"."
+            "Attribute \"$attrName\" cannot combine multiple symbols with \"|\"."
         )
 
         var result = 0
         parts.forEach { symbol ->
             val resolved = def.symbols[symbol] ?: throw XmlParserException(
-                "Unknown enum/flag symbol \"$symbol\" for attribute \"$attrName\". " +
+                "Unknown framework symbol \"$symbol\" for attribute \"$attrName\". " +
                     "Supported symbols: ${def.symbols.keys.joinToString()}. " +
                     "Alternatively pass a raw Int value, e.g. set(\"$attrName\", <int>)."
             )

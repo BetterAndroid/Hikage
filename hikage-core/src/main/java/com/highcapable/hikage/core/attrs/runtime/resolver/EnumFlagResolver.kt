@@ -24,7 +24,7 @@ package com.highcapable.hikage.core.attrs.runtime.resolver
 import com.highcapable.hikage.core.base.XmlParserException
 
 /**
- * Resolver for `enum` / `flag` attribute values.
+ * Resolver for framework and resource-bag attribute symbols.
  *
  * Because the compiled resource table resolves enum/flag symbols (e.g. `gravity="center"`)
  * into integers at compile time, we must do the same at runtime when synthesizing a binary
@@ -33,21 +33,21 @@ import com.highcapable.hikage.core.base.XmlParserException
  *
  * Resolution is layered:
  * - **T1 (default, [BuiltInEnumFlagResolver])**: a curated static table of the common framework
- *   enum/flag attributes whose values are de-facto ABI and never change.
+ *   symbols whose values are de-facto ABI and never change.
  * - **T2 ([AttributeBagResolver])**: read the attribute's bag (`ResTable_map`) at runtime via
  *   reflection to cover library / custom enum/flag attributes.
  */
 internal interface EnumFlagResolver {
 
     /**
-     * Whether this resolver recognizes [attrName] as an enum/flag attribute.
+     * Whether this resolver recognizes [attrName] as a symbol attribute.
      * @param attrName the attribute name (without namespace prefix).
      * @return [Boolean]
      */
     fun isEnumFlag(attrName: String): Boolean
 
     /**
-     * Resolve the [value] of the enum/flag attribute [attrName] into an integer.
+     * Resolve the [value] of the symbol attribute [attrName] into an integer.
      *
      * Should only be called when [isEnumFlag] returns true.
      * @param attrName the attribute name (without namespace prefix).
