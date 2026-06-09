@@ -156,7 +156,7 @@ internal object AttributeValueEncoder {
 
         // Allow a raw integer for enum/flag attributes too (T0).
         value.parseIntOrNull()?.let { (data, _) -> return data }
-        return if (isT1) resolver.resolve(attr.name, value) else AttributeBagResolver.resolve(context, attr, value)
+        return if (isT1) resolver.resolveOrNull(attr.name, value) else AttributeBagResolver.resolve(context, attr, value)
     }
 
     private fun encodeReference(context: Context, attr: AttributeItem, value: String): EncodedAttributeValue {

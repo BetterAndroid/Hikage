@@ -36,10 +36,12 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
      * A symbol attribute definition.
      * @param isFlag whether multiple symbols may be combined with `|`.
      * @param symbols the symbol -> int mapping.
+     * @param allowsGenericValue whether unknown values may fall through to generic encoding.
      */
     private class Def(
         val isFlag: Boolean,
-        val symbols: Map<String, Int>
+        val symbols: Map<String, Int>,
+        val allowsGenericValue: Boolean = false
     )
 
     /** flag, [android.view.Gravity] values. */
@@ -68,6 +70,7 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
     /** enum, [ViewGroup.LayoutParams] values. */
     private val layoutSize = Def(
         isFlag = false,
+        allowsGenericValue = true,
         symbols = mapOf(
             "fill_parent" to -1,
             "match_parent" to -1,
@@ -87,7 +90,7 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
         put("dropDownHeight", layoutSize)
 
         // enum, action bar size accepts wrap_content besides dimensions.
-        put("actionBarSize", Def(false, mapOf("wrap_content" to 0)))
+        put("actionBarSize", Def(false, mapOf("wrap_content" to 0), allowsGenericValue = true))
 
         // enum, GridView.AUTO_FIT.
         put("numColumns", Def(false, mapOf("auto_fit" to -1)))
@@ -263,6 +266,16 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
     }
 
     override fun isEnumFlag(attrName: String) = table.containsKey(attrName)
+
+    override fun resolveOrNull(attrName: String, value: String): Int? {
+        val def = table[attrName] ?: return null
+        val parts = value.split('|').map { it.trim() }.filter { it.isNotEmpty() }
+        if (parts.isEmpty()) return null
+        if (!def.isFlag && parts.size > 1) return null
+        if (parts.any { it !in def.symbols }) return if (def.allowsGenericValue) null else resolve(attrName, value)
+
+        return resolve(attrName, value)
+    }
 
     override fun resolve(attrName: String, value: String): Int {
         val def = table[attrName] ?: throw XmlParserException(
