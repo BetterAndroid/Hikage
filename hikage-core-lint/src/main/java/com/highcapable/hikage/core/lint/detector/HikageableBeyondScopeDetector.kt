@@ -50,7 +50,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
             id = "HikageableBeyondScope",
             briefDescription = "Hikageable beyond scope.",
             explanation = "Functions marked with `@Hikageable` can only be passed in `Hikage.Performer`.",
-            category = Category.COMPLIANCE,
+            category = Category.CORRECTNESS,
             priority = 10,
             severity = Severity.ERROR,
             implementation = Implementation(

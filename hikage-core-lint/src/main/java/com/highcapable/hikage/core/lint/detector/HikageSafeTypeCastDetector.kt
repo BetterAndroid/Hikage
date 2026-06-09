@@ -41,10 +41,10 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
     companion object {
 
         val ISSUE = Issue.create(
-            id = "UseHikageSafeTypeCast",
+            id = "ReplaceWithHikageSafeTypeCast",
             briefDescription = "Hikage safe type cast usage.",
             explanation = "Recommended to use `hikage.get<YourView>(\"your_id\")` instead of `hikage[\"your_id\"] as YourView`.",
-            category = Category.COMPLIANCE,
+            category = Category.USABILITY,
             priority = 5,
             severity = Severity.WARNING,
             implementation = Implementation(

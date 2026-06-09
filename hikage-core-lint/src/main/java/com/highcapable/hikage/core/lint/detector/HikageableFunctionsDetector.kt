@@ -47,7 +47,7 @@ class HikageableFunctionsDetector : Detector(), Detector.UastScanner {
             id = "HikageableFunctions",
             briefDescription = "Hikageable functions.",
             explanation = "Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.",
-            category = Category.COMPLIANCE,
+            category = Category.CORRECTNESS,
             priority = 10,
             severity = Severity.ERROR,
             implementation = Implementation(
