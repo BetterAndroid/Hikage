@@ -578,13 +578,26 @@ TextView(attrs = myAttrs)
 ```
 ::: warning
 
-When you set an attribute value, Hikage will dynamically parse and set it according to the type of the attribute. If the type of the attribute value you provide does not match the actual type of the attribute, it may cause an exception or fail silently at runtime.
+When you set an attribute value, Hikage will dynamically parse and set it according to the type of the attribute.
+If the type of the attribute value you provide does not match the actual type of the attribute, it may cause an exception or fail silently at runtime.
 
-Hikage may have some limitations in parsing dynamic type casting, please make sure that the type of the attribute value you provide matches the actual type of the attribute and try to use strings to set attribute values preferentially to avoid potential issues.
+Hikage may have some limitations in parsing dynamic type casting,
+please make sure that the type of the attribute value you provide matches the actual type of the attribute and try to use strings to set attribute values preferentially to avoid potential issues.
 
-The attribute value does not support dynamic modification after it is set. This is a design limitation of Android XML attributes, not a design defect of Hikage.
+The attribute value does not support dynamic modification after it is set. This is a design limitation of Android XML attributes,
+not a design defect of Hikage.
 
-Android XML attributes do not allow duplicate names, so you cannot set the same attribute multiple times in `HikageAttribute`, even if their namespaces are different.
+Android XML attributes do not allow duplicate names, so you cannot set the same attribute multiple times in `HikageAttribute`,
+even if their namespaces are different.
+
+:::
+
+::: danger
+
+For attributes starting with `android:layout_`, they belong to the XML attributes when creating `LayoutParams`.
+If you manually create `LayoutParams` using the `lparams` parameter, Hikage will ignore passing the `AttributeSet` to
+the parent layout and create new `LayoutParams`, these attributes will no longer take effect and will be overridden,
+you can only choose one scheme to set layout parameters.
 
 :::
 
