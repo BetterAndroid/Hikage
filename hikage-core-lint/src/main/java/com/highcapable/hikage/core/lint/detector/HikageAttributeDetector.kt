@@ -101,17 +101,72 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             )
         )
 
+        val INVALID_NAME_ISSUE = Issue.create(
+            id = "InvalidHikageAttributeName",
+            briefDescription = "Hikage attribute name invalid.",
+            explanation = "Attribute names must use a valid namespace prefix and local name.",
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.ERROR,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
+        val INVALID_RESOURCE_REFERENCE_ISSUE = Issue.create(
+            id = "InvalidHikageAttributeResourceReference",
+            briefDescription = "Hikage attribute resource reference invalid.",
+            explanation = "Resource references must use the same resource reference format as XML.",
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.ERROR,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
+        val INVALID_COLOR_VALUE_ISSUE = Issue.create(
+            id = "InvalidHikageAttributeColorValue",
+            briefDescription = "Hikage attribute color value invalid.",
+            explanation = "Color values must be #RGB, #ARGB, #RRGGBB or #AARRGGBB.",
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.ERROR,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
+        val TOO_LONG_STRING_ISSUE = Issue.create(
+            id = "TooLongHikageAttributeString",
+            briefDescription = "Hikage attribute string too long.",
+            explanation = "Attribute strings must fit in the binary XML string pool.",
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.ERROR,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
         private const val NAMESPACE_FUNCTION = "namespace"
         private const val SET_FUNCTION = "set"
         private const val HIKAGE_ATTRIBUTE_FUNCTION = "HikageAttribute"
         private const val ATTRS_ARGUMENT = "attrs"
         private const val LPARAMS_ARGUMENT = "lparams"
         private const val LAYOUT_ATTRIBUTE_PREFIX = "layout_"
+        private const val ATTRIBUTE_STRING_MAX_LENGTH = 0x7FFF
         private const val ANDROID_NAMESPACE = "android"
         private const val APP_NAMESPACE = "app"
         private const val ATTRS_UTILS_SUFFIX = ".attrs.HikageAttributeUtils"
         private const val ATTRIBUTE_SCOPE_SUFFIX = ".attrs.AttributeScope"
         private const val HIKAGE_CLASS_SUFFIX = ".Hikage"
+
+        private val COLOR_VALUE_REGEX = "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$".toRegex()
     }
 
     override fun getApplicableUastTypes() = listOf(UCallExpression::class.java)
@@ -138,13 +193,18 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         reportedLayoutAttributes: MutableSet<PsiElement>
     ) {
         when {
-            method.isHikageNamespaceFunction() -> visitAndReportNamespaceShortcut(context, callExpr)
+            method.isHikageNamespaceFunction() -> {
+                visitAndReportNamespaceShortcut(context, callExpr)
+                visitAndReportTooLongNamespace(context, node, callExpr)
+            }
             method.isHikageRootSetFunction() -> visitAndReportRootSet(context, node, callExpr)
             method.isHikageScopeSetFunction() -> visitAndReportScopedSet(context, node, callExpr)
         }
 
-        if (method.isHikageRootSetFunction() || method.isHikageScopeSetFunction())
+        if (method.isHikageRootSetFunction() || method.isHikageScopeSetFunction()) {
+            visitAndReportInvalidAttribute(context, node, callExpr)
             visitAndReportDuplicate(context, node, callExpr, attributes)
+        }
 
         if (method.hasHikageable()) visitAndReportIneffectiveLayoutAttributes(context, callExpr, method, reportedLayoutAttributes)
     }
@@ -232,6 +292,70 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             attrNameExpr,
             location,
             message = "Attribute `$attrName` uses the `$attrNamespace` namespace inside the `$namespace` namespace."
+        )
+    }
+
+    private fun visitAndReportTooLongNamespace(context: JavaContext, node: UCallExpression, callExpr: KtCallExpression) {
+        val namespace = callExpr.firstStringLiteralText() ?: return
+        if (namespace.length <= ATTRIBUTE_STRING_MAX_LENGTH) return
+
+        val namespaceExpr = node.valueArguments.firstOrNull()?.sourcePsi ?: return
+        val location = context.getLocation(namespaceExpr)
+        context.report(
+            TOO_LONG_STRING_ISSUE,
+            namespaceExpr,
+            location,
+            message = "Attribute string is too long. Maximum length is $ATTRIBUTE_STRING_MAX_LENGTH characters."
+        )
+    }
+
+    private fun visitAndReportInvalidAttribute(context: JavaContext, node: UCallExpression, callExpr: KtCallExpression) {
+        val attrNameExpr = node.valueArguments.firstOrNull()?.sourcePsi ?: return
+        val attrName = callExpr.stringLiteralTextAt(0)
+        if (attrName != null) {
+            val location = context.getLocation(attrNameExpr)
+            attrName.invalidAttributeNameMessage()?.let {
+                context.report(
+                    INVALID_NAME_ISSUE,
+                    attrNameExpr,
+                    location,
+                    message = it
+                )
+            }
+            attrName.attributeNameString().takeIf { it.length > ATTRIBUTE_STRING_MAX_LENGTH }?.let {
+                context.report(
+                    TOO_LONG_STRING_ISSUE,
+                    attrNameExpr,
+                    location,
+                    message = "Attribute string is too long. Maximum length is $ATTRIBUTE_STRING_MAX_LENGTH characters."
+                )
+            }
+        }
+
+        val valueExpr = callExpr.valueArguments.getOrNull(1)?.getArgumentExpression() ?: return
+        val value = valueExpr.staticStringText() ?: return
+        val valueLocation = context.getLocation(valueExpr)
+        value.invalidResourceReferenceMessage()?.let {
+            context.report(
+                INVALID_RESOURCE_REFERENCE_ISSUE,
+                valueExpr,
+                valueLocation,
+                message = it
+            )
+        }
+        value.invalidColorValueMessage()?.let {
+            context.report(
+                INVALID_COLOR_VALUE_ISSUE,
+                valueExpr,
+                valueLocation,
+                message = it
+            )
+        }
+        if (value.length > ATTRIBUTE_STRING_MAX_LENGTH) context.report(
+            TOO_LONG_STRING_ISSUE,
+            valueExpr,
+            valueLocation,
+            message = "Attribute string is too long. Maximum length is $ATTRIBUTE_STRING_MAX_LENGTH characters."
         )
     }
 
@@ -476,13 +600,99 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         else -> null
     }
 
-    private fun KtCallExpression.firstStringLiteralText(): String? {
-        val expression = valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression ?: return null
-        val text = expression.text
-        if (!text.startsWith("\"") || !text.endsWith("\"") || text.startsWith("\"\"\"")) return null
-        if (text.contains('$')) return null
+    private fun KtCallExpression.firstStringLiteralText() = stringLiteralTextAt(0)
+    private fun KtCallExpression.stringLiteralTextAt(index: Int) = valueArguments.getOrNull(index)?.getArgumentExpression()?.staticStringText()
 
-        return text.substring(1, text.length - 1)
+    private fun KtExpression.staticStringText(visited: MutableSet<PsiElement> = hashSetOf()): String? {
+        if (!visited.add(this)) return null
+
+        if (this is KtStringTemplateExpression) {
+            val text = text
+            if (!text.startsWith("\"") || !text.endsWith("\"") || text.startsWith("\"\"\"")) return null
+            if (text.contains('$')) return null
+
+            return text.substring(1, text.length - 1)
+        }
+
+        if (this is KtQualifiedExpression) {
+            val receiverText = receiverExpression.staticStringText(visited) ?: return null
+            val selector = selectorExpression as? KtCallExpression ?: return null
+            if (selector.calleeExpression?.text != "repeat") return null
+            val repeatCount = selector.valueArguments.singleOrNull()
+                ?.getArgumentExpression()
+                ?.text
+                ?.parseIntLiteralOrNull()
+                ?: return null
+
+            if (repeatCount < 0) return null
+            if (receiverText.isEmpty()) return ""
+
+            val cappedCount = minOf(repeatCount, ATTRIBUTE_STRING_MAX_LENGTH / receiverText.length + 1)
+            return receiverText.repeat(cappedCount)
+        }
+
+        if (this is KtNameReferenceExpression) {
+            val property = references.firstOrNull()?.resolve() as? KtProperty ?: return null
+            if (!visited.add(property)) return null
+            return property.initializer?.staticStringText(visited)
+        }
+
+        return null
+    }
+
+    private fun String.attributeNameString(): String {
+        val separator = indexOf(':')
+        return if (separator in 0..<lastIndex) substring(separator + 1) else this
+    }
+
+    private fun String.invalidAttributeNameMessage(): String? {
+        if (isEmpty()) return "Attribute name must not be empty."
+
+        val separator = indexOf(':')
+        if (separator < 0) return null
+        return when {
+            separator == 0 -> "Attribute `$this` is missing a namespace before `:`."
+            separator == lastIndex -> "Attribute `$this` is missing a name after `:`."
+            indexOf(':', separator + 1) >= 0 -> "Attribute `$this` must not contain more than one `:`."
+            else -> null
+        }
+    }
+
+    private fun String.invalidResourceReferenceMessage(): String? {
+        if (!startsWith("@") || this == "@null") return null
+
+        var body = removePrefix("@").removePrefix("+")
+        if (body.isEmpty()) return "Resource reference `$this` is missing a resource type and name."
+
+        val colon = body.indexOf(':')
+        if (colon >= 0) {
+            if (colon == 0) return "Resource reference `$this` is missing a package name before `:`."
+            if (colon == body.lastIndex) return "Resource reference `$this` is missing a resource type and name after `:`."
+            body = body.substring(colon + 1)
+        }
+
+        val slash = body.indexOf('/')
+        if (slash < 0) return "Resource reference `$this` must include a resource type, for example `@string/name`."
+
+        return when {
+            slash == 0 -> "Resource reference `$this` is missing a resource type before `/`."
+            slash == body.lastIndex -> "Resource reference `$this` is missing a resource name after `/`."
+            body.indexOf('/', slash + 1) >= 0 -> "Resource reference `$this` must not contain more than one `/`."
+            else -> null
+        }
+    }
+
+    private fun String.invalidColorValueMessage(): String? {
+        if (!startsWith("#") || COLOR_VALUE_REGEX.matches(this)) return null
+        return "Color value `$this` must be #RGB, #ARGB, #RRGGBB or #AARRGGBB."
+    }
+
+    private fun String.parseIntLiteralOrNull(): Int? {
+        val value = replace("_", "")
+        return when {
+            value.startsWith("0x", ignoreCase = true) -> value.substring(2).toIntOrNull(16)
+            else -> value.toIntOrNull()
+        }
     }
 
     private data class LayoutAttributeReport(
