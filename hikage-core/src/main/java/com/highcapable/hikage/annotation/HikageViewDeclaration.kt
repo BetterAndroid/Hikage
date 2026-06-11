@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
  *
  * You can declare a class for [View] that does not belong to your own [View] or third-party library.
  *
- * The class name you define can be as good as you like, and notice it must to use the `object` keyword to modify it.
+ * The class name you define can be as good as you like, and notice it must use the `object` keyword to modify it.
  *
  * Usage:
  *

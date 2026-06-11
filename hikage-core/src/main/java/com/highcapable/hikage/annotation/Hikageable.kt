@@ -34,7 +34,8 @@ import com.highcapable.hikage.core.Hikage
  * inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyView(
  *     lparams: LayoutParams? = null,
  *     id: String? = null,
- *     init: HikageView<MyView> = {}
+ *     noinline attrs: HikageAttribute = {},
+ *     noinline init: HikageView<MyView> = {}
  * ) = View<MyView>(lparams, id, init)
  * ```
  * @see Hikage.Performer
