@@ -39,19 +39,19 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UReturnExpression
 import org.jetbrains.uast.tryResolve
 
-class HikageableFunctionsDetector : Detector(), Detector.UastScanner {
+class HikageablePropagationDetector : Detector(), Detector.UastScanner {
 
     companion object {
 
         val ISSUE = Issue.create(
-            id = "HikageableFunctions",
-            briefDescription = "Hikageable functions.",
+            id = "MissingHikageableAnnotation",
+            briefDescription = "Missing @Hikageable annotation.",
             explanation = "Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.",
             category = Category.CORRECTNESS,
             priority = 10,
             severity = Severity.ERROR,
             implementation = Implementation(
-                HikageableFunctionsDetector::class.java,
+                HikageablePropagationDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
