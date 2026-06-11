@@ -27,10 +27,10 @@ import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.highcapable.hikage.core.lint.detector.HikageAttributeDetector
+import com.highcapable.hikage.core.lint.detector.HikageComponentsUsageDetector
 import com.highcapable.hikage.core.lint.detector.HikageSafeTypeCastDetector
 import com.highcapable.hikage.core.lint.detector.HikageableBeyondScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageableFunctionsDetector
-import com.highcapable.hikage.core.lint.detector.WidgetsUsageDetector
 import com.highcapable.hikage.generated.HikageProperties
 
 class HikageIssueRegistry : IssueRegistry() {
@@ -47,7 +47,7 @@ class HikageIssueRegistry : IssueRegistry() {
         HikageableBeyondScopeDetector.ISSUE,
         HikageableFunctionsDetector.ISSUE,
         HikageSafeTypeCastDetector.ISSUE,
-        WidgetsUsageDetector.ISSUE
+        HikageComponentsUsageDetector.ISSUE
     )
 
     override val minApi = HikageProperties.PROJECT_HIKAGE_CORE_LINT_MIN_API
