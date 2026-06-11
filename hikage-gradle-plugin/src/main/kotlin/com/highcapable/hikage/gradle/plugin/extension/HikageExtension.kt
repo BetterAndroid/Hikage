@@ -26,6 +26,7 @@ package com.highcapable.hikage.gradle.plugin.extension
 import com.highcapable.hikage.generated.HikageProperties
 import org.gradle.api.Action
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.kotlin.dsl.create
 import javax.inject.Inject
 
 /**
@@ -43,7 +44,7 @@ open class HikageExtension @Inject constructor() {
     }
 
     /** The Hikage compiler configuration. */
-    val compiler = extensions.create(COMPILER_EXTENSION_NAME, HikageCompilerExtension::class.java)
+    val compiler = extensions.create<HikageCompilerExtension>(COMPILER_EXTENSION_NAME)
 
     /**
      * Configure the Hikage compiler.

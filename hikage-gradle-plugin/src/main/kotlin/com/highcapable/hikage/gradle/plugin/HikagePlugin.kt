@@ -27,6 +27,7 @@ import com.highcapable.hikage.gradle.plugin.extension.HikageExtension
 import com.highcapable.hikage.gradle.plugin.integration.AndroidIntegration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
 
 /**
  * The Hikage Gradle plugin.
@@ -34,7 +35,7 @@ import org.gradle.api.Project
 class HikagePlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val extension = target.extensions.create(HikageExtension.NAME, HikageExtension::class.java)
+        val extension = target.extensions.create<HikageExtension>(HikageExtension.NAME)
         AndroidIntegration(target, extension).configure()
     }
 }
