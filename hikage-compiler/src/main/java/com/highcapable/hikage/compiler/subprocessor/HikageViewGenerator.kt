@@ -58,10 +58,18 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import java.io.File
+import java.io.IOException
 
 class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) : BaseSymbolProcessor(environment) {
 
     private companion object {
+
+        private const val VIEW_DECLARATION_FILES_OPTION = "hikage.viewDeclarationFiles"
+        private const val VIEW_DECLARATION_FILE_NAME = "HikageViewDeclarationFile"
 
         private const val PACKAGE_NAME_PREFIX = "com.highcapable.hikage.widget"
 
@@ -80,14 +88,17 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val AttributeClass = ClassName(DeclaredSymbol.HIKAGE_ATTRS_PACKAGE_NAME, DeclaredSymbol.HIKAGE_ATTRIBUTE_LAMBDA_CLASS_NAME)
         val ViewFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "View")
         val ViewGroupFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "ViewGroup")
+
+        val jsonDecoder = Json
     }
 
     private val generatedFileOwners = mutableMapOf<String, String>()
+    private val annotationViewKeys = mutableSetOf<String>()
 
     override fun startProcess(resolver: Resolver) {
         Processor.init(logger, resolver)
 
-        val performers = mutableListOf<Performer>()
+        val annotationPerformers = mutableListOf<Performer>()
         resolver.getSymbolsWithAnnotation(HikageViewSpec.CLASS)
             .filterIsInstance<KSClassDeclaration>()
             .distinctBy { it.qualifiedName }
@@ -96,7 +107,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     // Get annotation parameters.
                     val (annotation, declaration) = HikageViewSpec.create(resolver, it, ksClass)
 
-                    performers += Performer(annotation, declaration, ksClass.containingFile, ksClass.ownerOf(HikageViewSpec.NAME))
+                    annotationPerformers += Performer(annotation, declaration, ksClass.containingFile, ksClass.ownerOf(HikageViewSpec.NAME))
                 }
             }
 
@@ -108,11 +119,45 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     // Get annotation parameters.
                     val (annotation, declaration) = HikageViewDeclarationSpec.create(resolver, it, ksClass)
 
-                    performers += Performer(annotation, declaration, ksClass.containingFile, ksClass.ownerOf(HikageViewDeclarationSpec.NAME))
+                    annotationPerformers += Performer(annotation, declaration, ksClass.containingFile, ksClass.ownerOf(HikageViewDeclarationSpec.NAME))
                 }
             }
 
+        annotationViewKeys += annotationPerformers.map { it.declaration.viewClassKey }
+        val filePerformers = createViewDeclarationFilePerformers(resolver)
+            .filter { it.declaration.viewClassKey !in annotationViewKeys }
+        val performers = annotationPerformers + filePerformers
+
         processPerformer(performers, mutableSetOf())
+    }
+
+    private fun createViewDeclarationFilePerformers(resolver: Resolver): List<Performer> {
+        val files = environment.options[VIEW_DECLARATION_FILES_OPTION]
+            ?.split(File.pathSeparator)
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?.distinct()
+            ?.map(::File)
+            ?: return emptyList()
+
+        return files.flatMap { file ->
+            require(file.exists() && file.isFile) {
+                "Hikage view declaration file does not exist or is not a file: ${file.path}"
+            }
+
+            val items = try {
+                jsonDecoder.decodeFromString<List<ViewDeclarationFileItem>>(file.readText())
+            } catch (e: SerializationException) {
+                error("Parse Hikage view declaration file failed: ${file.path}\n${e.message}")
+            } catch (e: IOException) {
+                error("Read Hikage view declaration file failed: ${file.path}\n${e.message}")
+            }
+
+            items.mapIndexed { index, item ->
+                val (annotation, declaration) = ViewDeclarationFileSpec.create(resolver, item, file, index)
+                Performer(annotation, declaration, null, "$VIEW_DECLARATION_FILE_NAME: ${file.path}[$index]")
+            }
+        }
     }
 
     private fun processPerformer(performers: List<Performer>, roundGeneratedFiles: MutableSet<String>) {
@@ -388,7 +433,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             tagName: String,
             alias: String?,
             ksClass: KSClassDeclaration,
-            baseType: KSClassDeclaration = ksClass
+            baseType: KSClassDeclaration = ksClass,
+            locateDesc: String = "Located: ${baseType.qualifiedName?.asString()}"
         ): ViewDeclaration {
             val packageName = ksClass.packageName.asString()
             val className = ksClass.getSimpleNameString()
@@ -401,7 +447,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 _alias = className.replace(".", "_")
             _alias = _alias?.takeIf { it.isNotBlank() }
 
-            val declaration = ViewDeclaration(packageName, className, _alias, isViewGroup, baseType)
+            val declaration = ViewDeclaration(packageName, className, _alias, isViewGroup, locateDesc)
 
             // Verify the legality of the class name.
             if (!_alias.isNullOrBlank()) require(ClassDetector.verify(_alias)) {
@@ -426,12 +472,11 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val className: String,
         val alias: String?,
         val isViewGroup: Boolean,
-        val baseType: KSClassDeclaration
+        val locateDesc: String
     ) {
 
         val key get() = "$packageName${alias ?: className}$isViewGroup"
-
-        val locateDesc by lazy { "Located: ${baseType.qualifiedName?.asString()}" }
+        val viewClassKey get() = "$packageName.$className"
 
         fun toClassName() = ClassName(packageName, className)
 
@@ -518,6 +563,72 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             }
         }
     }
+
+    private data class ViewDeclarationFileSpec(
+        override val lparams: KSClassDeclaration?,
+        override val alias: String?,
+        override val requireAttrs: Boolean,
+        override val requireInit: Boolean,
+        override val requirePerformer: Boolean,
+        override val final: Boolean
+    ) : HikageAnnotationSpec {
+
+        companion object {
+
+            fun create(
+                resolver: Resolver,
+                item: ViewDeclarationFileItem,
+                file: File,
+                index: Int
+            ): Pair<ViewDeclarationFileSpec, ViewDeclaration> {
+                val viewClass = item.viewClass.trim()
+                require(viewClass.isNotEmpty()) {
+                    "Declares $VIEW_DECLARATION_FILE_NAME's viewClass must not be empty.\nLocated: ${file.path}[$index]"
+                }
+
+                val resolvedView = resolver.getClassDeclarationByName(viewClass)
+                    ?: error("Declares $VIEW_DECLARATION_FILE_NAME's viewClass \"$viewClass\" was not found.\nLocated: ${file.path}[$index]")
+                val lparams = item.lparams?.trim()?.takeIf { it.isNotEmpty() }?.let {
+                    resolver.getClassDeclarationByName(it)
+                        ?: error("Declares $VIEW_DECLARATION_FILE_NAME's lparams \"$it\" was not found.\nLocated: ${file.path}[$index]")
+                }
+
+                val declaration = Processor.createViewDeclaration(
+                    tagName = VIEW_DECLARATION_FILE_NAME,
+                    alias = item.alias,
+                    ksClass = resolvedView,
+                    locateDesc = "Located: ${file.path}[$index]"
+                )
+                val resolvedLparams = Processor.resolvedLparamsDeclaration(
+                    tagName = VIEW_DECLARATION_FILE_NAME,
+                    resolver = resolver,
+                    declaration = declaration,
+                    lparams = lparams?.asType()
+                )
+                val spec = ViewDeclarationFileSpec(
+                    lparams = resolvedLparams,
+                    alias = item.alias,
+                    requireAttrs = item.requireAttrs,
+                    requireInit = item.requireInit,
+                    requirePerformer = item.requirePerformer,
+                    final = item.final
+                )
+
+                return spec to declaration
+            }
+        }
+    }
+
+    @Serializable
+    private data class ViewDeclarationFileItem(
+        val viewClass: String,
+        val lparams: String? = null,
+        val alias: String? = null,
+        val requireAttrs: Boolean = false,
+        val requireInit: Boolean = false,
+        val requirePerformer: Boolean = false,
+        val final: Boolean = false
+    )
 
     private interface HikageAnnotationSpec {
         val lparams: KSClassDeclaration?

@@ -40,6 +40,9 @@ open class HikageCompilerExtension @Inject constructor(objects: ObjectFactory, p
 
         /** The version property name. */
         const val VERSION_PROPERTY_NAME = "hikage.compiler.version"
+
+        /** The view declaration files property name. */
+        const val VIEW_DECLARATION_FILES_PROPERTY_NAME = "hikage.compiler.viewDeclarationFiles"
     }
 
     /** Whether to enable the Hikage compiler integration. */
@@ -53,5 +56,12 @@ open class HikageCompilerExtension @Inject constructor(objects: ObjectFactory, p
     val version = objects.property(String::class.java).convention(
         providers.gradleProperty(VERSION_PROPERTY_NAME)
             .orElse(HikageProperties.PROJECT_HIKAGE_BOM_VERSION)
+    )
+
+    /** Whether to generate code from Hikage view declaration files. */
+    val viewDeclarationFiles = objects.property(Boolean::class.java).convention(
+        providers.gradleProperty(VIEW_DECLARATION_FILES_PROPERTY_NAME)
+            .map(String::toBoolean)
+            .orElse(true)
     )
 }

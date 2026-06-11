@@ -21,10 +21,17 @@
  */
 package com.highcapable.hikage.gradle.plugin.integration
 
+import com.android.build.api.dsl.CommonExtension
+import com.google.devtools.ksp.gradle.KspExtension
 import com.highcapable.hikage.generated.HikageProperties
 import com.highcapable.hikage.gradle.plugin.debug.HikagePluginException
 import com.highcapable.hikage.gradle.plugin.extension.HikageExtension
+import com.highcapable.hikage.gradle.plugin.provider.ViewDeclarationFilesArgumentProvider
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
+import java.io.File
 
 /**
  * The Android integration for Hikage Gradle plugin.
@@ -33,7 +40,7 @@ import org.gradle.api.Project
  */
 internal class AndroidIntegration(private val project: Project, private val extension: HikageExtension) {
 
-    private companion object {
+    companion object {
 
         /** The Android application plugin id. */
         const val ANDROID_APPLICATION_PLUGIN_ID = "com.android.application"
@@ -46,6 +53,15 @@ internal class AndroidIntegration(private val project: Project, private val exte
 
         /** The KSP dependency configuration name. */
         const val KSP_CONFIGURATION_NAME = "ksp"
+
+        /** The Hikage view declaration files KSP option name. */
+        const val VIEW_DECLARATION_FILES_OPTION_NAME = "hikage.viewDeclarationFiles"
+
+        /** The main source set name. */
+        const val MAIN_SOURCE_SET_NAME = "main"
+
+        /** The Hikage view declaration directory name. */
+        const val VIEW_DECLARATION_DIRECTORY_NAME = "hikage-view-declaration"
 
         const val HIKAGE_GROUP_NAME = HikageProperties.PROJECT_GROUP_NAME
         const val HIKAGE_COMPILER_MODULE_NAME = HikageProperties.PROJECT_HIKAGE_COMPILER_MODULE_NAME
@@ -75,8 +91,17 @@ internal class AndroidIntegration(private val project: Project, private val exte
         if (compiler.enabled.get()) project.pluginManager.apply(KSP_PLUGIN_ID)
 
         project.plugins.withId(KSP_PLUGIN_ID) {
+            configureCompilerOptions()
             configureCompilerDependency()
         }
+    }
+
+    private fun configureCompilerOptions() = project.extensions.configure<KspExtension> {
+        arg(ViewDeclarationFilesArgumentProvider(
+            enabled = extension.compiler.enabled,
+            viewDeclarationFiles = extension.compiler.viewDeclarationFiles,
+            files = createViewDeclarationFiles()
+        ))
     }
 
     private fun configureCompilerDependency() = project.dependencies.addProvider(
@@ -91,4 +116,14 @@ internal class AndroidIntegration(private val project: Project, private val exte
             "$HIKAGE_GROUP_NAME:$HIKAGE_COMPILER_MODULE_NAME:$version"
         }
     )
+
+    private fun createViewDeclarationFiles(): FileCollection {
+        val android = project.extensions.getByType<CommonExtension>()
+        val resources = android.sourceSets.getByName(MAIN_SOURCE_SET_NAME).resources
+        val directories = resources.directories.map { File(it, VIEW_DECLARATION_DIRECTORY_NAME) }
+
+        return project.files(directories.map {
+            project.fileTree(it) { include("**/*.json") }
+        })
+    }
 }
