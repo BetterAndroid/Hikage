@@ -50,7 +50,23 @@ plugins {
 
 插件会自动应用 [Google KSP](https://github.com/google/ksp) 插件，并向 `ksp` 配置中加入当前版本对应的编译器依赖。
 
-如果你需要临时关闭 Hikage 编译器装配，或覆盖编译器版本，可以使用如下配置。
+同时，插件会自动读取当前 Android `main` 源集的 `resources` 目录，扫描其中的 `hikage-view-declaration` 目录，并将所有 JSON 文件作为 `View` 声明文件传递给编译器。
+
+关于 `View` 声明文件的 JSON 格式，请参考 [hikage-compiler → View 声明文件](./hikage-compiler.md#view-声明文件)。
+
+JSON 文件位置结构如下：
+
+``` :no-line-numbers
+src/
+└── main
+    └── resources
+        └── hikage-view-declaration
+            ├── foo.json
+            ├── bar.json
+            └── ...
+```
+
+完整的插件配置项示例如下。
 
 > 示例如下
 
@@ -59,14 +75,16 @@ hikage {
     compiler {
         enabled = true
         version = "<version>"
+        viewDeclarationFiles = true
     }
 }
 ```
 
-| 参数名称  | 描述                                                                 |
-| --------- | -------------------------------------------------------------------- |
-| `enabled` | 是否启用 Hikage 编译器装配，默认启用                                 |
-| `version` | [hikage-compiler](./hikage-compiler.md) 版本，默认与插件版本保持一致 |
+| 参数名称               | 描述                                                                 |
+| ---------------------- | -------------------------------------------------------------------- |
+| `enabled`              | 是否启用 Hikage 编译器装配，默认启用                                 |
+| `version`              | [hikage-compiler](./hikage-compiler.md) 版本，默认与插件版本保持一致 |
+| `viewDeclarationFiles` | 是否通过 `View` 声明文件生成代码，默认启用                           |
 
 ::: warning
 

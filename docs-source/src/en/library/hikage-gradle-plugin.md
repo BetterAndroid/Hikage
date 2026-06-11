@@ -50,7 +50,24 @@ Please change `<version>` to the version displayed at the top of this document.
 
 The plugin automatically applies the [Google KSP](https://github.com/google/ksp) plugin and adds the matching compiler dependency of the current version to the `ksp` configuration.
 
-If you need to temporarily disable Hikage compiler wiring or override the compiler version, you can use the following configuration.
+At the same time, the plugin will automatically read the `resources` directories of the current Android `main` source sets,
+scan the `hikage-view-declaration` directory in them, and pass all JSON files as view declaration files to the compiler.
+
+For the JSON format of the view declaration file, please refer to [hikage-compiler → View Declaration File](./hikage-compiler.md#view-declaration-file).
+
+JSON file location structure is as follows:
+
+``` :no-line-numbers
+src/
+└── main
+    └── resources
+        └── hikage-view-declaration
+            ├── foo.json
+            ├── bar.json
+            └── ...
+```
+
+A complete example of plugin configurations is as follows.
 
 > The following example
 
@@ -59,14 +76,16 @@ hikage {
     compiler {
         enabled = true
         version = "<version>"
+        viewDeclarationFiles = true
     }
 }
 ```
 
-| Parameter Name | Description                                                                                       |
-| -------------- | ------------------------------------------------------------------------------------------------- |
-| `enabled`      | Whether to enable Hikage compiler wiring, enabled by default                                      |
-| `version`      | The [hikage-compiler](./hikage-compiler.md)'s version, aligned with the plugin version by default |
+| Parameter Name         | Description                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `enabled`              | Whether to enable Hikage compiler wiring, enabled by default                                      |
+| `version`              | The [hikage-compiler](./hikage-compiler.md)'s version, aligned with the plugin version by default |
+| `viewDeclarationFiles` | Whether to generate code through view declaration files, enabled by default                       |
 
 ::: warning
 
