@@ -218,7 +218,9 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         name = "attrs",
                         type = AttributeClass,
                         modifiers = listOf(KModifier.NOINLINE)
-                    ).defaultValue("{}").build()
+                    ).apply {
+                        if (!performer.annotation.requireAttrs) defaultValue("{}")
+                    }.build()
                 )
                 addParameter(
                     ParameterSpec.builder(
@@ -439,6 +441,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     private data class HikageViewSpec(
         override val lparams: KSClassDeclaration?,
         override val alias: String?,
+        override val requireAttrs: Boolean,
         override val requireInit: Boolean,
         override val requirePerformer: Boolean,
         override val final: Boolean
@@ -456,6 +459,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             ): Pair<HikageViewSpec, ViewDeclaration> {
                 val lparams = annotation.arguments.getOrNull<KSType>("lparams")
                 val alias = annotation.arguments.getOrNull<String>("alias")
+                val requireAttrs = annotation.arguments.getOrNull<Boolean>("requireAttrs") ?: false
                 val requireInit = annotation.arguments.getOrNull<Boolean>("requireInit") ?: false
                 val requirePerformer = annotation.arguments.getOrNull<Boolean>("requirePerformer") ?: false
                 val final = annotation.arguments.getOrNull<Boolean>("final") ?: false
@@ -464,7 +468,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 val declaration = Processor.createViewDeclaration(NAME, alias, ksClass)
                 val resolvedLparams = Processor.resolvedLparamsDeclaration(NAME, resolver, declaration, lparams)
 
-                return HikageViewSpec(resolvedLparams, alias, requireInit, requirePerformer, final) to declaration
+                return HikageViewSpec(resolvedLparams, alias, requireAttrs, requireInit, requirePerformer, final) to declaration
             }
         }
     }
@@ -473,6 +477,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val view: KSClassDeclaration?,
         override val lparams: KSClassDeclaration?,
         override val alias: String?,
+        override val requireAttrs: Boolean,
         override val requireInit: Boolean,
         override val requirePerformer: Boolean,
         override val final: Boolean
@@ -491,6 +496,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 val view = annotation.arguments.getOrNull<KSType>("view")
                 val lparams = annotation.arguments.getOrNull<KSType>("lparams")
                 val alias = annotation.arguments.getOrNull<String>("alias")
+                val requireAttrs = annotation.arguments.getOrNull<Boolean>("requireAttrs") ?: false
                 val requireInit = annotation.arguments.getOrNull<Boolean>("requireInit") ?: false
                 val requirePerformer = annotation.arguments.getOrNull<Boolean>("requirePerformer") ?: false
                 val final = annotation.arguments.getOrNull<Boolean>("final") ?: false
@@ -508,7 +514,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 }
 
                 val resolvedLparams = Processor.resolvedLparamsDeclaration(NAME, resolver, declaration, lparams)
-                return HikageViewDeclarationSpec(resolvedView, resolvedLparams, alias, requireInit, requirePerformer, final) to declaration
+                return HikageViewDeclarationSpec(resolvedView, resolvedLparams, alias, requireAttrs, requireInit, requirePerformer, final) to declaration
             }
         }
     }
@@ -516,6 +522,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     private interface HikageAnnotationSpec {
         val lparams: KSClassDeclaration?
         val alias: String?
+        val requireAttrs: Boolean
         val requireInit: Boolean
         val requirePerformer: Boolean
         val final: Boolean

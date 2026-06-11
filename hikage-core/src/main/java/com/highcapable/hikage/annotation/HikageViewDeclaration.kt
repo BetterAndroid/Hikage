@@ -44,7 +44,8 @@ import kotlin.reflect.KClass
  * after specifying, the `performer` parameter will be generated for the function.
  * The parameters must be a class inherited from [ViewGroup.LayoutParams],
  * if the current [View] does not inherit from [ViewGroup], this parameter will be ignored and warned.
- * @param alias the view's class name alias will naming the function, default is the [view] class name.
+ * @param alias the view's class name alias will name the function, default is the [view] class name.
+ * @param requireAttrs whether to force the `attrs` parameter to be called, default is false.
  * @param requireInit whether to force the `init` parameter to be called, default is false.
  * @param requirePerformer whether to force the `performer` parameter to be called, default is false,
  * this parameter will be ignored when no `performer` parameter is needed here.
@@ -59,6 +60,7 @@ annotation class HikageViewDeclaration(
     val view: KClass<*>,
     val lparams: KClass<*> = Any::class,
     val alias: String = "",
+    val requireAttrs: Boolean = false,
     val requireInit: Boolean = false,
     val requirePerformer: Boolean = false,
     val final: Boolean = false
