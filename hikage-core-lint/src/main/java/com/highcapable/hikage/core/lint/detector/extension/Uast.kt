@@ -17,13 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2025/3/17.
+ * This file is created by fankes on 2026/6/11.
  */
-package com.highcapable.hikage.core.lint.detector.entity
+package com.highcapable.hikage.core.lint.detector.extension
 
-import org.jetbrains.uast.UCallExpression
+import com.android.tools.lint.client.api.UElementHandler
+import com.android.tools.lint.detector.api.JavaContext
 
-data class ReportDetail(
-    val message: String,
-    val callExpr: UCallExpression
-)
+internal fun JavaContext.createKotlinOnlyUastHandler(handler: UElementHandler) =
+    handler.takeIf { file.name.endsWith(".kt") }

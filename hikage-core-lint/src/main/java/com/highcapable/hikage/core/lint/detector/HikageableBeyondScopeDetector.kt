@@ -31,7 +31,7 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
-import com.highcapable.hikage.core.lint.detector.entity.ReportDetail
+import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
 import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -62,7 +62,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
 
     override fun getApplicableUastTypes() = listOf(UCallExpression::class.java)
 
-    override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
+    override fun createUastHandler(context: JavaContext) = context.createKotlinOnlyUastHandler(object : UElementHandler() {
 
         private val reportedNodes = mutableSetOf<UCallExpression>()
         private val reports = mutableListOf<ReportDetail>()
@@ -142,5 +142,10 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
                 }
             }
         }
-    }
+    })
+
+    private data class ReportDetail(
+        val message: String,
+        val callExpr: UCallExpression
+    )
 }

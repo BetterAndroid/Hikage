@@ -31,6 +31,7 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
+import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
 import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
 import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UBlockExpression
@@ -61,7 +62,7 @@ class HikageablePropagationDetector : Detector(), Detector.UastScanner {
 
     override fun getApplicableUastTypes() = listOf(UMethod::class.java)
 
-    override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
+    override fun createUastHandler(context: JavaContext) = context.createKotlinOnlyUastHandler(object : UElementHandler() {
 
         override fun visitMethod(node: UMethod) {
             val uastBody = node.uastBody as? UBlockExpression ?: return
@@ -102,5 +103,5 @@ class HikageablePropagationDetector : Detector(), Detector.UastScanner {
                 context.report(ISSUE, node, nameLocation, message, lintFix)
             }
         }
-    }
+    })
 }

@@ -31,6 +31,7 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
+import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
 import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.toUElement
 import java.util.concurrent.ConcurrentHashMap
@@ -77,13 +77,13 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
         private val declaredComponents = ConcurrentHashMap<String, ViewCandidate>()
     }
 
-    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(
+    override fun getApplicableUastTypes() = listOf(
         UImportStatement::class.java,
         UClass::class.java,
         UCallExpression::class.java
     )
 
-    override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
+    override fun createUastHandler(context: JavaContext) = context.createKotlinOnlyUastHandler(object : UElementHandler() {
 
         private val sourceViews = mutableMapOf<String, ViewCandidate>()
         private val importViews = mutableMapOf<String, ViewCandidate>()
@@ -201,7 +201,10 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
             val viewClassName = hikageViewDeclarationAnnotation?.findClassName("view")
                 ?: hikageViewAnnotation?.let { qualifiedName }
                 ?: return null
-            val functionName = (hikageViewAnnotation ?: hikageViewDeclarationAnnotation)?.findStringValue("alias").orEmpty().takeIf { it.isNotBlank() }
+            val functionName = (hikageViewAnnotation ?: hikageViewDeclarationAnnotation)
+                ?.findStringValue("alias")
+                .orEmpty()
+                .takeIf { it.isNotBlank() }
                 ?: viewClassName.substringAfterLast(".").replace(".", "_")
 
             return ViewCandidate(viewClassName, functionName)
@@ -233,7 +236,7 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
             .substringBefore(" as ")
             .trim()
             .takeIf { it.isNotBlank() && !it.endsWith(".*") }
-    }
+    })
 
     private fun String.toCandidate(): ViewCandidate? {
         if (!startsWith("$VIEW_FUNCTION_PACKAGE_PREFIX.")) return null

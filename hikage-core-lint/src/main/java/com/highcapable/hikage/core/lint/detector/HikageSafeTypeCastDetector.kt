@@ -31,6 +31,7 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
+import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
 import org.jetbrains.uast.UArrayAccessExpression
 import org.jetbrains.uast.UBinaryExpressionWithType
 import org.jetbrains.uast.UParenthesizedExpression
@@ -56,7 +57,7 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
 
     override fun getApplicableUastTypes() = listOf(UQualifiedReferenceExpression::class.java, UBinaryExpressionWithType::class.java)
 
-    override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
+    override fun createUastHandler(context: JavaContext) = context.createKotlinOnlyUastHandler(object : UElementHandler() {
 
         override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
             if (node.selector !is UBinaryExpressionWithType) return
@@ -116,5 +117,5 @@ class HikageSafeTypeCastDetector : Detector(), Detector.UastScanner {
                 quickfixData = lintFix
             )
         }
-    }
+    })
 }

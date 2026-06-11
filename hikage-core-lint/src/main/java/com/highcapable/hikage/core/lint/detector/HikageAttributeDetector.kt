@@ -31,6 +31,7 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
+import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
 import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -171,7 +172,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
     override fun getApplicableUastTypes() = listOf(UCallExpression::class.java)
 
-    override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
+    override fun createUastHandler(context: JavaContext) = context.createKotlinOnlyUastHandler(object : UElementHandler() {
 
         private val attributes = hashMapOf<PsiElement, MutableMap<String, PsiElement>>()
         private val reportedLayoutAttributes = hashSetOf<PsiElement>()
@@ -182,7 +183,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
             startLint(context, node, callExpr, method, attributes, reportedLayoutAttributes)
         }
-    }
+    })
 
     private fun startLint(
         context: JavaContext,
