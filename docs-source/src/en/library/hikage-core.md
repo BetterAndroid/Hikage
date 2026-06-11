@@ -594,7 +594,7 @@ even if their namespaces are different.
 
 ::: danger
 
-For attributes starting with `android:layout_`, they belong to the XML attributes when creating `LayoutParams`.
+For attributes starting with `layout_`, they belong to the XML attributes when creating `LayoutParams`.
 If you manually create `LayoutParams` using the `lparams` parameter, Hikage will ignore passing the `AttributeSet` to
 the parent layout and create new `LayoutParams`, these attributes will no longer take effect and will be overridden,
 you can only choose one scheme to set layout parameters.
