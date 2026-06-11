@@ -21,9 +21,9 @@
 | [InvalidHikageAttributeColorValue](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)             | `CORRECTNESS` | `ERROR`   | `6`    | Color values must be #RGB, #ARGB, #RRGGBB or #AARRGGBB.                                                       |
 | [TooLongHikageAttributeString](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)                 | `CORRECTNESS` | `ERROR`   | `6`    | Attribute strings must fit in the binary XML string pool.                                                     |
 | [HikageableBeyondScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableBeyondScopeDetector.kt)                  | `CORRECTNESS` | `ERROR`   | `10`   | Functions marked with `@Hikageable` can only be passed in `Hikage.Performer`.                                 |
-| [HikageableFunctions](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableFunctionsDetector.kt)                      | `CORRECTNESS` | `ERROR`   | `10`   | Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.              |
+| [MissingHikageableAnnotation](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageablePropagationDetector.kt)            | `CORRECTNESS` | `ERROR`   | `10`   | Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.              |
 | [ReplaceWithHikageSafeTypeCast](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageSafeTypeCastDetector.kt)             | `USABILITY`   | `WARNING` | `5`    | Recommended to use `hikage.get<YourView>("your_id")` instead of `hikage["your_id"] as YourView`.              |
-| [ReplaceWithHikageWidgets](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/WidgetsUsageDetector.kt)                        | `USABILITY`   | `WARNING` | `5`    | Use the built-in widget function component provided by Hikage like `TextView(...)` instead.                   |
+| [ReplaceWithHikageComponents](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageComponentsUsageDetector.kt)            | `USABILITY`   | `WARNING` | `5`    | Use the generated Hikage component function like `TextView(...)` instead.                                     |
 
 </div>
 
@@ -36,7 +36,7 @@
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <issue id="ReplaceWithHikageWidgets" severity="ignore" />
+    <issue id="ReplaceWithHikageComponents" severity="ignore" />
     <issue id="ReplaceWithHikageSafeTypeCast" severity="error" />
 </lint>
 ```
@@ -55,9 +55,9 @@
 ```kotlin
 android {
     lint {
-        disable += "ReplaceWithHikageWidgets"
+        disable += "ReplaceWithHikageComponents"
         warning += "ReplaceWithHikageSafeTypeCast"
-        error += "HikageableFunctions"
+        error += "MissingHikageableAnnotation"
     }
 }
 ```
@@ -70,8 +70,8 @@ android {
 android {
     lint {
         checkOnly += setOf(
-            "ReplaceWithHikageWidgets",
-            "HikageableFunctions"
+            "ReplaceWithHikageComponents",
+            "MissingHikageableAnnotation"
         )
     }
 }
