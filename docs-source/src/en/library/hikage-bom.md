@@ -6,6 +6,14 @@
 
 This is the BOM dependency for unified version management of `Hikage` related modules.
 
+::: warning
+
+Gradle plugin versions are not managed by the BOM module.
+
+If you need [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) or [hikage-declaration-gradle-plugin](../plugin/hikage-declaration-gradle-plugin.md), declare the plugin version separately in `plugins`.
+
+:::
+
 ## Configure Dependency
 
 You can add this module to your project using the following method.
@@ -18,9 +26,6 @@ Add dependency in your project's `gradle/libs.versions.toml`.
 [versions]
 hikage-bom = "<version>"
 
-[plugins]
-hikage = { id = "com.highcapable.hikage", version.ref = "hikage-bom" }
-
 [libraries]
 hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
@@ -28,19 +33,12 @@ hikage-compiler = { module = "com.highcapable.hikage:hikage-compiler" }
 hikage-extension = { module = "com.highcapable.hikage:hikage-extension" }
 hikage-extension-betterandroid = { module = "com.highcapable.hikage:hikage-extension-betterandroid" }
 hikage-extension-compose = { module = "com.highcapable.hikage:hikage-extension-compose" }
+hikage-widget-foundation = { module = "com.highcapable.hikage:hikage-widget-foundation" }
 hikage-widget-androidx = { module = "com.highcapable.hikage:hikage-widget-androidx" }
 hikage-widget-material = { module = "com.highcapable.hikage:hikage-widget-material" }
 ```
 
 Configure dependency in your project's `build.gradle.kts`.
-
-> Apply Plugin
-
-```kotlin
-alias(libs.plugins.hikage)
-```
-
-> Apply Dependency
 
 ```kotlin
 implementation(platform(libs.hikage.bom))
@@ -55,6 +53,7 @@ implementation(libs.hikage.core)
 implementation(libs.hikage.extension)
 implementation(libs.hikage.extension.betterandroid)
 implementation(libs.hikage.extension.compose)
+implementation(libs.hikage.widget.foundation)
 implementation(libs.hikage.widget.androidx)
 implementation(libs.hikage.widget.material)
 ```
@@ -64,14 +63,6 @@ Please change `<version>` to the version displayed at the top of this document.
 ### Traditional Method
 
 Configure dependency in your project's `build.gradle.kts`.
-
-> Apply Plugin
-
-```kotlin
-id("com.highcapable.hikage") version "<version>"
-```
-
-> Apply Dependency
 
 ```kotlin
 implementation(platform("com.highcapable.hikage:hikage-bom:<version>"))
@@ -86,6 +77,7 @@ implementation("com.highcapable.hikage:hikage-core")
 implementation("com.highcapable.hikage:hikage-extension")
 implementation("com.highcapable.hikage:hikage-extension-betterandroid")
 implementation("com.highcapable.hikage:hikage-extension-compose")
+implementation("com.highcapable.hikage:hikage-widget-foundation")
 implementation("com.highcapable.hikage:hikage-widget-androidx")
 implementation("com.highcapable.hikage:hikage-widget-material")
 ```
@@ -97,7 +89,7 @@ Please change `<version>` to the version displayed at the top of this document.
 `ksp` is an independent Gradle dependency configuration, so `implementation(platform(...))` does not manage dependency versions declared in `ksp(...)`.
 If you need to use `hikage-compiler`, also add `hikage-bom` to the `ksp` configuration.
 
-We recommend you to use [hikage-gradle-plugin](./hikage-gradle-plugin.md) for easier configuration.
+We recommend you to use [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) for easier configuration.
 
 :::
 
@@ -108,10 +100,10 @@ We recommend you to use [hikage-gradle-plugin](./hikage-gradle-plugin.md) for ea
 It currently manages the versions of the following modules:
 
 - [hikage-core](./hikage-core.md)
-- [hikage-gradle-plugin](./hikage-gradle-plugin.md)
 - [hikage-compiler](./hikage-compiler.md)
 - [hikage-extension](./hikage-extension.md)
 - [hikage-extension-betterandroid](./hikage-extension-betterandroid.md)
 - [hikage-extension-compose](./hikage-extension-compose.md)
+- [hikage-widget-foundation](./hikage-widget-foundation.md)
 - [hikage-widget-androidx](./hikage-widget-androidx.md)
 - [hikage-widget-material](./hikage-widget-material.md)

@@ -3,14 +3,12 @@
 ![Maven Central](https://img.shields.io/maven-central/v/com.highcapable.hikage/hikage-compiler?logo=apachemaven&logoColor=orange&style=flat-square)
 <span style="margin-left: 5px"/>
 ![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fraw.githubusercontent.com%2FHighCapable%2Fmaven-repository%2Frefs%2Fheads%2Fmain%2Frepository%2Freleases%2Fcom%2Fhighcapable%2Fhikage%2Fhikage-compiler%2Fmaven-metadata.xml&logo=apachemaven&logoColor=orange&label=highcapable-maven-releases&style=flat-square)
-<span style="margin-left: 5px"/>
-![Android Min SDK](https://img.shields.io/badge/Min%20SDK-21-orange?logo=android&style=flat-square)
 
 这是 Hikage 的自动化编译模块。
 
 ::: tip
 
-通常情况下，我们推荐直接使用 [hikage-gradle-plugin](./hikage-gradle-plugin.md) 自动装配此模块。
+通常情况下，我们推荐直接使用 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 自动装配此模块。
 
 :::
 
@@ -181,13 +179,38 @@ Hikageable {
 
 除了使用 `HikageViewDeclaration` 注解，你还可以通过 `View` 声明文件的方式来声明需要生成布局组件函数的第三方 `View` 组件。
 
-你可以通过 `hikage.viewDeclarationFiles` 传入一个或多个 `View` 声明文件路径，多个文件使用 `File.pathSeparator` 分隔。
+通常情况下，我们建议通过 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 自动收集声明文件。
+
+如果你正在发布声明模块，推荐使用 [hikage-declaration-gradle-plugin](../plugin/hikage-declaration-gradle-plugin.md) 来完成声明文件资源的自动打包工作。
+
+如果你希望手动接管 KSP 参数，可以通过 `hikage.viewDeclarationFiles` 传入一个或多个 `View` 声明文件或目录路径，多个路径使用 `File.pathSeparator` 分隔，当传入目录时，编译器会递归扫描其中所有 `.json` 文件。
 
 > 示例如下
 
 ```kotlin
 ksp {
-    arg("hikage.viewDeclarationFiles", file("path/to/widgets.json").absolutePath)
+    arg(
+        "hikage.viewDeclarationFiles",
+        listOf(
+            file("path/to/widgets.json").absolutePath,
+            file("path/to/hikage-view-declaration").absolutePath
+        ).joinToString(File.pathSeparator)
+    )
+}
+```
+
+`hikage.viewDeclarationFiles` 属于严格声明入口，如果路径指向不存在的 `.json` 文件，或 JSON 中声明的 `viewClass` / `lparams` 无法解析，编译会直接失败。
+
+此时你可以使用 `hikage.optionalViewDeclarationFiles` 来实现可选声明入口的功能，在无法解析时编译器会跳过当前项并输出 `info` 级别的日志。
+
+> 示例如下
+
+```kotlin
+ksp {
+    arg(
+        "hikage.optionalViewDeclarationFiles",
+        file("path/to/dependency-declarations").absolutePath
+    )
 }
 ```
 
@@ -226,6 +249,6 @@ ksp {
 
 Hikage 生成布局组件的函数包名路径为 `com.highcapable.hikage.widget` + 你的 `View` 或第三方 `View` 组件的完整包名。
 
-同一个 `View` 存在注解声明时，注解声明会优先于 `View` 声明文件。
+同一个 `View` 存在 `HikageView` 或 `HikageViewDeclaration` 注解声明时，注解声明会优先于 `View` 声明文件。
 
 :::

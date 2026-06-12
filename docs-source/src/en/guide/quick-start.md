@@ -54,6 +54,46 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 ```
 
+## Quick Setup
+
+Add the following content to your project's `gradle/libs.versions.toml`.
+
+```toml
+[versions]
+# ...
+hikage-plugin = "<plugin-version>"
+hikage = "<version>"
+
+[plugins]
+# ...
+hikage = { id = "com.highcapable.hikage", version.ref = "hikage-plugin" }
+
+[libraries]
+# ...
+hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage" }
+hikage-core = { module = "com.highcapable.hikage:hikage-core" }
+```
+
+- Replace `<plugin-version>` with ![hikage-plugin](https://img.shields.io/maven-central/v/com.highcapable.hikage/com.highcapable.hikage.gradle.plugin?logo=apachemaven&logoColor=orange&style=flat-square&label=hikage-plugin)
+- Replace `<version>` with ![hikage-bom](https://img.shields.io/maven-central/v/com.highcapable.hikage/hikage-bom?logo=apachemaven&logoColor=orange&style=flat-square&label=hikage-bom)
+
+Next, add the following content to your project's `build.gradle.kts`.
+
+```kotlin
+plugins {
+    // ...
+    alias(libs.plugins.hikage)
+}
+
+dependencies {
+    // ...
+    implementation(platform(libs.hikage.bom))
+    implementation(libs.hikage.core)
+}
+```
+
+After clicking the `Sync` button to sync your project, `Hikage` will be successfully integrated into your project.
+
 ## Features Overview
 
 The project is divided into multiple modules. You can choose the module you wish to include as a dependency in your project, but be sure to include the **hikage-core** module.
@@ -72,13 +112,21 @@ For details, please see the [changelog](../about/changelog.md).
 
 - [hikage-bom](../library/hikage-bom.md)
 - [hikage-core](../library/hikage-core.md)
-- [hikage-gradle-plugin](../library/hikage-gradle-plugin.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-extension](../library/hikage-extension.md)
 - [hikage-extension-betterandroid](../library/hikage-extension-betterandroid.md)
 - [hikage-extension-compose](../library/hikage-extension-compose.md)
+- [hikage-widget-foundation](../library/hikage-widget-foundation.md)
 - [hikage-widget-androidx](../library/hikage-widget-androidx.md)
 - [hikage-widget-material](../library/hikage-widget-material.md)
+
+### Gradle Plugins
+
+Gradle plugins provide dependency assembly and simplified configuration capabilities for `Hikage`.
+It is recommended to use them in conjunction with runtime dependencies.
+
+- [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md)
+- [hikage-declaration-gradle-plugin](../plugin/hikage-declaration-gradle-plugin.md)
 
 ## Demo
 

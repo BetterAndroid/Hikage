@@ -13,13 +13,17 @@ const navigationLinks = {
     library: [
         '/library/hikage-bom',
         '/library/hikage-core',
-        '/library/hikage-gradle-plugin',
         '/library/hikage-compiler',
         '/library/hikage-extension',
         '/library/hikage-extension-betterandroid',
         '/library/hikage-extension-compose',
+        '/library/hikage-widget-foundation',
         '/library/hikage-widget-androidx',
         '/library/hikage-widget-material'
+    ],
+    plugin: [
+        '/plugin/hikage-gradle-plugin',
+        '/plugin/hikage-declaration-gradle-plugin'
     ],
     config: [
         '/config/r8-proguard',
@@ -85,6 +89,9 @@ export const navBarItems = {
             text: 'Libraries',
             children: i18n.array(navigationLinks.library, 'en')
         }, {
+            text: 'Plugins',
+            children: i18n.array(navigationLinks.plugin, 'en')
+        }, {
             text: 'Configs',
             children: i18n.array(navigationLinks.config, 'en')
         }, {
@@ -103,6 +110,9 @@ export const navBarItems = {
         }, {
             text: '依赖',
             children: i18n.array(navigationLinks.library, 'zh-cn')
+        }, {
+            text: '插件',
+            children: i18n.array(navigationLinks.plugin, 'zh-cn')
         }, {
             text: '配置',
             children: i18n.array(navigationLinks.config, 'zh-cn')
@@ -126,6 +136,10 @@ export const sideBarItems = {
         collapsible: true,
         children: i18n.array(navigationLinks.library, 'en')
     }, {
+        text: 'Plugins',
+        collapsible: true,
+        children: i18n.array(navigationLinks.plugin, 'en')
+    }, {
         text: 'Configs',
         collapsible: true,
         children: i18n.array(navigationLinks.config, 'en')
@@ -142,6 +156,10 @@ export const sideBarItems = {
         text: '依赖',
         collapsible: true,
         children: i18n.array(navigationLinks.library, 'zh-cn')
+    }, {
+        text: '插件',
+        collapsible: true,
+        children: i18n.array(navigationLinks.plugin, 'zh-cn')
     }, {
         text: '配置',
         collapsible: true,

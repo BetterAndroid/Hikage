@@ -51,6 +51,46 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 ```
 
+## 极速上手
+
+在你的项目 `gradle/libs.versions.toml` 中添加以下内容。
+
+```toml
+[versions]
+# ...
+hikage-plugin = "<plugin-version>"
+hikage = "<version>"
+
+[plugins]
+# ...
+hikage = { id = "com.highcapable.hikage", version.ref = "hikage-plugin" }
+
+[libraries]
+# ...
+hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage" }
+hikage-core = { module = "com.highcapable.hikage:hikage-core" }
+```
+
+- 将 `<plugin-version>` 替换为 ![hikage-plugin](https://img.shields.io/maven-central/v/com.highcapable.hikage/com.highcapable.hikage.gradle.plugin?logo=apachemaven&logoColor=orange&style=flat-square&label=hikage-plugin)
+- 将 `<version>` 替换为 ![hikage-bom](https://img.shields.io/maven-central/v/com.highcapable.hikage/hikage-bom?logo=apachemaven&logoColor=orange&style=flat-square&label=hikage-bom)
+
+接下来，在你的项目 `build.gradle.kts` 中添加以下内容。
+
+```kotlin
+plugins {
+    // ...
+    alias(libs.plugins.hikage)
+}
+
+dependencies {
+    // ...
+    implementation(platform(libs.hikage.bom))
+    implementation(libs.hikage.core)
+}
+```
+
+点击 `Sync` 按钮同步项目后，`Hikage` 就已经成功集成到你的项目中了。
+
 ## 功能一览
 
 整个项目分为多个模块，你可以选择你希望引入的模块作为依赖应用到你的项目中，但一定要包含 **hikage-core** 模块。
@@ -67,13 +107,20 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 - [hikage-bom](../library/hikage-bom.md)
 - [hikage-core](../library/hikage-core.md)
-- [hikage-gradle-plugin](../library/hikage-gradle-plugin.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-extension](../library/hikage-extension.md)
 - [hikage-extension-betterandroid](../library/hikage-extension-betterandroid.md)
 - [hikage-extension-compose](../library/hikage-extension-compose.md)
+- [hikage-widget-foundation](../library/hikage-widget-foundation.md)
 - [hikage-widget-androidx](../library/hikage-widget-androidx.md)
 - [hikage-widget-material](../library/hikage-widget-material.md)
+
+### Gradle 插件
+
+Gradle 插件为 `Hikage` 提供了依赖装配和简化配置流程的能力，推荐优先和运行时依赖配套使用。
+
+- [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md)
+- [hikage-declaration-gradle-plugin](../plugin/hikage-declaration-gradle-plugin.md)
 
 ## Demo
 
