@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "androidx.drawerlayout.widget.DrawerLayout",
+    "lparams": "androidx.drawerlayout.widget.DrawerLayout.LayoutParams"
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "viewClass": "com.google.android.material.chip.Chip"
+  },
+  {
+    "viewClass": "com.google.android.material.chip.ChipGroup",
+    "lparams": "com.google.android.material.chip.ChipGroup.LayoutParams"
+  }
+]

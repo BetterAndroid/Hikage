@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "androidx.cardview.widget.CardView",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  }
+]

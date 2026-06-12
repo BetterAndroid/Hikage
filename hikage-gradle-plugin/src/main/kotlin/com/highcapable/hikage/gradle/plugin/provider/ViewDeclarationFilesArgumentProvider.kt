@@ -21,7 +21,6 @@
  */
 package com.highcapable.hikage.gradle.plugin.provider
 
-import com.highcapable.hikage.gradle.plugin.integration.AndroidIntegration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputFiles
@@ -34,11 +33,13 @@ import java.io.File
  * The command line argument provider for view declaration files.
  * @param enabled the provider for whether the plugin is enabled.
  * @param viewDeclarationFiles the provider for whether view declaration files should be included.
- * @param files the file collection of view declaration files.
+ * @param optionName the KSP option name.
+ * @param files the file collection of view declaration files or directories.
  */
 internal class ViewDeclarationFilesArgumentProvider(
     private val enabled: Provider<Boolean>,
     private val viewDeclarationFiles: Provider<Boolean>,
+    private val optionName: String,
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val files: FileCollection
@@ -48,11 +49,10 @@ internal class ViewDeclarationFilesArgumentProvider(
         if (!enabled.get() || !viewDeclarationFiles.get()) return emptyList()
 
         val value = files.files
-            .filter { it.isFile && it.extension == "json" }
             .sortedBy { it.absolutePath }
             .joinToString(File.pathSeparator) { it.absolutePath }
 
         return if (value.isEmpty()) emptyList()
-        else listOf("${AndroidIntegration.VIEW_DECLARATION_FILES_OPTION_NAME}=$value")
+        else listOf("$optionName=$value")
     }
 }

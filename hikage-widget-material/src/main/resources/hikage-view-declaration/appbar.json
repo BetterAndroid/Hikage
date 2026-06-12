@@ -1,0 +1,14 @@
+[
+  {
+    "viewClass": "com.google.android.material.appbar.AppBarLayout",
+    "lparams": "com.google.android.material.appbar.AppBarLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.appbar.MaterialToolbar",
+    "final": true
+  },
+  {
+    "viewClass": "com.google.android.material.appbar.CollapsingToolbarLayout",
+    "lparams": "com.google.android.material.appbar.CollapsingToolbarLayout.LayoutParams"
+  }
+]

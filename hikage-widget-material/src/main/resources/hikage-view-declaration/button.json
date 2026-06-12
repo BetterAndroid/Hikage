@@ -1,0 +1,9 @@
+[
+  {
+    "viewClass": "com.google.android.material.button.MaterialButton"
+  },
+  {
+    "viewClass": "com.google.android.material.button.MaterialButtonToggleGroup",
+    "lparams": "android.widget.LinearLayout.LayoutParams"
+  }
+]

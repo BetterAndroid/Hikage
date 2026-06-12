@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.hikage)
 }
 
 android {
@@ -31,22 +31,31 @@ android {
 }
 
 dependencies {
-    ksp(projects.hikageCompiler)
-
-    implementation(platform(libs.betterandroid.android.bom))
-
     implementation(projects.hikageCore)
     implementation(projects.hikageExtension)
     implementation(projects.hikageExtensionBetterandroid)
     implementation(projects.hikageWidgetAndroidx)
     implementation(projects.hikageWidgetMaterial)
 
-    implementation(libs.pangutext.android)
+    implementation(platform(libs.betterandroid.android.bom))
     implementation(libs.betterandroid.ui.component)
     implementation(libs.betterandroid.ui.extension)
     implementation(libs.betterandroid.system.extension)
+
+    implementation(libs.pangutext.android)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.coordinatorlayout)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.slidingpanelayout)
+    implementation(libs.androidx.drawerlayout)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.viewpager)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.material)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

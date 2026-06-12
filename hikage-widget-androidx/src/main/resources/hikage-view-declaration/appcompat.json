@@ -1,0 +1,62 @@
+[
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatRadioButton"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatRatingBar"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatImageButton"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatEditText"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.ActionMenuView"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatImageView"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatButton"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatSeekBar"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatCheckBox"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatTextView"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatToggleButton"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.Toolbar",
+    "final": true
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatCheckedTextView"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.SwitchCompat"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.SearchView",
+    "final": true
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.LinearLayoutCompat",
+    "lparams": "androidx.appcompat.widget.LinearLayoutCompat.LayoutParams"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatAutoCompleteTextView"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatSpinner"
+  },
+  {
+    "viewClass": "androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView"
+  }
+]

@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.dokka)
     alias(libs.plugins.maven.publish)
-    alias(libs.plugins.kotlin.ksp)
 }
 
 group = gropify.project.groupName
@@ -28,7 +27,7 @@ android {
 dependencies {
     lintPublish(projects.hikageCoreLint)
 
-    ksp(projects.hikageCompiler)
+    api(projects.hikageWidgetFoundation)
 
     implementation(platform(libs.kavaref.bom))
     implementation(libs.kavaref.core)

@@ -1,0 +1,170 @@
+[
+  {
+    "viewClass": "android.widget.SeekBar"
+  },
+  {
+    "viewClass": "android.widget.LinearLayout",
+    "lparams": "android.widget.LinearLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.RelativeLayout",
+    "lparams": "android.widget.RelativeLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.FrameLayout",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.ScrollView",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.ProgressBar"
+  },
+  {
+    "viewClass": "android.widget.Chronometer"
+  },
+  {
+    "viewClass": "android.widget.Space"
+  },
+  {
+    "viewClass": "android.widget.CheckedTextView"
+  },
+  {
+    "viewClass": "android.widget.ExpandableListView",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.Spinner"
+  },
+  {
+    "viewClass": "android.widget.RadioGroup",
+    "lparams": "android.widget.RadioGroup.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.RadioButton"
+  },
+  {
+    "viewClass": "android.widget.ToggleButton"
+  },
+  {
+    "viewClass": "android.widget.CheckBox"
+  },
+  {
+    "viewClass": "android.widget.EditText"
+  },
+  {
+    "viewClass": "android.widget.AutoCompleteTextView"
+  },
+  {
+    "viewClass": "android.widget.Button"
+  },
+  {
+    "viewClass": "android.widget.ImageButton"
+  },
+  {
+    "viewClass": "android.widget.TextView"
+  },
+  {
+    "viewClass": "android.widget.TextClock"
+  },
+  {
+    "viewClass": "android.widget.TextSwitcher",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.ActionMenuView",
+    "lparams": "android.widget.ActionMenuView.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.CalendarView",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.DatePicker",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.TimePicker",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.RatingBar"
+  },
+  {
+    "viewClass": "android.widget.HorizontalScrollView",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.QuickContactBadge"
+  },
+  {
+    "viewClass": "android.widget.ImageSwitcher",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.ViewSwitcher",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.ViewFlipper",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.ViewAnimator",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.VideoView"
+  },
+  {
+    "viewClass": "android.widget.Toolbar",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.GridLayout",
+    "lparams": "android.widget.GridLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.GridView",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.ListView",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.ImageView"
+  },
+  {
+    "viewClass": "android.widget.MediaController",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.TableLayout",
+    "lparams": "android.widget.TableLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.TableRow",
+    "lparams": "android.widget.TableRow.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.NumberPicker",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.SearchView",
+    "final": true
+  },
+  {
+    "viewClass": "android.widget.Switch"
+  },
+  {
+    "viewClass": "android.widget.TabHost",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "android.widget.TabWidget",
+    "final": true
+  }
+]

@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "androidx.slidingpanelayout.widget.SlidingPaneLayout",
+    "lparams": "androidx.slidingpanelayout.widget.SlidingPaneLayout.LayoutParams"
+  }
+]

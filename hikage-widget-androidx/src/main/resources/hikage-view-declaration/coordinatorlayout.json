@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "androidx.coordinatorlayout.widget.CoordinatorLayout",
+    "lparams": "androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams"
+  }
+]

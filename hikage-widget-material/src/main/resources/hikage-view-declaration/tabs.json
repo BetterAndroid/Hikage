@@ -1,0 +1,9 @@
+[
+  {
+    "viewClass": "com.google.android.material.tabs.TabLayout",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.tabs.TabItem"
+  }
+]

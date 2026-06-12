@@ -1,0 +1,8 @@
+[
+  {
+    "viewClass": "com.google.android.material.floatingactionbutton.FloatingActionButton"
+  },
+  {
+    "viewClass": "com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton"
+  }
+]

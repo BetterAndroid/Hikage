@@ -1,0 +1,26 @@
+[
+  {
+    "viewClass": "com.google.android.material.circularreveal.CircularRevealGridLayout",
+    "lparams": "android.widget.GridLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.circularreveal.CircularRevealRelativeLayout",
+    "lparams": "android.widget.RelativeLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.circularreveal.CircularRevealFrameLayout",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.circularreveal.CircularRevealLinearLayout",
+    "lparams": "android.widget.LinearLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.circularreveal.coordinatorlayout.CircularRevealCoordinatorLayout",
+    "lparams": "androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.circularreveal.cardview.CircularRevealCardView",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  }
+]

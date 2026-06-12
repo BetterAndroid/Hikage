@@ -14,6 +14,7 @@ tasks.named<Jar>("jar") {
 
 dependencies {
     compileOnly(libs.kotlin.stdlib)
+    compileOnly(libs.gson)
     compileOnly(libs.android.lint.api)
     compileOnly(libs.android.lint.checks)
 

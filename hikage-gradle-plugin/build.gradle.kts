@@ -4,7 +4,7 @@ plugins {
 }
 
 group = gropify.project.groupName
-version = gropify.project.hikage.bom.version
+version = gropify.project.hikage.plugin.version
 
 java {
     withSourcesJar()
@@ -13,6 +13,7 @@ java {
 dependencies {
     compileOnly(libs.android.gradle.plugin)
     implementation(libs.ksp.symbol.processing.gradle.plugin)
+    implementation(libs.zip4j)
 }
 
 gradlePlugin {

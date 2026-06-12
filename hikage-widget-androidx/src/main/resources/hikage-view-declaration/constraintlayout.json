@@ -1,0 +1,28 @@
+[
+  {
+    "viewClass": "androidx.constraintlayout.widget.ConstraintLayout",
+    "lparams": "androidx.constraintlayout.widget.ConstraintLayout.LayoutParams"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.motion.widget.MotionLayout",
+    "lparams": "androidx.constraintlayout.widget.ConstraintLayout.LayoutParams"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.utils.widget.ImageFilterButton"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.utils.widget.ImageFilterView"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.utils.widget.MockView"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.utils.widget.MotionButton"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.utils.widget.MotionLabel"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.utils.widget.MotionTelltales"
+  }
+]

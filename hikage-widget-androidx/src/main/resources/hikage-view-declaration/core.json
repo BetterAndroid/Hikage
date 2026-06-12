@@ -1,0 +1,9 @@
+[
+  {
+    "viewClass": "androidx.core.widget.NestedScrollView",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "androidx.core.widget.ContentLoadingProgressBar"
+  }
+]

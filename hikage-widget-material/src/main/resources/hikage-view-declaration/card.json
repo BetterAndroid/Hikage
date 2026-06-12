@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "com.google.android.material.card.MaterialCardView",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  }
+]

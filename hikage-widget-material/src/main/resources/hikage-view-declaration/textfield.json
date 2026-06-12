@@ -1,0 +1,12 @@
+[
+  {
+    "viewClass": "com.google.android.material.textfield.TextInputEditText"
+  },
+  {
+    "viewClass": "com.google.android.material.textfield.MaterialAutoCompleteTextView"
+  },
+  {
+    "viewClass": "com.google.android.material.textfield.TextInputLayout",
+    "lparams": "android.widget.LinearLayout.LayoutParams"
+  }
+]

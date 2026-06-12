@@ -1,0 +1,10 @@
+[
+  {
+    "viewClass": "androidx.viewpager.widget.ViewPager",
+    "final": true
+  },
+  {
+    "viewClass": "androidx.viewpager2.widget.ViewPager2",
+    "final": true
+  }
+]

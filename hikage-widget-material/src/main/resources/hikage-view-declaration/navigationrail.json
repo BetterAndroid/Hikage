@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "com.google.android.material.navigationrail.NavigationRailView",
+    "final": true
+  }
+]

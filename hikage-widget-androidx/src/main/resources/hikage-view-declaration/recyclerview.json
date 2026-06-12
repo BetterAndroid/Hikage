@@ -1,0 +1,6 @@
+[
+  {
+    "viewClass": "androidx.recyclerview.widget.RecyclerView",
+    "final": true
+  }
+]

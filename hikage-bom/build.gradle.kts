@@ -13,6 +13,7 @@ dependencies {
         api(projects.hikageExtension)
         api(projects.hikageExtensionBetterandroid)
         api(projects.hikageExtensionCompose)
+        api(projects.hikageWidgetFoundation)
         api(projects.hikageWidgetAndroidx)
         api(projects.hikageWidgetMaterial)
     }

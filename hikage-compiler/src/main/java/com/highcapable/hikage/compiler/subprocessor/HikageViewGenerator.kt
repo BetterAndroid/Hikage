@@ -53,8 +53,6 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
@@ -69,15 +67,19 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     private companion object {
 
         private const val VIEW_DECLARATION_FILES_OPTION = "hikage.viewDeclarationFiles"
+        private const val OPTIONAL_VIEW_DECLARATION_FILES_OPTION = "hikage.optionalViewDeclarationFiles"
+
+        private const val PROJECT_GROUP_OPTION = "hikage.internal.projectGroup"
+        private const val PROJECT_NAME_OPTION = "hikage.internal.projectName"
+
         private const val VIEW_DECLARATION_FILE_NAME = "HikageViewDeclarationFile"
+        private const val VIEW_SYMBOL_INDEX_FILE_NAME = "index"
+        private const val VIEW_SYMBOL_DIRECTORY_NAME = "META-INF/hikage/view-symbol"
 
         private const val PACKAGE_NAME_PREFIX = "com.highcapable.hikage.widget"
 
         private const val VIEW_FUNCTION_ALIAS = "_View"
         private const val VIEW_GROUP_FUNCTION_ALIAS = "_ViewGroup"
-
-        private const val VIEW_METADATA_CLASS_SUFFIX = "HikageView"
-        private const val VIEW_METADATA_FUNCTION_NAME = "FUNCTION_NAME"
 
         val HikageableClass = ClassName(DeclaredSymbol.ANNOTATION_PACKAGE_NAME, DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS_NAME)
         val LayoutParamClass = ClassName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, DeclaredSymbol.HIKAGE_LAYOUT_PARAMS_CLASS_NAME)
@@ -90,10 +92,13 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val ViewGroupFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "ViewGroup")
 
         val jsonDecoder = Json
+
+        fun String.toSymbolPath() = replace("[^A-Za-z0-9_.-]".toRegex(), "_")
     }
 
     private val generatedFileOwners = mutableMapOf<String, String>()
     private val annotationViewKeys = mutableSetOf<String>()
+    private var hasGeneratedViewSymbol = false
 
     override fun startProcess(resolver: Resolver) {
         Processor.init(logger, resolver)
@@ -124,27 +129,38 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             }
 
         annotationViewKeys += annotationPerformers.map { it.declaration.viewClassKey }
-        val filePerformers = createViewDeclarationFilePerformers(resolver)
-            .filter { it.declaration.viewClassKey !in annotationViewKeys }
+        val strictFilePerformers = createViewDeclarationFilePerformers(
+            resolver = resolver,
+            optionName = VIEW_DECLARATION_FILES_OPTION,
+            isOptional = false
+        ).filter { it.declaration.viewClassKey !in annotationViewKeys }
+        val strictViewKeys = annotationViewKeys + strictFilePerformers.map { it.declaration.viewClassKey }
+        val optionalFilePerformers = createViewDeclarationFilePerformers(
+            resolver = resolver,
+            optionName = OPTIONAL_VIEW_DECLARATION_FILES_OPTION,
+            isOptional = true
+        )
+        val filePerformers = strictFilePerformers + optionalFilePerformers
+            .filter { it.declaration.viewClassKey !in strictViewKeys }
         val performers = annotationPerformers + filePerformers
 
         processPerformer(performers, mutableSetOf())
+        generateViewSymbolIndex(performers)
     }
 
-    private fun createViewDeclarationFilePerformers(resolver: Resolver): List<Performer> {
-        val files = environment.options[VIEW_DECLARATION_FILES_OPTION]
+    private fun createViewDeclarationFilePerformers(resolver: Resolver, optionName: String, isOptional: Boolean): List<Performer> {
+        val files = environment.options[optionName]
             ?.split(File.pathSeparator)
+            ?.asSequence()
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
             ?.distinct()
             ?.map(::File)
+            ?.flatMap { it.toViewDeclarationFiles() }
+            ?.toList()
             ?: return emptyList()
 
         return files.flatMap { file ->
-            require(file.exists() && file.isFile) {
-                "Hikage view declaration file does not exist or is not a file: ${file.path}"
-            }
-
             val items = try {
                 jsonDecoder.decodeFromString<List<ViewDeclarationFileItem>>(file.readText())
             } catch (e: SerializationException) {
@@ -154,10 +170,26 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             }
 
             items.mapIndexed { index, item ->
-                val (annotation, declaration) = ViewDeclarationFileSpec.create(resolver, item, file, index)
-                Performer(annotation, declaration, null, "$VIEW_DECLARATION_FILE_NAME: ${file.path}[$index]")
-            }
+                ViewDeclarationFileSpec.create(resolver, item, file, index, isOptional)?.let { (annotation, declaration) ->
+                    Performer(annotation, declaration, null, "$VIEW_DECLARATION_FILE_NAME: ${file.path}[$index]")
+                }
+            }.filterNotNull()
         }
+    }
+
+    private fun File.toViewDeclarationFiles() = when {
+        isFile -> {
+            require(extension == "json") {
+                "Hikage view declaration file is not a JSON file: $path"
+            }
+            listOf(this)
+        }
+        isDirectory -> walkTopDown()
+            .filter { it.isFile && it.extension == "json" }
+            .sortedBy { it.path }
+            .toList()
+        extension == "json" -> error("Hikage view declaration file does not exist: $path")
+        else -> emptyList()
     }
 
     private fun processPerformer(performers: List<Performer>, roundGeneratedFiles: MutableSet<String>) {
@@ -170,6 +202,39 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 duplicatedItems.joinToString("\n") { "${it.declaration}\n${it.declaration.locateDesc}" }
         }
         performers.forEach { generateCodeFile(it, roundGeneratedFiles) }
+    }
+
+    private fun generateViewSymbolIndex(performers: List<Performer>) {
+        if (performers.isEmpty() || hasGeneratedViewSymbol) return
+
+        val group = environment.options[PROJECT_GROUP_OPTION]
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+        val module = environment.options[PROJECT_NAME_OPTION]
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+
+        // If the project group or name is not specified, skip generating the view symbol index file.
+        if (group == null || module == null) return
+
+        val items = performers.map {
+            ViewSymbol(
+                viewClass = it.declaration.viewClassKey,
+                name = it.declaration.alias ?: it.declaration.className.replace(".", "_"),
+                packageName = "$PACKAGE_NAME_PREFIX.${it.declaration.packageName}"
+            )
+        }.sortedWith(compareBy(ViewSymbol::viewClass, ViewSymbol::name, ViewSymbol::packageName))
+
+        val path = "$VIEW_SYMBOL_DIRECTORY_NAME/${group.toSymbolPath()}/${module.toSymbolPath()}/$VIEW_SYMBOL_INDEX_FILE_NAME"
+        val dependencies = Dependencies(
+            aggregating = true,
+            sources = performers.mapNotNull { it.sourceFile }.distinct().toTypedArray()
+        )
+
+        codeGenerator.createNewFileByPath(dependencies, path, extensionName = "json").use {
+            it.write(jsonDecoder.encodeToString(items).toByteArray())
+        }
+        hasGeneratedViewSymbol = true
     }
 
     private fun generateCodeFile(performer: Performer, roundGeneratedFiles: MutableSet<String>) {
@@ -200,7 +265,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         }
 
         val packageName = "$PACKAGE_NAME_PREFIX.${performer.declaration.packageName}"
-        val metadataClassName = "_${performer.declaration.className.replace(".", "_")}$VIEW_METADATA_CLASS_SUFFIX"
 
         val hasPerformer = lparamsClass != null && !performer.annotation.final
         val performFunctionAlias = if (hasPerformer) VIEW_GROUP_FUNCTION_ALIAS else VIEW_FUNCTION_ALIAS
@@ -296,25 +360,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             }.build())
         }.build()
 
-        val metadataFileSpec = FileSpec.builder(packageName, metadataClassName).apply {
-            addCopyrightFileComment()
-            addAnnotation(
-                AnnotationSpec.builder(Suppress::class)
-                    .addMember("%S", "unused")
-                    .build()
-            )
-            addType(
-                TypeSpec.objectBuilder(metadataClassName).apply {
-                    addKdoc("Metadata for Hikage generated widget function.")
-                    addProperty(
-                        PropertySpec.builder(VIEW_METADATA_FUNCTION_NAME, String::class.asTypeName(), KModifier.CONST)
-                            .initializer("%S", classNameSet)
-                            .build()
-                    )
-                }.build()
-            )
-        }.build()
-
         val dependencies = performer.sourceFile?.let {
             Dependencies(aggregating = false, it)
         } ?: Dependencies(aggregating = false)
@@ -322,13 +367,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         writeCodeFile(
             fileSpec = codeFileSpec,
             generatedKey = "$packageName.$fileName",
-            performer = performer,
-            roundGeneratedFiles = roundGeneratedFiles,
-            dependencies = dependencies
-        )
-        writeCodeFile(
-            fileSpec = metadataFileSpec,
-            generatedKey = "$packageName.$metadataClassName",
             performer = performer,
             roundGeneratedFiles = roundGeneratedFiles,
             dependencies = dependencies
@@ -428,6 +466,11 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             }
             return resolvedLparams
         }
+
+        fun skipOptionalViewDeclarationFileItem(file: File, index: Int, viewClass: String, throwable: Throwable) = logger.info(
+            "Skip optional $VIEW_DECLARATION_FILE_NAME's viewClass \"$viewClass\" because it cannot be resolved " +
+                "from the current classpath.\nLocated: ${file.path}[$index]\nReason: ${throwable.message}"
+        )
 
         fun createViewDeclaration(
             tagName: String,
@@ -579,42 +622,50 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 resolver: Resolver,
                 item: ViewDeclarationFileItem,
                 file: File,
-                index: Int
-            ): Pair<ViewDeclarationFileSpec, ViewDeclaration> {
+                index: Int,
+                isOptional: Boolean
+            ): Pair<ViewDeclarationFileSpec, ViewDeclaration>? {
                 val viewClass = item.viewClass.trim()
                 require(viewClass.isNotEmpty()) {
                     "Declares $VIEW_DECLARATION_FILE_NAME's viewClass must not be empty.\nLocated: ${file.path}[$index]"
                 }
 
-                val resolvedView = resolver.getClassDeclarationByName(viewClass)
-                    ?: error("Declares $VIEW_DECLARATION_FILE_NAME's viewClass \"$viewClass\" was not found.\nLocated: ${file.path}[$index]")
-                val lparams = item.lparams?.trim()?.takeIf { it.isNotEmpty() }?.let {
-                    resolver.getClassDeclarationByName(it)
-                        ?: error("Declares $VIEW_DECLARATION_FILE_NAME's lparams \"$it\" was not found.\nLocated: ${file.path}[$index]")
+                return runCatching {
+                    val resolvedView = resolver.getClassDeclarationByName(viewClass)
+                        ?: error("Declares $VIEW_DECLARATION_FILE_NAME's viewClass \"$viewClass\" was not found.\nLocated: ${file.path}[$index]")
+                    val lparams = item.lparams?.trim()?.takeIf { it.isNotEmpty() }?.let {
+                        resolver.getClassDeclarationByName(it)
+                            ?: error("Declares $VIEW_DECLARATION_FILE_NAME's lparams \"$it\" was not found.\nLocated: ${file.path}[$index]")
+                    }
+
+                    val declaration = Processor.createViewDeclaration(
+                        tagName = VIEW_DECLARATION_FILE_NAME,
+                        alias = item.alias,
+                        ksClass = resolvedView,
+                        locateDesc = "Located: ${file.path}[$index]"
+                    )
+                    val resolvedLparams = Processor.resolvedLparamsDeclaration(
+                        tagName = VIEW_DECLARATION_FILE_NAME,
+                        resolver = resolver,
+                        declaration = declaration,
+                        lparams = lparams?.asType()
+                    )
+                    val spec = ViewDeclarationFileSpec(
+                        lparams = resolvedLparams,
+                        alias = item.alias,
+                        requireAttrs = item.requireAttrs,
+                        requireInit = item.requireInit,
+                        requirePerformer = item.requirePerformer,
+                        final = item.final
+                    )
+
+                    spec to declaration
+                }.getOrElse {
+                    if (isOptional) {
+                        Processor.skipOptionalViewDeclarationFileItem(file, index, viewClass, it)
+                        null
+                    } else throw it
                 }
-
-                val declaration = Processor.createViewDeclaration(
-                    tagName = VIEW_DECLARATION_FILE_NAME,
-                    alias = item.alias,
-                    ksClass = resolvedView,
-                    locateDesc = "Located: ${file.path}[$index]"
-                )
-                val resolvedLparams = Processor.resolvedLparamsDeclaration(
-                    tagName = VIEW_DECLARATION_FILE_NAME,
-                    resolver = resolver,
-                    declaration = declaration,
-                    lparams = lparams?.asType()
-                )
-                val spec = ViewDeclarationFileSpec(
-                    lparams = resolvedLparams,
-                    alias = item.alias,
-                    requireAttrs = item.requireAttrs,
-                    requireInit = item.requireInit,
-                    requirePerformer = item.requirePerformer,
-                    final = item.final
-                )
-
-                return spec to declaration
             }
         }
     }
@@ -628,6 +679,13 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val requireInit: Boolean = false,
         val requirePerformer: Boolean = false,
         val final: Boolean = false
+    )
+
+    @Serializable
+    private data class ViewSymbol(
+        val viewClass: String,
+        val name: String,
+        val packageName: String
     )
 
     private interface HikageAnnotationSpec {

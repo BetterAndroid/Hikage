@@ -5,6 +5,7 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -14,6 +15,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://raw.githubusercontent.com/HighCapable/maven-repository/main/repository/releases")
+        mavenLocal()
     }
 }
 
@@ -47,6 +49,16 @@ gropify {
             isEnabled = false
         }
     }
+
+    projects(
+        ":hikage-widget-foundation",
+        ":hikage-widget-androidx",
+        ":hikage-widget-material"
+    ) {
+        jvm {
+            isEnabled = false
+        }
+    }
 }
 
 rootProject.name = "Hikage"
@@ -55,7 +67,8 @@ include(":samples:demo-android")
 include(":hikage-bom")
 include(
     ":hikage-compiler",
-    ":hikage-gradle-plugin"
+    ":hikage-gradle-plugin",
+    ":hikage-declaration-gradle-plugin"
 )
 include(
     ":hikage-core",
@@ -63,6 +76,7 @@ include(
     ":hikage-extension",
     ":hikage-extension-compose",
     ":hikage-extension-betterandroid",
+    ":hikage-widget-foundation",
     ":hikage-widget-androidx",
     ":hikage-widget-material"
 )

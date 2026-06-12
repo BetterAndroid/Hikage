@@ -1,0 +1,8 @@
+[
+  {
+    "viewClass": "com.google.android.material.progressindicator.CircularProgressIndicator"
+  },
+  {
+    "viewClass": "com.google.android.material.progressindicator.LinearProgressIndicator"
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {
+    "viewClass": "com.google.android.material.slider.Slider"
+  },
+  {
+    "viewClass": "com.google.android.material.slider.RangeSlider"
+  }
+]
