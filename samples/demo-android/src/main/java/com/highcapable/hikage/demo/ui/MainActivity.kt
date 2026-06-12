@@ -90,7 +90,7 @@ class MainActivity : BaseActivity() {
                             lparams = LayoutParams(widthMatchParent = true)
                         ) {
                             isSingleLine = true
-                            doOnTextChanged { text, _, _, _ -> 
+                            doOnTextChanged { text, _, _, _ ->
                                 username = text.toString()
                             }
                         }
@@ -109,7 +109,7 @@ class MainActivity : BaseActivity() {
                         ) {
                             isSingleLine = true
                             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                            doOnTextChanged { text, _, _, _ -> 
+                            doOnTextChanged { text, _, _, _ ->
                                 password = text.toString()
                             }
                         }
@@ -156,7 +156,7 @@ class MainActivity : BaseActivity() {
                                 text = stringResource(R.string.text_welcome)
                             }
                             TextView(
-                                lparams = LayoutParams { 
+                                lparams = LayoutParams {
                                     topMargin = 8.dp
                                 }
                             ) {
