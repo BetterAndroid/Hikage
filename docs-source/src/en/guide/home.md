@@ -25,7 +25,7 @@ allowing you to build layouts blazing fast with 100% out-of-the-box support for 
 ## Why Hikage?
 
 Hikage is mainly suitable for developers focusing on native Android platform development.
-Since Kotlin became the primary development language, there hasn't been a perfect tool to implement dynamic code layouts using DSL.
+Since Kotlin became the primary development language, there hasn't been a perfect solution to implement dynamic code layouts using DSL.
 Therefore, projects that do not use Jetpack Compose still need to use the original XML. Although ViewBinding provides support, it is still not very user-friendly.
 
 Hikage inherits the design schemes of [Anko](https://github.com/Kotlin/anko) and [Splitties](https://github.com/LouisCAD/Splitties),
