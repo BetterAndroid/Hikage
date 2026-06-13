@@ -132,7 +132,10 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      */
     fun <R> process(context: Context, attrs: HikageAttribute, block: (Lazy<AttributeSet>) -> R): R {
         val resolver = AttributeSetResolver.from(context)
-        val attributeSet = lazy(LazyThreadSafetyMode.NONE) { resolver.newAttributeSet(context, attrs.build()) }
+        val attributeItems = requireNoPerformers(Hikage.Attribute::class.qualifiedName) { attrs.build() }
+        val attributeSet = lazy(LazyThreadSafetyMode.NONE) {
+            resolver.newAttributeSet(context, attributeItems)
+        }
 
         return try {
             block(attributeSet)
@@ -182,14 +185,17 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * Require no [Hikage.Performer].
      * @param name the process name.
      * @param block the block.
+     * @return [R]
      */
-    inline fun requireNoPerformers(name: String?, block: () -> Unit) {
+    inline fun <R> requireNoPerformers(name: String?, block: () -> R): R {
         val viewCount = providedViewCount
 
-        block()
+        val result = block()
         if (providedViewCount != viewCount) throw PerformerException(
             "Performers are not allowed to appear in ${name ?: "<unknown>"} DSL creation process."
         )
+
+        return result
     }
 
     /**
