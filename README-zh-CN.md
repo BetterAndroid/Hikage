@@ -7,7 +7,7 @@
 
 <img src="img-src/icon.svg" width = "100" height = "100" alt="LOGO"/>
 
-一个 Android 响应式 UI 构建工具。
+一个基于 Kotlin DSL 的 Android 实时 UI 构建框架。
 
 [English](README.md) | 简体中文
 
@@ -18,7 +18,7 @@
 
 ## 这是什么
 
-`Hikage` (发音 /ˈhɪkɑːɡeɪ/)，这是一个 Android 响应式 UI 构建工具，它的设计聚焦于 **实时代码构建 UI**。
+`Hikage` (发音 /ˈhɪkɑːɡeɪ/)，这是一个基于 Kotlin DSL 的 Android UI 构建框架，它的设计聚焦于 **实时代码构建 UI**。
 
 项目图标由 [MaiTungTM](https://github.com/Lagrio) 设计，名称取自 「BanG Dream It's MyGO!!!!!」 中的原创歌曲《春日影》(Haru**hikage**)。
 
@@ -30,14 +30,109 @@
   </div>
 </details>
 
-不同于 Jetpack Compose 的声明式 UI，Hikage 专注于 Android 原生平台，它的设计目标是为了让开发者能够快速构建 UI 并可直接支持 Android 原生组件。
+Hikage 与需要彻底改变方案并重写的 Jetpack Compose 不同，它专注于原生 Android View 生态系统，将简洁、声明式的 UI 体验带入经典的 View 框架，让你能够以极快的速度构建布局，并
+100% 开箱即用地支持传统和标准原生组件。
 
-**<u>Hikage 只是一个 UI 构建工具，自身并不提供任何 UI 组件</u>**。
+## 为什么是 Hikage？
 
-拒绝重复造轮子，我们的方案始终是兼容与高效，现在你可以抛弃 ViewBinding 和 XML 甚至是 `findViewById`，直接来尝试使用代码布局吧。
+Hikage 继承了 [Anko](https://github.com/Kotlin/anko)、[Splitties](https://github.com/LouisCAD/Splitties) 的设计方案以及借鉴了 Jetpack Compose 的 DSL
+函数命名方案，
+并且在此基础上进行了大量改进，使得它在使用成本上更贴近原生，写法上更贴近 Jetpack Compose。
 
-`Hikage` 配合我们的另一个项目 [BetterAndroid](https://github.com/BetterAndroid/BetterAndroid) 使用效果更佳，同时 `Hikage` 自身将自动引用
-`BetterAndroid` 相关依赖作为核心内容。
+> 各种 DSL 布局方案对比
+
+<details open><summary>Hikage</summary>
+
+```kotlin
+LinearLayout(
+    lparams = LayoutParams(matchParent = true) {
+        topMargin = 16.dp
+    },
+    init = {
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER
+    }
+) {
+    TextView {
+        text = "Hello, World!"
+        textSize = 16f
+        gravity = Gravity.CENTER
+    }
+}
+```
+
+</details>
+
+<details><summary>Anko、Splitties</summary>
+
+```kotlin
+verticalLayout {
+    gravity = Gravity.CENTER
+    textView("Hello, World!") {
+        textSize = 16f
+        gravity = Gravity.CENTER
+    }
+}.lparams(
+    width = matchParent,
+    height = matchParent
+) {
+    topMargin = dip(16)
+}
+```
+
+</details>
+
+<details><summary>Jetpack Compose</summary>
+
+```kotlin
+Column(
+    modifier = Modifier.padding(top = 16.dp),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+) {
+    Text(
+        text = "Hello, World!",
+        fontSize = 16.sp,
+        textAlign = TextAlign.Center
+    )
+}
+```
+
+</details>
+
+Hikage 的基础部分**完全不需要借助外部及额外的编译插件**，它能**即插即用**并在**任何地方创建**一个可被设置到父布局以及 `Window` 上的 `View` 对象。
+
+Hikage **全面兼容**混合式布局，你可以在 Hikage 中嵌入 XML (使用 `R.layout` 方案装载布局)、ViewBinding 甚至是 Jetpack Compose。
+
+相比于 Anko、Splitties，Hikage 支持**内存级别的 AAPT2 资源解析模拟器**，能够**动态构建 `AttributeSet`**，这套方案已经通过了模拟器与实机测试，**稳定兼容
+Android 5.0.2 (API 21) ~ 17 (API 37)**，这使得不支持动态设置属性的老旧自定义组件也能通过 Hikage 重获新生。
+
+> 示例如下
+
+```kotlin
+TextView(
+    attrs = {
+        android {
+            set("text", "Set text in dynamic AttributeSet")
+            set("textSize", "16sp")
+            set("gravity", "center")
+            set("paddingLeft", "8dp")
+            // 支持动态类型投射
+            set("paddingRight", 8.dp)
+        }
+    }
+) {
+    text = "Overriden text in code"
+}
+```
+
+从现在开始，放弃并忘记 ViewBinding、XML 甚至是 `findViewById`，直接来尝试使用代码布局吧！
+
+**不会 Jetpack Compose？没关系，今天 Hikage 就是你的 Kotlin DSL 版
+XML，把你最熟悉的肌肉记忆组件重构为最现代的声明式 UI，享受同样的编写体验和更高的开发效率以及更好的运行时性能。**
+
+Hikage 配合我们的另一个项目 [BetterAndroid](https://github.com/BetterAndroid/BetterAndroid) 使用效果更佳，同时 Hikage
+自身将自动引用其 [ui-extension](https://betterandroid.github.io/BetterAndroid/zh-cn/library/ui-extension) 作为核心依赖。
 
 ## 开始使用
 
@@ -52,10 +147,6 @@
 2. **同步项目**: 在 Gradle 同步后，你就可以开始使用 `Hikage` 了。
 
 在打开的页面中，选择侧边栏的 **快速开始** 章节以继续阅读。
-
-## 开始使用
-
-[点击这里](https://betterandroid.github.io/Hikage/zh-cn) 前往文档页面查看更多详细教程和内容。
 
 ## 更多项目
 

@@ -1,10 +1,10 @@
 # Introduction
 
-> `Hikage` (Pronunciation /ˈhɪkɑːɡeɪ/) is an Android responsive UI building tool.
+> `Hikage` (Pronunciation /ˈhɪkɑːɡeɪ/) is a Kotlin DSL-based Android real-time UI building framework.
 
 ## Background
 
-This is an Android responsive UI build tool designed to focus on **real-time code-based UI building**.
+This is a Kotlin DSL-based Android UI building framework that focuses on **real-time code-based UI construction**.
 
 The project icon was designed by [MaiTungTM](https://github.com/Lagrio),
 the name is taken from the original song "Haru**hikage**" in "BanG Dream It's MyGO!!!!!".
@@ -17,18 +17,12 @@ the name is taken from the original song "Haru**hikage**" in "BanG Dream It's My
   </div>
 </details>
 
-Unlike Jetpack Compose's declarative UI, Hikage focuses on Android native platforms,
-and its design goal is to enable developers to quickly build UIs and directly support Android native components.
+Unlike Jetpack Compose which demands a complete paradigm shift and rewrite,
+Hikage is laser-focused on the native Android View ecosystem.
+It brings the sleek, declarative UI DX to the classic View framework,
+allowing you to build layouts blazing fast with 100% out-of-the-box support for legacy and standard native components.
 
-**<u>Hikage is just a UI build tool and does not provide any UI components themselves</u>**.
-
-Rejecting duplicate wheels, our solution is always compatible and efficient. Now you can abandon ViewBinding and XML, and even `findViewById`, and try
-using code layout directly.
-
-`Hikage` works better with another project [BetterAndroid](https://github.com/BetterAndroid/BetterAndroid), and
-`Hikage` itself will automatically reference the `BetterAndroid`-related dependencies as the core content.
-
-## Usage
+## Why Hikage?
 
 Hikage is mainly suitable for developers focusing on native Android platform development.
 Since Kotlin became the primary development language, there hasn't been a perfect tool to implement dynamic code layouts using DSL.
@@ -103,6 +97,42 @@ The basic part of Hikage **does not require any external or additional compilati
 It can be **plug-and-play** and **create a View object anywhere** that can be set to the parent layout and `Window`.
 
 Hikage **fully supports** hybrid layouts. You can embed XML (using the `R.layout` scheme to load layouts), ViewBinding, and even Jetpack Compose within Hikage.
+
+Compared with Anko and Splitties, Hikage supports an **in-memory AAPT2 resource parsing emulator**,
+capable of **dynamically constructing an `AttributeSet`**. This solution has been tested on emulators and real devices,
+ensuring **stable compatibility with Android 5.0.2 (API 21) ~ 17 (API 37)**.
+This empowers legacy custom views that lack programmatic setters to be revitalized via Hikage.
+
+> The following example
+
+```kotlin
+TextView(
+    attrs = {
+        android {
+            // The following is equivalent to android:text="Set text in dynamic AttributeSet".
+            set("text", "Set text in dynamic AttributeSet")
+            set("textSize", "16sp")
+            set("gravity", "center")
+            set("paddingLeft", "8dp")
+            // Supports dynamic type conversion.
+            set("paddingRight", 8.dp)
+        }
+    }
+) {
+    text = "Overridden text in code"
+}
+```
+
+For more usage details, please refer to [hikage-core → XML Attribute Sets](../library/hikage-core.md#xml-attribute-sets).
+
+From now on, forget about ViewBinding, XML, and even `findViewById`, and just try using code-based layouts!
+
+**Don't know Jetpack Compose? No worries, today Hikage is your Kotlin DSL version of XML,
+refactoring your most familiar muscle-memory components into the most modern declarative UI,
+enjoying the same writing experience with higher development efficiency and better runtime performance.**
+
+Hikage works best when used in conjunction with our other project [BetterAndroid](https://github.com/BetterAndroid/BetterAndroid), and
+Hikage itself will automatically reference its [ui-extension](https://betterandroid.github.io/BetterAndroid/en/library/ui-extension) as a core dependency.
 
 ## Language Requirement
 

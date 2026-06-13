@@ -50,11 +50,11 @@ export const configs = {
         locales: {
             '/en/': {
                 lang: 'en-US',
-                description: 'An Android responsive UI building tool'
+                description: 'A Kotlin DSL-based Android real-time UI building framework'
             },
             '/zh-cn/': {
                 lang: 'zh-CN',
-                description: '一个 Android 响应式 UI 构建工具'
+                description: '一个基于 Kotlin DSL 的 Android 实时 UI 构建框架'
             }
         }
     },
