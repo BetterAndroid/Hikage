@@ -1,5 +1,5 @@
 /*
- * Hikage - An Android responsive UI building tool.
+ * Hikage - A Kotlin DSL-based Android real-time UI building framework.
  * Copyright (C) 2019 HighCapable
  * https://github.com/BetterAndroid/Hikage
  *
