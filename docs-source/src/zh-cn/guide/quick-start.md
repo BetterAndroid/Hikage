@@ -59,7 +59,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 [versions]
 # ...
 hikage-plugin = "<plugin-version>"
-hikage = "<version>"
+hikage-bom = "<version>"
 
 [plugins]
 # ...
@@ -67,8 +67,9 @@ hikage = { id = "com.highcapable.hikage", version.ref = "hikage-plugin" }
 
 [libraries]
 # ...
-hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage" }
+hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
+hikage-extension = { module = "com.highcapable.hikage:hikage-extension" }
 ```
 
 - 将 `<plugin-version>` 替换为 ![hikage-plugin](https://img.shields.io/maven-central/v/com.highcapable.hikage/com.highcapable.hikage.gradle.plugin?logo=apachemaven&logoColor=orange&style=flat-square&label=hikage-plugin)
@@ -86,6 +87,7 @@ dependencies {
     // ...
     implementation(platform(libs.hikage.bom))
     implementation(libs.hikage.core)
+    implementation(libs.hikage.extension)
 }
 ```
 
