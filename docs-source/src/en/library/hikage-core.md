@@ -487,7 +487,7 @@ val SubTextView = Hikageable {
 }
 ```
 
-### XML Attribute Set
+### XML Attribute Sets
 
 Hikage supports passing in the XML attribute set via the parameter `attrs` when creating a component. These attribute values will be parsed dynamically at runtime and set to the component, and it will only take effect once when the component is created.
 
