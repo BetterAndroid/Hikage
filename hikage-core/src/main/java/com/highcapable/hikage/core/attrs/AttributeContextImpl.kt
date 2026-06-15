@@ -31,7 +31,7 @@ import com.highcapable.hikage.core.attrs.entity.AttributeName
 internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
 
     /** The collected attributes. */
-    private val attrs = mutableListOf<AttributeItem>()
+    private val attrs = ArrayList<AttributeItem>(8)
 
     override fun namespace(name: String) = AttributeScopeImpl(name, this)
 
@@ -52,20 +52,17 @@ internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
 
     /** Set an attribute with a string value. */
     fun set(namespace: String, name: String, value: String) {
-        val attrName = AttributeName.from(name, namespace)
-        attrs += AttributeItem.of(attrName, AttributeItem.Value.Str(value))
+        attrs += createAttributeItem(namespace, name, AttributeItem.Value.Str(value))
     }
 
     /** Set an attribute with a raw integer value. */
     fun set(namespace: String, name: String, value: Int) {
-        val attrName = AttributeName.from(name, namespace)
-        attrs += AttributeItem.of(attrName, AttributeItem.Value.Raw(value))
+        attrs += createAttributeItem(namespace, name, AttributeItem.Value.Raw(value))
     }
 
     /** Set an attribute with a boolean value. */
     fun set(namespace: String, name: String, value: Boolean) {
-        val attrName = AttributeName.from(name, namespace)
-        attrs += AttributeItem.of(attrName, AttributeItem.Value.Bool(value))
+        attrs += createAttributeItem(namespace, name, AttributeItem.Value.Bool(value))
     }
 
     /**
@@ -73,4 +70,9 @@ internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
      * @return [List]<[AttributeItem]>
      */
     fun build(): List<AttributeItem> = attrs
+
+    private fun createAttributeItem(namespace: String, name: String, value: AttributeItem.Value): AttributeItem {
+        if (name.indexOf(':') < 0) return AttributeItem(namespace, name, value)
+        return AttributeItem.of(AttributeName.from(name, namespace), value)
+    }
 }

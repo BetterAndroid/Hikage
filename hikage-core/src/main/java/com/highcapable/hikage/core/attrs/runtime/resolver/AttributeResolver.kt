@@ -34,6 +34,12 @@ import com.highcapable.hikage.core.base.XmlParserException
  */
 internal object AttributeResolver {
 
+    /** Cache of package name + attribute items to resolved attributes. */
+    private val resolvedCache = hashMapOf<CacheKey, List<ResolvedAttribute>>()
+
+    /** Cache of package name + attribute name to resource id. */
+    private val resourceIdCache = hashMapOf<ResourceIdCacheKey, Int>()
+
     /**
      * Resolve the given [attrs].
      * @param context the context.
@@ -41,14 +47,19 @@ internal object AttributeResolver {
      * @return resolved attributes ordered by resource id.
      */
     fun resolve(context: Context, attrs: List<AttributeItem>): List<ResolvedAttribute> {
+        val cacheKey = CacheKey(context.packageName, attrs.toList())
+        synchronized(resolvedCache) {
+            resolvedCache[cacheKey]?.let { return it }
+        }
+
         val seen = hashSetOf<String>()
-        return attrs.map { attr ->
+        val resolved = attrs.map { attr ->
             if (!seen.add(attr.name)) throw XmlParserException(
                 "Duplicate attribute name \"${attr.name}\" in the same view's attrs."
             )
 
             val pkg = AttributeValueEncoder.namespaceToPackage(context, attr.namespace)
-            val id = context.resources.getIdentifier(attr.name, "attr", pkg)
+            val id = resolveResourceId(context, attr.name, pkg)
             if (id == 0) throw XmlParserException(
                 "Cannot resolve attribute \"$pkg:attr/${attr.name}\". " +
                     "Make sure the attribute exists and the namespace is correct."
@@ -59,6 +70,24 @@ internal object AttributeResolver {
                 resourceId = id
             )
         }.sortedBy { it.resourceId }
+
+        synchronized(resolvedCache) {
+            resolvedCache[cacheKey] = resolved
+        }
+        return resolved
+    }
+
+    private fun resolveResourceId(context: Context, name: String, pkg: String): Int {
+        val cacheKey = ResourceIdCacheKey(pkg, name)
+        synchronized(resourceIdCache) {
+            resourceIdCache[cacheKey]?.let { return it }
+        }
+
+        val id = context.resources.getIdentifier(name, "attr", pkg)
+        synchronized(resourceIdCache) {
+            resourceIdCache[cacheKey] = id
+        }
+        return id
     }
 
     /**
@@ -69,4 +98,20 @@ internal object AttributeResolver {
         override val namespaceUri: String,
         override val resourceId: Int
     ) : ResolvedAttribute
+
+    /**
+     * The resolved attributes cache key.
+     */
+    private data class CacheKey(
+        val packageName: String,
+        val attrs: List<AttributeItem>
+    )
+
+    /**
+     * The resource id cache key.
+     */
+    private data class ResourceIdCacheKey(
+        val packageName: String,
+        val name: String
+    )
 }

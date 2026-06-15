@@ -75,6 +75,9 @@ internal class LayoutSession private constructor(private val factories: List<Hik
     /** The view id map. */
     private val viewIds = mutableMapOf<String, Int>()
 
+    /** The attribute set resolver map. */
+    private val attributeSetResolvers = mutableMapOf<String, AttributeSetResolver>()
+
     /**
      * Get the root view.
      * @return [View]
@@ -131,7 +134,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [R]
      */
     fun <R> process(context: Context, attrs: HikageAttribute, block: (Lazy<AttributeSet>) -> R): R {
-        val resolver = AttributeSetResolver.from(context)
+        val resolver = attributeSetResolverOf(context)
         val attributeItems = requireNoPerformers(Hikage.Attribute::class.qualifiedName) { attrs.build() }
         val attributeSet = lazy(LazyThreadSafetyMode.NONE) {
             resolver.newAttributeSet(context, attributeItems)
@@ -310,6 +313,16 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [String]
      */
     private fun generateRandomViewId() = "anonymous@${viewAtomicId.getAndIncrement().toHexString()}"
+
+    /**
+     * Get the [AttributeSetResolver] for [context].
+     * @param context the context.
+     * @return [AttributeSetResolver]
+     */
+    private fun attributeSetResolverOf(context: Context): AttributeSetResolver {
+        val key = context.javaClass.name
+        return attributeSetResolvers.getOrPut(key) { AttributeSetResolver.from(context) }
+    }
 
     /**
      * Create a new [AttributeSet] from [AttributeItem].

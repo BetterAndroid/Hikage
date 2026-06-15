@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2026/5/31.
  */
-@file:Suppress("FunctionName", "UNCHECKED_CAST")
+@file:Suppress("unused", "FunctionName", "UNCHECKED_CAST")
 @file:JvmName("HikagePerformerUtils")
 
 package com.highcapable.hikage.core.layout
@@ -257,8 +257,6 @@ inline fun <reified V : View> Hikage.Performer<*>.View(
 
 /**
  * Provide a new [ViewGroup] instance [VG].
- *
- * Provide the new type of [ViewGroup.LayoutParams] down via [LP].
  *
  * - Note: The [VG] must be inherited from [ViewGroup].
  * @param lparams the view layout params.

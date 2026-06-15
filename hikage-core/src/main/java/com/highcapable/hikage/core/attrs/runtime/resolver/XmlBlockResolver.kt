@@ -105,6 +105,9 @@ internal object XmlBlockResolver : AttributeSetResolver {
     /** Global pointer references object. */
     private var blockParser: Any? = null
 
+    /** Cache of package name + attribute items to synthesized `XmlBlock` instances. */
+    private val xmlBlockCache = hashMapOf<CacheKey, Any>()
+
     /** Whether the initialization is done once. */
     private var isInitOnce = false
 
@@ -230,11 +233,11 @@ internal object XmlBlockResolver : AttributeSetResolver {
     }
 
     override fun newParser(context: Context, attrs: List<AttributeItem>): XmlResourceParser {
-        if (attrs.isEmpty()) return newParser(context)
-
         initParser(context.applicationContext.applicationInfo)
-        val data = BinaryXmlBuilder.build(context, attrs)
-        val parser = createParserFrom(data) ?: error(
+        val block = getOrCreateXmlBlock(context, attrs) ?: error(
+            "Failed to create XmlBlock from the synthesized XML on Android ${AndroidVersion.code}."
+        )
+        val parser = createParserOf(block) ?: error(
             "Failed to create parser from the synthesized XmlBlock on Android ${AndroidVersion.code}."
         )
 
@@ -269,6 +272,33 @@ internal object XmlBlockResolver : AttributeSetResolver {
         } finally {
             closeXmlBlock(block)
         }
+    }
+
+    /**
+     * Get or create a cached synthesized `XmlBlock` for [attrs].
+     *
+     * `XmlResourceParser` instances are stateful and must be recreated, but the backing `XmlBlock`
+     * can serve multiple fresh parsers for identical attributes.
+     * @param context the context.
+     * @param attrs the injected attributes.
+     * @return `XmlBlock` instance or null.
+     */
+    private fun getOrCreateXmlBlock(context: Context, attrs: List<AttributeItem>): Any? {
+        val cacheKey = CacheKey(context.packageName, attrs.toList())
+        synchronized(xmlBlockCache) {
+            xmlBlockCache[cacheKey]?.let { return it }
+        }
+
+        val data = BinaryXmlBuilder.build(context, attrs)
+        val block = xmlBlockByteArrayConstructor?.createQuietly(data) ?: return null
+        synchronized(xmlBlockCache) {
+            xmlBlockCache[cacheKey]?.let {
+                closeXmlBlock(block)
+                return it
+            }
+            xmlBlockCache[cacheKey] = block
+        }
+        return block
     }
 
     /**
@@ -315,4 +345,12 @@ internal object XmlBlockResolver : AttributeSetResolver {
                 event = parser.next()
         }
     }
+
+    /**
+     * The synthesized `XmlBlock` cache key.
+     */
+    private data class CacheKey(
+        val packageName: String,
+        val attrs: List<AttributeItem>
+    )
 }

@@ -68,6 +68,9 @@ internal object BinaryXmlBuilder {
 
     private const val NO_ENTRY = -1
 
+    /** Cache of package name + attribute items to synthesized binary XML bytes. */
+    private val binaryXmlCache = hashMapOf<CacheKey, ByteArray>()
+
     /**
      * Build the binary XML document.
      * @param context the context.
@@ -80,7 +83,20 @@ internal object BinaryXmlBuilder {
         context: Context,
         attrs: List<AttributeItem>,
         resolver: EnumFlagResolver = BuiltInEnumFlagResolver
-    ) = buildResolved(context, AttributeResolver.resolve(context, attrs), resolver)
+    ): ByteArray {
+        if (resolver !== BuiltInEnumFlagResolver) return buildResolved(context, AttributeResolver.resolve(context, attrs), resolver)
+
+        val cacheKey = CacheKey(context.packageName, attrs.toList())
+        synchronized(binaryXmlCache) {
+            binaryXmlCache[cacheKey]?.let { return it }
+        }
+
+        val data = buildResolved(context, AttributeResolver.resolve(context, attrs), resolver)
+        synchronized(binaryXmlCache) {
+            binaryXmlCache[cacheKey] = data
+        }
+        return data
+    }
 
     /**
      * Build the binary XML document from parser-independent [attrs].
@@ -232,6 +248,14 @@ internal object BinaryXmlBuilder {
         val prefixIndex: Int,
         val uriIndex: Int,
         val uri: String
+    )
+
+    /**
+     * The synthesized binary XML cache key.
+     */
+    private data class CacheKey(
+        val packageName: String,
+        val attrs: List<AttributeItem>
     )
 
     /**

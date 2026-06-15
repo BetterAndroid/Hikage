@@ -62,6 +62,12 @@ internal object AttributeValueEncoder {
         "mm" to TypedValue.COMPLEX_UNIT_MM
     )
 
+    /** Cache of resource references to resource ids. */
+    private val resourceIdCache = hashMapOf<ResourceIdCacheKey, Int>()
+
+    /** Cache of resource id existence checks. */
+    private val resourceExistsCache = hashMapOf<Int, Boolean>()
+
     /**
      * Encode the given [attr].
      * @param context the context (for resolving resource ids).
@@ -150,8 +156,9 @@ internal object AttributeValueEncoder {
     private fun resolveEnumFlag(context: Context, attr: AttributeItem, value: String, resolver: EnumFlagResolver): Int? {
         // T1 only applies to framework attributes, otherwise custom attributes with the same name would
         // be incorrectly treated as Android framework symbols.
-        val isT1 = namespaceToPackage(context, attr.namespace) == "android" && resolver.isEnumFlag(attr.name)
-        val isT2 = !isT1 && AttributeBagResolver.isEnumFlag(context, attr)
+        val isFramework = namespaceToPackage(context, attr.namespace) == "android"
+        val isT1 = isFramework && resolver.isEnumFlag(attr.name)
+        val isT2 = !isFramework && AttributeBagResolver.isEnumFlag(context, attr)
         if (!isT1 && !isT2) return null
 
         // Allow a raw integer for enum/flag attributes too (T0).
@@ -208,10 +215,23 @@ internal object AttributeValueEncoder {
         )
 
         val pkgName = pkg ?: context.packageName
-        val id = context.resources.getIdentifier(name, type, pkgName)
+        val id = resolveResourceId(context, pkgName, type, name)
         if (id == 0) throw XmlParserException(
             "Cannot resolve resource \"$pkgName:$type/$name\" for attribute \"${attr.name}\"."
         )
+        return id
+    }
+
+    private fun resolveResourceId(context: Context, packageName: String, type: String, name: String): Int {
+        val cacheKey = ResourceIdCacheKey(packageName, type, name)
+        synchronized(resourceIdCache) {
+            resourceIdCache[cacheKey]?.let { return it }
+        }
+
+        val id = context.resources.getIdentifier(name, type, packageName)
+        synchronized(resourceIdCache) {
+            resourceIdCache[cacheKey] = id
+        }
         return id
     }
 
@@ -285,8 +305,18 @@ internal object AttributeValueEncoder {
 
     private fun String.parseFloatOrNull() = this.toFloatOrNull()?.let { floatToRawIntBits(it) }
 
-    private fun Int.isResourceId(context: Context) =
-        this != 0 && runCatching { context.resources.getResourceTypeName(this) }.isSuccess
+    private fun Int.isResourceId(context: Context): Boolean {
+        if (this == 0) return false
+        synchronized(resourceExistsCache) {
+            resourceExistsCache[this]?.let { return it }
+        }
+
+        val exists = runCatching { context.resources.getResourceTypeName(this) }.isSuccess
+        synchronized(resourceExistsCache) {
+            resourceExistsCache[this] = exists
+        }
+        return exists
+    }
 
     /**
      * Pack a float into an Android complex value (dimension/fraction), mirroring the inverse of
@@ -337,4 +367,13 @@ internal object AttributeValueEncoder {
         namespace.startsWith("http://") || namespace.startsWith("https://") -> namespace
         else -> "http://schemas.android.com/apk/res-auto"
     }
+
+    /**
+     * The resource id cache key.
+     */
+    private data class ResourceIdCacheKey(
+        val packageName: String,
+        val type: String,
+        val name: String
+    )
 }

@@ -96,6 +96,15 @@ internal object AttributeBagResolver {
     /** Cache of attribute resource id -> format bitmask (or [INVALID_FORMAT]). */
     private val formatCache = hashMapOf<Int, Int>()
 
+    /** Cache of package name + attribute name to resource id. */
+    private val attrResIdCache = hashMapOf<ResourceIdCacheKey, Int>()
+
+    /** Cache of package name + enum/flag symbol name to resource id. */
+    private val symbolResIdCache = hashMapOf<ResourceIdCacheKey, Int>()
+
+    /** Cache of resource bag values. */
+    private val bagTextCache = hashMapOf<BagTextCacheKey, String?>()
+
     /**
      * Whether the [attr] is a (custom) enum/flag attribute resolvable from the resource bag.
      * @param context the context.
@@ -138,7 +147,7 @@ internal object AttributeBagResolver {
     fun resolve(context: Context, attr: AttributeItem, value: String): Int {
         val pkg = AttributeValueEncoder.namespaceToPackage(context, attr.namespace)
 
-        val attrResId = context.resources.getIdentifier(attr.name, "attr", pkg)
+        val attrResId = resolveResourceId(context, pkg, "attr", attr.name, attrResIdCache)
         if (attrResId == 0) throw XmlParserException(
             "Cannot resolve attribute \"$pkg:attr/${attr.name}\"."
         )
@@ -147,7 +156,7 @@ internal object AttributeBagResolver {
         val tokens = value.split('|').map { it.trim() }.filter { it.isNotEmpty() }
         if (tokens.isEmpty()) throw XmlParserException("Empty enum/flag value for attribute \"${attr.name}\".")
         tokens.forEach { token ->
-            val symbolResId = context.resources.getIdentifier(token, "id", pkg)
+            val symbolResId = resolveResourceId(context, pkg, "id", token, symbolResIdCache)
             if (symbolResId == 0) throw XmlParserException(
                 "Unknown enum/flag symbol \"$token\" for attribute \"${attr.name}\". " +
                     "Alternatively pass a raw Int value, e.g. set(\"${attr.name}\", <int>)."
@@ -163,16 +172,52 @@ internal object AttributeBagResolver {
 
     private fun resolveAttrResId(context: Context, attr: AttributeItem): Int {
         val pkg = AttributeValueEncoder.namespaceToPackage(context, attr.namespace)
-        return context.resources.getIdentifier(attr.name, "attr", pkg)
+        return resolveResourceId(context, pkg, "attr", attr.name, attrResIdCache)
     }
 
-    private fun formatOf(context: Context, attrResId: Int): Int = formatCache.getOrPut(attrResId) {
-        val text = bagText(context, attrResId, ATTR_TYPE) ?: return@getOrPut INVALID_FORMAT
-        parseIntOrNull(text) ?: INVALID_FORMAT
+    private fun formatOf(context: Context, attrResId: Int): Int {
+        synchronized(formatCache) {
+            formatCache[attrResId]?.let { return it }
+        }
+
+        val format = bagText(context, attrResId, ATTR_TYPE)?.let(::parseIntOrNull) ?: INVALID_FORMAT
+        synchronized(formatCache) {
+            formatCache[attrResId] = format
+        }
+        return format
     }
 
-    private fun bagText(context: Context, resId: Int, bagEntryId: Int) =
-        getResourceBagText?.copy()?.of(context.assets)?.invokeQuietly<CharSequence>(resId, bagEntryId)?.toString()
+    private fun bagText(context: Context, resId: Int, bagEntryId: Int): String? {
+        val cacheKey = BagTextCacheKey(resId, bagEntryId)
+        synchronized(bagTextCache) {
+            if (bagTextCache.containsKey(cacheKey)) return bagTextCache[cacheKey]
+        }
+
+        val text = getResourceBagText?.copy()?.of(context.assets)?.invokeQuietly<CharSequence>(resId, bagEntryId)?.toString()
+        synchronized(bagTextCache) {
+            bagTextCache[cacheKey] = text
+        }
+        return text
+    }
+
+    private fun resolveResourceId(
+        context: Context,
+        packageName: String,
+        type: String,
+        name: String,
+        cache: MutableMap<ResourceIdCacheKey, Int>
+    ): Int {
+        val cacheKey = ResourceIdCacheKey(packageName, type, name)
+        synchronized(cache) {
+            cache[cacheKey]?.let { return it }
+        }
+
+        val id = context.resources.getIdentifier(name, type, packageName)
+        synchronized(cache) {
+            cache[cacheKey] = id
+        }
+        return id
+    }
 
     private fun parseIntValue(text: String, attr: AttributeItem, token: String) = parseIntOrNull(text) ?: throw XmlParserException(
         "Resolved value \"$text\" of enum/flag symbol \"$token\" for attribute \"${attr.name}\" is not an integer."
@@ -185,4 +230,21 @@ internal object AttributeBagResolver {
             else -> value.toLongOrNull(10)?.toInt()
         }
     }
+
+    /**
+     * The resource id cache key.
+     */
+    private data class ResourceIdCacheKey(
+        val packageName: String,
+        val type: String,
+        val name: String
+    )
+
+    /**
+     * The resource bag value cache key.
+     */
+    private data class BagTextCacheKey(
+        val resId: Int,
+        val bagEntryId: Int
+    )
 }
