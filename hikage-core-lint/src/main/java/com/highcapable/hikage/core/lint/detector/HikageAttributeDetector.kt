@@ -455,10 +455,11 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         val namedArg = arguments.firstOrNull { it.getArgumentName()?.asName?.identifier == name }
         if (namedArg != null) return namedArg
 
-        return arguments.firstOrNull {
-            val index = arguments.indexOf(it)
-            parameters.getOrNull(index)?.name == name
-        }
+        return arguments
+            .takeWhile { it.getArgumentName() == null }
+            .withIndex()
+            .firstOrNull { (index, _) -> parameters.getOrNull(index)?.name == name }
+            ?.value
     }
 
     private fun KtCallExpression.namespaceShortcutReplacement(namespace: String): String? {
