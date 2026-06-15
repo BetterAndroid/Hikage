@@ -32,10 +32,16 @@ the name is taken from the original song "Haru**hikage**" in "BanG Dream It's My
   </div>
 </details>
 
+Its second layer of meaning is "Shadow under the Sun",
+which symbolizes the design philosophy of this framework: Hikage is like a shadow,
+able to provide a more modern and efficient way of building UI without interfering with developers' existing habits and project structure.
+
 Unlike Jetpack Compose which demands a complete paradigm shift and rewrite,
-Hikage is laser-focused on the native Android View ecosystem.
-It brings the sleek, declarative UI DX to the classic View framework,
+Hikage is laser-focused on the native Android view ecosystem.
+It brings the sleek, declarative UI DX to the classic view framework,
 allowing you to build layouts blazing fast with 100% out-of-the-box support for legacy and standard native components.
+
+Hikage does not produce UI components, it is just a transporter of the Android 17-year-old native view ecosystem.
 
 ## Why Hikage?
 
