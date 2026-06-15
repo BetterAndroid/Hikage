@@ -109,8 +109,8 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         attrs: HikageAttribute,
         init: HikageView<V>
     ): V {
-        val view = session.process(context, attrs) { attributeSet ->
-            val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, attrs = attributeSet)
+        val view = session.process(context, attrs) { attributeSet, lParamsAttributeSet ->
+            val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, attrs = lParamsAttributeSet)
             session.createView(viewClass, id, context, attributeSet, parent).apply {
                 layoutParams = lpDelegate.create()
             }
@@ -139,8 +139,8 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         init: HikageView<VG>,
         performer: HikagePerformer<NLP>
     ): VG {
-        val view = session.process(context, attrs) { attributeSet ->
-            val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, attrs = attributeSet)
+        val view = session.process(context, attrs) { attributeSet, lparamsAttributeSet ->
+            val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, attrs = lparamsAttributeSet)
             session.createView(viewClass, id, context, attributeSet, parent).apply {
                 layoutParams = lpDelegate.create()
             }

@@ -133,15 +133,25 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @param block the block to run.
      * @return [R]
      */
-    fun <R> process(context: Context, attrs: HikageAttribute, block: (Lazy<AttributeSet>) -> R): R {
+    fun <R> process(context: Context, attrs: HikageAttribute, block: (Lazy<AttributeSet>, Lazy<AttributeSet>?) -> R): R {
         val resolver = attributeSetResolverOf(context)
+
         val attributeItems = requireNoPerformers(Hikage.Attribute::class.qualifiedName) { attrs.build() }
         val attributeSet = lazy(LazyThreadSafetyMode.NONE) {
             resolver.newAttributeSet(context, attributeItems)
         }
 
+        // Layout params attributes are not necessary for all views,
+        // so we only create the layout params attribute set when there are layout params attributes.
+        val lParamsItems = attributeItems.filter { it.name.startsWith("layout_") }
+        val lParamsAttributeSet = lParamsItems.takeIf { it.isNotEmpty() }?.let {
+            lazy(LazyThreadSafetyMode.NONE) {
+                resolver.newAttributeSet(context, it)
+            }
+        }
+
         return try {
-            block(attributeSet)
+            block(attributeSet, lParamsAttributeSet)
         } finally {
             if (attributeSet.isInitialized())
                 (attributeSet.value as? XmlResourceParser)?.let { resolver.release(it) }
