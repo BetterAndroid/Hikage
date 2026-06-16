@@ -23,6 +23,7 @@
 
 package com.highcapable.hikage.compiler.subprocessor
 
+import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
@@ -197,7 +198,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     }
 
     private fun processPerformer(performers: List<Performer>, roundGeneratedFiles: MutableSet<String>) {
-        val duplicatedItems = performers.groupBy { it.declaration.key }.filter { it.value.size > 1 }.flatMap { it.value }
+        val generatablePerformers = performers.filterNot { it.shouldSkipExistingHikageableFunction() }
+        val duplicatedItems = generatablePerformers.groupBy { it.declaration.key }.filter { it.value.size > 1 }.flatMap { it.value }
 
         require(duplicatedItems.isEmpty()) {
             "Discover duplicate @HikageView or @HikageViewDeclaration's class name or alias definitions, " +
@@ -205,7 +207,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 "Duplicated Items:\n" +
                 duplicatedItems.joinToString("\n") { "${it.declaration}\n${it.declaration.locateDesc}" }
         }
-        performers.forEach { generateCodeFile(it, roundGeneratedFiles) }
+        generatablePerformers.forEach { generateCodeFile(it, roundGeneratedFiles) }
     }
 
     private fun generateViewSymbolIndex(performers: List<Performer>) {
@@ -242,7 +244,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     }
 
     private fun generateCodeFile(performer: Performer, roundGeneratedFiles: MutableSet<String>) {
-        val classNameSet = performer.declaration.alias ?: performer.declaration.className
+        val classNameSet = performer.functionName
 
         val viewClass = performer.declaration.toClassName().let {
             val packageName = it.packageName
@@ -267,7 +269,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             else null) to ClassName(packageName, subClassName)
         }
 
-        val packageName = "$PACKAGE_NAME_PREFIX.${performer.declaration.packageName}"
+        val packageName = performer.generatedPackageName
 
         val hasPerformer = lparamsClass != null && !performer.annotation.final
         val performFunctionAlias = if (hasPerformer) VIEW_GROUP_FUNCTION_ALIAS else VIEW_FUNCTION_ALIAS
@@ -425,9 +427,24 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         }
     }
 
+    private fun Performer.shouldSkipExistingHikageableFunction(): Boolean {
+        if (!isViewDeclarationFile) return false
+
+        val packageName = generatedPackageName
+        val functionName = functionName
+        if (!Processor.hasExistingHikageableFunction(packageName, functionName)) return false
+
+        logger.info(
+            "Skip generating Hikage performer \"$packageName.$functionName\" because an existing @Hikageable function was found.\n" +
+                declaration.locateDesc
+        )
+        return true
+    }
+
     private object Processor {
 
         private lateinit var logger: KSPLogger
+        private lateinit var resolver: Resolver
 
         private lateinit var viewDeclaration: KSClassDeclaration
         private lateinit var viewGroupDeclaration: KSClassDeclaration
@@ -437,6 +454,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
 
         fun init(logger: KSPLogger, resolver: Resolver) {
             this.logger = logger
+            this.resolver = resolver
             viewDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_VIEW_CLASS)!!
             viewGroupDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_VIEW_GROUP_CLASS)!!
             lparamsDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_LAYOUT_PARAMS_CLASS)!!
@@ -483,6 +501,18 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             "Skip optional $VIEW_DECLARATION_FILE_NAME's viewClass \"$viewClass\" because it cannot be resolved " +
                 "from the current classpath.\nLocated: ${file.path}[$index]\nReason: ${throwable.message}"
         )
+
+        fun hasExistingHikageableFunction(targetPackageName: String, targetFunctionName: String): Boolean {
+            fun KSFunctionDeclaration.isTargetFunction() =
+                packageName.asString() == targetPackageName &&
+                    simpleName.asString() == targetFunctionName &&
+                    annotations.any { it.isClass(DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS) }
+
+            @OptIn(KspExperimental::class)
+            return resolver.getDeclarationsFromPackage(targetPackageName)
+                .filterIsInstance<KSFunctionDeclaration>()
+                .any { it.isTargetFunction() }
+        }
 
         fun createViewDeclaration(
             tagName: String,
@@ -752,5 +782,9 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val declaration: ViewDeclaration,
         val sourceFile: KSFile?,
         val owner: String
-    )
+    ) {
+        val functionName get() = declaration.alias ?: declaration.className
+        val generatedPackageName get() = "$PACKAGE_NAME_PREFIX.${declaration.packageName}"
+        val isViewDeclarationFile get() = sourceFile == null
+    }
 }
