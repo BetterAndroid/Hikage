@@ -174,6 +174,27 @@ class MyActivity : AppCompatActivity() {
 }
 ```
 
+或者，直接创建 `Hikage` 对象。
+
+> 示例如下
+
+```kotlin
+class MyActivity : AppCompatActivity() {
+
+    private val myLayout by lazyHikage {
+        // ...
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // 得到根布局
+        val root = myLayout.root
+        // 设置为 Activity 的内容视图
+        setContentView(root)
+    }
+}
+```
+
 ### 基本布局组件
 
 Hikage 采用与 Jetpack Compose 一致的函数式创建组件方案，它的布局使用两种基础组件完成，`View` 和 `ViewGroup` 函数，

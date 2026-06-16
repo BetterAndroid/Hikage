@@ -181,6 +181,27 @@ class MyActivity: AppCompatActivity() {
 }
 ```
 
+Or, we can directly create a `Hikage` object.
+
+> The following example
+
+```kotlin
+class MyActivity : AppCompatActivity() {
+
+    private val myLayout by lazyHikage {
+        // ...
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Get the root layout.
+        val root = myLayout.root
+        // Set as the content view of the Activity.
+        setContentView(root)
+    }
+}
+```
+
 ### Basic Layout Components
 
 Hikage uses a functional component creation scheme consistent with Jetpack Compose.
