@@ -252,3 +252,9 @@ Hikage 生成布局组件的函数包名路径为 `com.highcapable.hikage.widget
 同一个 `View` 存在 `HikageView` 或 `HikageViewDeclaration` 注解声明时，注解声明会优先于 `View` 声明文件。
 
 :::
+
+::: danger
+
+为了确保生成的组件具有原生级别的构造性能，使用 `HikageView`、`HikageViewDeclaration` 注解和 `View` 声明文件定义的第三方组件必须完整支持 `(Context, AttributeSet?)` 构造方法，且必须满足第一位参数不可为 `null` 第二位参数可为 `null` 的条件，否则编译器将在生成过程中抛出异常。
+
+:::
