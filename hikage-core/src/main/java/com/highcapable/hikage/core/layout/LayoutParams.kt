@@ -81,6 +81,9 @@ class LayoutParams private constructor(
         /** The [ViewGroup.generateLayoutParams] method resolver map. */
         private val generateLayoutParamsResolvers = mutableMapOf<KClass<out ViewGroup>, MethodResolver<ViewGroup>?>()
 
+        /** The [ViewGroup.checkLayoutParams] method resolver map. */
+        private val checkLayoutParamsResolvers = mutableMapOf<KClass<out ViewGroup>, MethodResolver<ViewGroup>?>()
+
         /** The [ViewGroup.generateLayoutParams] method resolver map with [AttributeSet]. */
         private val generateLayoutParamsWithAttributeSetResolvers = mutableMapOf<KClass<out ViewGroup>, MethodResolver<ViewGroup>?>()
 
@@ -149,6 +152,26 @@ class LayoutParams private constructor(
         }
 
         /**
+         * Get [ViewGroup.checkLayoutParams] method resolver.
+         * @receiver the parent view group.
+         * @return [MethodResolver] or null.
+         */
+        private fun ViewGroup.checkLayoutParamsResolver(): MethodResolver<ViewGroup>? {
+            val viewClass = this::class
+            if (checkLayoutParamsResolvers.containsKey(viewClass))
+                return checkLayoutParamsResolvers[viewClass]
+
+            val resolver = asResolver().optional(silent = true).firstMethodOrNull {
+                name = "checkLayoutParams"
+                parameters(ViewGroup.LayoutParams::class)
+                superclass()
+            }
+            checkLayoutParamsResolvers[viewClass] = resolver
+
+            return resolver
+        }
+
+        /**
          * Get [ViewGroup.generateLayoutParams] method resolver with [AttributeSet].
          * @receiver the parent view group.
          * @return [MethodResolver] or null.
@@ -167,6 +190,29 @@ class LayoutParams private constructor(
 
             return resolver
         }
+
+        /**
+         * Generate [ViewGroup.LayoutParams] from [lparams] by parent view group.
+         * @receiver the parent view group.
+         * @param lparams the source layout params.
+         * @return [ViewGroup.LayoutParams] or null.
+         */
+        private fun ViewGroup.generateLayoutParams(lparams: ViewGroup.LayoutParams) =
+            generateLayoutParamsResolver()
+                ?.copy()?.of(this)
+                ?.invokeQuietly<ViewGroup.LayoutParams>(lparams)
+
+        /**
+         * Check whether parent view group accepts [lparams].
+         * @receiver the parent view group.
+         * @param lparams the layout params.
+         * @return [Boolean] whether it accepts.
+         */
+        private fun ViewGroup.acceptsLayoutParams(lparams: ViewGroup.LayoutParams) =
+            checkLayoutParamsResolver()
+                ?.copy()?.of(this)
+                ?.invokeQuietly<Boolean>(lparams)
+                ?: false
     }
 
     /**
@@ -174,15 +220,12 @@ class LayoutParams private constructor(
      * @return [ViewGroup.LayoutParams]
      */
     private fun createDefaultLayoutParams(lparams: ViewGroup.LayoutParams? = null, attrs: Lazy<AttributeSet>? = null): ViewGroup.LayoutParams {
-        if (lparams != null && lpClass.isInstance(lparams)) return lparams
+        if (lparams != null && parent?.acceptsLayoutParams(lparams) == true) return lparams
 
-        val wrapped = lparams?.let {
-            parent?.generateLayoutParamsResolver()
-                ?.copy()?.of(parent)
-                ?.invokeQuietly<ViewGroup.LayoutParams>(it)
-        } ?: lparams
+        val wrapped = lparams?.let { parent?.generateLayoutParams(it) } ?: lparams
+        if (wrapped != null && lpClass.isInstance(wrapped)) return wrapped
 
-        return wrapped
+        return lparams?.takeIf { lpClass.isInstance(it) }
             ?: attrs?.let {
                 parent?.generateLayoutParamsWithAttributeSetResolver()
                     ?.copy()?.of(parent)
@@ -201,7 +244,9 @@ class LayoutParams private constructor(
         if (bodyBuilder == null && wrapperBuilder == null) throw PerformerException("No layout params builder found.")
 
         return bodyBuilder?.let {
-            val lparams = ViewLayoutParams(lpClass, it.width, it.height, it.matchParent, it.widthMatchParent, it.heightMatchParent)
+            val lparams = createDefaultLayoutParams(
+                ViewLayoutParams(lpClass, it.width, it.height, it.matchParent, it.widthMatchParent, it.heightMatchParent)
+            )
             session.requireNoPerformers(lparams::class.qualifiedName) { it.body(lparams) }
 
             lparams

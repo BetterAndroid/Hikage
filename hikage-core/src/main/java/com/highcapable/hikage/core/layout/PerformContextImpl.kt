@@ -267,7 +267,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
 
     /** If required, add the [view] to the [parent]. */
     private fun addToParentIfRequired(view: View) {
-        if (attachToParent) parent?.addView(view)
+        if (attachToParent) parent?.addView(view, view.layoutParams)
     }
 
     /**
