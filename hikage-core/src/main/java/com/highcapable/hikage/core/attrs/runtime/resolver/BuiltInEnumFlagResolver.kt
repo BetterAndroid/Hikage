@@ -136,6 +136,9 @@ internal object BuiltInEnumFlagResolver : EnumFlagResolver {
         // enum, LinearLayout.HORIZONTAL / VERTICAL
         put("orientation", Def(false, mapOf("horizontal" to 0, "vertical" to 1)))
 
+        // flag, LinearLayout.SHOW_DIVIDER_* values.
+        put("showDividers", Def(true, mapOf("none" to 0, "beginning" to 1, "middle" to 2, "end" to 4)))
+
         // enum, View.VISIBLE / INVISIBLE / GONE
         put("visibility", Def(false, mapOf("visible" to 0, "invisible" to 1, "gone" to 2)))
 
