@@ -27,6 +27,10 @@ package com.highcapable.hikage.core.builder
 import android.content.Context
 import android.view.ViewGroup
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.base.HikageFactory
+import com.highcapable.hikage.core.base.HikageFactoryBuilder
+import com.highcapable.hikage.core.base.HikagePerformer
+import com.highcapable.hikage.core.base.Hikageable
 
 /**
  * Lazy initialize a [Hikage] layout.
@@ -74,6 +78,75 @@ fun Context.lazyHikage(
     parent: ViewGroup? = null,
     attachToParent: Boolean = parent != null
 ) = lazy { builder.build().create(context = this, parent, attachToParent) }
+
+/**
+ * Lazy initialize a [Hikage] layout.
+ *
+ * Usage:
+ *
+ * ```kotlin
+ * class MainActivity : AppCompatActivity() {
+ *
+ *     private val hikage by lazyHikage {
+ *         LinearLayout(
+ *              lparams = LayoutParams(matchParent = true),
+ *              init = {
+ *                  orientation = LinearLayout.VERTICAL
+ *                  gravity = Gravity.CENTER
+ *              }
+ *         ) {
+ *              TextView {
+ *                  text = "Hello, Hikage!"
+ *                  textSize = 20f
+ *              }
+ *         }
+ *     }
+ *
+ *     override fun onCreate(savedInstanceState: Bundle?) {
+ *         super.onCreate(savedInstanceState)
+ *         setContentView(hikage)
+ *     }
+ * }
+ * ```
+ * @receiver the context to create the layout.
+ * @param parent the parent view group.
+ * @param attachToParent whether to attach the layout to the parent when the [parent] is filled.
+ * @param factory the [HikageFactory] builder.
+ * @param performer the performer body.
+ * @return [Lazy]<[Hikage]>
+ */
+@JvmSynthetic
+fun Context.lazyHikage(
+    parent: ViewGroup? = null,
+    attachToParent: Boolean = parent != null,
+    factory: HikageFactoryBuilder.() -> Unit = {},
+    performer: HikagePerformer<ViewGroup.LayoutParams>
+) = lazyHikage<ViewGroup.LayoutParams>(parent, attachToParent, factory, performer)
+
+/**
+ * Lazy initialize a [Hikage] layout.
+ * @receiver the context to create the layout.
+ * @param parent the parent view group.
+ * @param attachToParent whether to attach the layout to the parent when the [parent] is filled.
+ * @param factory the [HikageFactory] builder.
+ * @param performer the performer body.
+ * @return [Lazy]<[Hikage]>
+ */
+@JvmName("lazyHikageTyped")
+inline fun <reified LP : ViewGroup.LayoutParams> Context.lazyHikage(
+    parent: ViewGroup? = null,
+    attachToParent: Boolean = parent != null,
+    noinline factory: HikageFactoryBuilder.() -> Unit = {},
+    noinline performer: HikagePerformer<LP>
+) = lazy {
+    Hikageable<LP>(
+        context = this,
+        parent = parent,
+        attachToParent = attachToParent,
+        factory = factory,
+        performer = performer
+    )
+}
 
 /**
  * A layout builder interface for [Hikage].
