@@ -524,6 +524,11 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     "\"${DeclaredSymbol.ANDROID_CONTEXT_CLASS}\" and \"${DeclaredSymbol.ANDROID_ATTRIBUTE_SET_CLASS}\".\n" +
                     declaration.locateDesc
             }
+            // View constructor's AttributeSet is required to be nullable.
+            require(ksClass.viewConstructorHasNullableAttributeSet()) {
+                "Declares @$tagName's class must have a constructor with nullable \"${DeclaredSymbol.ANDROID_ATTRIBUTE_SET_CLASS}\".\n" +
+                    declaration.locateDesc
+            }
 
             return declaration
         }
@@ -533,8 +538,12 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             parameters.size >= 2 &&
                 parameters[0].isTypeOf(contextDeclaration) &&
                 parameters[1].isTypeOf(attributeSetDeclaration) &&
-                parameters[1].isNullableAttributeSet() &&
                 parameters.drop(2).all { it.hasDefault }
+        }
+
+        private fun KSClassDeclaration.viewConstructorHasNullableAttributeSet() = constructors().any { constructor ->
+            val parameters = constructor.parameters
+            parameters.size >= 2 && parameters[1].isNullableAttributeSet()
         }
 
         private fun KSClassDeclaration.constructors() =
