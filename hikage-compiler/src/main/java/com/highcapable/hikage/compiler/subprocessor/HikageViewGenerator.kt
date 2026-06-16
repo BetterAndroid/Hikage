@@ -243,7 +243,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
 
     private fun generateCodeFile(performer: Performer, roundGeneratedFiles: MutableSet<String>) {
         val classNameSet = performer.declaration.alias ?: performer.declaration.className
-        val fileName = "_$classNameSet"
 
         val viewClass = performer.declaration.toClassName().let {
             val packageName = it.packageName
@@ -273,7 +272,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val hasPerformer = lparamsClass != null && !performer.annotation.final
         val performFunctionAlias = if (hasPerformer) VIEW_GROUP_FUNCTION_ALIAS else VIEW_FUNCTION_ALIAS
 
-        val codeFileSpec = FileSpec.builder(packageName, fileName).apply {
+        val codeFileSpec = FileSpec.builder(packageName, classNameSet).apply {
             addCopyrightFileComment()
 
             addAnnotation(
@@ -375,7 +374,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
 
         writeCodeFile(
             fileSpec = codeFileSpec,
-            generatedKey = "$packageName.$fileName",
+            generatedKey = "$packageName.$classNameSet",
             performer = performer,
             roundGeneratedFiles = roundGeneratedFiles,
             dependencies = dependencies
