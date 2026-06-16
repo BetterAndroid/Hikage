@@ -408,7 +408,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomVi
     noinline init: HikageView<MyCustomView> = {},
     // If this component is a container, you can declare a `performer` parameter.
     // performer: HikagePerformer<LP> = {}
-) = View<MyCustomView>(lparams, id, attrs, init)
+) = View<MyCustomView>({ context, attrs -> MyCustomView(context, attrs) }, lparams, id, attrs, init)
 ```
 
 ::: tip
@@ -692,7 +692,8 @@ val factory = HikageFactory { parent, base, context, params ->
     // `parent` is the ViewGroup object to which the current component is to be added,
     // and if not, it is `null`.
     // `base` is the View object created for the previous HikageFactory, if not, it is `null`.
-    // `params` object contains the component ID, AttributeSet and Class objects of View.
+    // `params` object contains the component ID, AttributeSet, the Class object of the View,
+    // and the direct creation function body of the constructor.
     val view = MyLayoutFactory.createView(context, params)
     // You can also initialize and set the created View object here.
     view.setBackgroundColor(Color.RED)

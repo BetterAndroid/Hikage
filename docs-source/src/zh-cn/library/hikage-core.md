@@ -392,7 +392,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomVi
     noinline init: HikageView<MyCustomView> = {},
     // 如果此组件是容器，可以声明一个 `performer` 参数
     // performer: HikagePerformer<LP> = {}
-) = View<MyCustomView>(lparams, id, attrs, init)
+) = View<MyCustomView>({ context, attrs -> MyCustomView(context, attrs) } ,lparams, id, attrs, init)
 ```
 
 ::: tip
@@ -660,7 +660,7 @@ val factory = HikageFactory { parent, base, context, params ->
     // 例如，使用你自己的方式创建一个新的 View 对象
     // `parent` 为当前组件要添加到的 ViewGroup 对象，如果没有则为 `null`
     // `base` 为上一个 HikageFactory 创建的 View 对象，如果没有则为 `null`
-    // `params` 对象中包含了组件 ID、AttributeSet 以及 View 的 Class 对象
+    // `params` 对象中包含了组件 ID、AttributeSet、View 的 Class 对象以及构造方法的直接创建函数体
     val view = MyLayoutFactory.createView(context, params)
     // 你还可以在这里对创建的 View 对象进行初始化和设置
     view.setBackgroundColor(Color.RED)
