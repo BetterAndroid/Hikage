@@ -16,6 +16,12 @@
 }
 ```
 
+::: tip
+
+如果你使用了通过 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 或 [hikage-compiler](../library/hikage-compiler.md) 生成的组件函数，则不再需要上述规则。
+
+:::
+
 如果你提供了自定义 `ViewGroup.LayoutParams`，并且它只会通过 Hikage 的 `LayoutParams` DSL 创建，也需要保留它的构造方法。
 
 ```
