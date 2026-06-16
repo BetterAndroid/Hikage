@@ -28,11 +28,11 @@ import com.highcapable.kavaref.resolver.ConstructorResolver
 import java.lang.reflect.InvocationTargetException
 
 /**
- * The view constructor class.
+ * The view resolver for creating a view instance.
  * @param resolver the constructor resolver.
  * @param parameterCount the parameter count.
  */
-internal class ViewConstructor<V : View>(
+internal class ViewResolver<V : View>(
     private val resolver: ConstructorResolver<V>,
     private val parameterCount: Int
 ) {

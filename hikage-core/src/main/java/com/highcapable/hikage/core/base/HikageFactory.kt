@@ -53,12 +53,14 @@ fun interface HikageFactory {
      * @param id the view ID.
      * @param attrs the attributes set.
      * @param viewClass the view class.
+     * @param factory the view factory, used to create the view instance.
      */
     @ConsistentCopyVisibility
     data class Params internal constructor(
         val id: String?,
         val attrs: AttributeSet,
-        val viewClass: KClass<out View>
+        val viewClass: KClass<out View>,
+        val factory: ViewConstructor<View>? = null
     )
 }
 

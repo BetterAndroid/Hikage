@@ -25,6 +25,7 @@
 package com.highcapable.hikage.core.base
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.ViewGroup
 import com.highcapable.hikage.core.Hikage
 
@@ -38,7 +39,14 @@ typealias HikagePerformer<LP> = Hikage.Performer<LP>.() -> Unit
  */
 typealias HikageView<V> = V.() -> Unit
 
-/** The [Hikage] layout params body type. */
+/**
+ * The [Hikage] view constructor type.
+ */
+typealias ViewConstructor<V> = (Context, AttributeSet?) -> V
+
+/**
+ * The [Hikage] layout params body type.
+ */
 internal typealias LayoutParamsBody<LP> = LP.() -> Unit
 
 /**

@@ -32,7 +32,10 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSValueParameter
+import com.google.devtools.ksp.symbol.Nullability
 import com.highcapable.hikage.compiler.DeclaredSymbol
 import com.highcapable.hikage.compiler.extension.ClassDetector
 import com.highcapable.hikage.compiler.extension.asType
@@ -47,6 +50,7 @@ import com.highcapable.hikage.compiler.subprocessor.base.BaseSymbolProcessor
 import com.highcapable.hikage.generated.HikageProperties
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -340,6 +344,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         if (!performer.annotation.requireInit) defaultValue("{}")
                     }.build()
                 )
+
+                val viewConstructor = CodeBlock.of("{ context, attrs -> %T(context, attrs) }", viewClass.second)
                 lparamsClass?.second?.takeIf { hasPerformer }?.let {
                     addParameter(
                         ParameterSpec.builder(
@@ -351,10 +357,13 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         }.build()
                     )
                     addStatement(
-                        "return $performFunctionAlias(${performer.declaration.className}::class, " +
-                            "${it.simpleName}::class, lparams, id, attrs, init, performer)"
+                        "return %L(%T::class, %T::class, %L, lparams, id, attrs, init, performer)",
+                        performFunctionAlias, viewClass.second, it, viewConstructor
                     )
-                } ?: addStatement("return $performFunctionAlias(${performer.declaration.className}::class, lparams, id, attrs, init)")
+                } ?: addStatement(
+                    "return %L(%T::class, %L, lparams, id, attrs, init)",
+                    performFunctionAlias, viewClass.second, viewConstructor
+                )
 
                 returns(viewClass.second)
             }.build())
@@ -424,12 +433,16 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         private lateinit var viewDeclaration: KSClassDeclaration
         private lateinit var viewGroupDeclaration: KSClassDeclaration
         private lateinit var lparamsDeclaration: KSClassDeclaration
+        private lateinit var contextDeclaration: KSClassDeclaration
+        private lateinit var attributeSetDeclaration: KSClassDeclaration
 
         fun init(logger: KSPLogger, resolver: Resolver) {
             this.logger = logger
             viewDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_VIEW_CLASS)!!
             viewGroupDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_VIEW_GROUP_CLASS)!!
             lparamsDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_LAYOUT_PARAMS_CLASS)!!
+            contextDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_CONTEXT_CLASS)!!
+            attributeSetDeclaration = resolver.getClassDeclarationByName(DeclaredSymbol.ANDROID_ATTRIBUTE_SET_CLASS)!!
         }
 
         fun resolvedLparamsDeclaration(
@@ -505,8 +518,37 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             require(ksClass.isSubclassOf(viewDeclaration.asType())) {
                 "Declares @$tagName's class must be subclass of \"${DeclaredSymbol.ANDROID_VIEW_CLASS}\".\n${declaration.locateDesc}"
             }
+            // Verify the existence of the required constructor.
+            require(ksClass.hasViewConstructor()) {
+                "Declares @$tagName's class must have a constructor with " +
+                    "\"${DeclaredSymbol.ANDROID_CONTEXT_CLASS}\" and \"${DeclaredSymbol.ANDROID_ATTRIBUTE_SET_CLASS}\".\n" +
+                    declaration.locateDesc
+            }
 
             return declaration
+        }
+
+        private fun KSClassDeclaration.hasViewConstructor() = constructors().any { constructor ->
+            val parameters = constructor.parameters
+            parameters.size >= 2 &&
+                parameters[0].isTypeOf(contextDeclaration) &&
+                parameters[1].isTypeOf(attributeSetDeclaration) &&
+                parameters[1].isNullableAttributeSet() &&
+                parameters.drop(2).all { it.hasDefault }
+        }
+
+        private fun KSClassDeclaration.constructors() =
+            sequenceOf(primaryConstructor)
+                .filterNotNull() + declarations
+                .filterIsInstance<KSFunctionDeclaration>()
+                .filter { it.simpleName.asString() == "<init>" }
+
+        private fun KSValueParameter.isTypeOf(declaration: KSClassDeclaration) =
+            type.resolve().declaration == declaration
+
+        private fun KSValueParameter.isNullableAttributeSet() = when (type.resolve().nullability) {
+            Nullability.NOT_NULL -> false
+            else -> true
         }
     }
 
