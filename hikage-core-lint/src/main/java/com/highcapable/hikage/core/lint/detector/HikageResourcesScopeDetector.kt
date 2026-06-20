@@ -53,7 +53,7 @@ class HikageResourcesScopeDetector : Detector(), Detector.UastScanner {
 
         val ISSUE = Issue.create(
             id = "UseHikageResourcesScope",
-            briefDescription = "Hikage resources scope usage.",
+            briefDescription = "Hikage resources scope violation.",
             explanation = "Hikage layouts can be created from different contexts or parents. Calling Android resource APIs " +
                 "directly inside a Hikage DSL may accidentally use an outer Context or Activity instead of the current " +
                 "performer context. Use ResourcesScope APIs such as stringResource, pluralStringResource, pluralTextResource, " +
