@@ -33,7 +33,7 @@ import com.highcapable.hikage.core.base.HikageFactory
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.PerformerException
-import com.highcapable.hikage.core.extension.ResourcesScope
+import com.highcapable.hikage.core.layout.extension.ResourcesScope
 import com.highcapable.hikage.core.layout.session.LayoutSession
 import kotlin.reflect.KClass
 

@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2025/3/12.
  */
-package com.highcapable.hikage.core.extension
+package com.highcapable.hikage.core.layout.extension
 
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
