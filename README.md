@@ -7,7 +7,7 @@
 
 <img src="img-src/icon.svg" width = "100" height = "100" alt="LOGO"/>
 
-A Kotlin DSL-based Android real-time UI building framework.
+A real-time Android View runtime powered by Kotlin DSL.
 
 English | [简体中文](README-zh-CN.md)
 
@@ -34,7 +34,7 @@ the name is taken from the original song "Haru**hikage**" in "BanG Dream It's My
 
 Its second layer of meaning is "Shadow under the Sun",
 which symbolizes the design philosophy of this framework: Hikage is like a shadow,
-able to provide a more modern and efficient way of building UI without interfering with developers' existing habits and project structure.
+providing a more modern and efficient UI construction system without interfering with developers' existing habits and project structure.
 
 Unlike Jetpack Compose which demands a complete paradigm shift and rewrite,
 Hikage is laser-focused on the native Android view ecosystem.
@@ -50,8 +50,9 @@ Since Kotlin became the primary development language, there hasn't been a perfec
 Therefore, projects that do not use Jetpack Compose still need to use the original XML. Although ViewBinding provides support, it is still not very
 user-friendly.
 
-Hikage inherits the design schemes of [Anko](https://github.com/Kotlin/anko) and [Splitties](https://github.com/LouisCAD/Splitties),
-and draws on the DSL function naming scheme of Jetpack Compose. On this basis, it has made many improvements,
+The core API structure of Hikage refers to the design schemes of [Anko](https://github.com/Kotlin/anko)
+and [Splitties](https://github.com/LouisCAD/Splitties),
+and draws on the DSL function naming scheme of Jetpack Compose. On this basis, it has carried out ecological refactoring,
 making it closer to native in terms of usage cost and closer to Jetpack Compose in terms of writing style.
 
 > Comparison of various DSL layout schemes
@@ -121,8 +122,10 @@ It can be **plug-and-play** and **create a View object anywhere** that can be se
 Hikage **fully supports** hybrid layouts. You can embed XML (using the `R.layout` scheme to load layouts), ViewBinding, and even Jetpack Compose
 within Hikage.
 
-Compared with Anko and Splitties, Hikage supports an **in-memory AAPT2 resource parsing emulator**,
-capable of **dynamically constructing an `AttributeSet`**. This solution has been tested on emulators and real devices,
+Compared to pure DSL scaffolding lightweight dependency libraries like Anko and Splitties, the whole ecosystem brought by Hikage naturally supports an
+**in-memory AAPT2 resource parsing emulator**,
+capable of **dynamically constructing an `AttributeSet`**. This solution has passed interactive tests and Benchmark performance stress tests on
+emulators and real devices,
 ensuring **stable compatibility with Android 5.0.2 (API 21) ~ 17 (API 37)**.
 This empowers legacy custom views that lack programmatic setters to be revitalized via Hikage.
 
@@ -146,7 +149,7 @@ TextView(
 }
 ```
 
-From now on, forget about ViewBinding, XML, and even `findViewById`, and just try using code-based layouts!
+From now on, forget about XML, ViewBinding, and even `findViewById`, and just try using code-based layouts!
 
 **Don't know Jetpack Compose? No worries, today Hikage is your Kotlin DSL version of XML,
 refactoring your most familiar muscle-memory components into the most modern declarative UI,

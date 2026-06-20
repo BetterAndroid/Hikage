@@ -51,11 +51,11 @@ export const configs = {
         locales: {
             '/en/': {
                 lang: 'en-US',
-                description: 'A Kotlin DSL-based Android real-time UI building framework'
+                description: 'A real-time Android View runtime powered by Kotlin DSL'
             },
             '/zh-cn/': {
                 lang: 'zh-CN',
-                description: '一个基于 Kotlin DSL 的 Android 实时 UI 构建框架'
+                description: '一个由 Kotlin DSL 驱动的 Android View 实时运行时框架'
             }
         }
     },

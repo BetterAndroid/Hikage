@@ -1,5 +1,5 @@
 /*
- * Hikage - A Kotlin DSL-based Android real-time UI building framework.
+ * Hikage - A real-time Android View runtime powered by Kotlin DSL.
  * Copyright (C) 2019 HighCapable
  * https://github.com/BetterAndroid/Hikage
  *
