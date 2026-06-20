@@ -345,9 +345,11 @@ val textView = hikage.getOrNull<TextView>("my_text_view")
 
 ### 自定义布局组件
 
-Hikage 可以通过编译器为组件类名生成对应的函数，你可以直接使用这些函数创建组件，而无需再使用泛型声明它们。
+Hikage 可以为组件类名生成对应的布局组件函数 (Hikage Performer)，你可以直接使用它们创建组件，而无需再使用泛型声明。
 
-如果你需要 Android 基础组件、Jetpack 或 Material 提供的组件，可以引入 [hikage-widget-foundation](./hikage-widget-foundation.md)、[hikage-widget-androidx](./hikage-widget-androidx.md) 或 [hikage-widget-material](./hikage-widget-material.md) 模块。
+如果你需要 Jetpack 或 Material 提供的组件，可以引入 [hikage-widget-androidx](./hikage-widget-androidx.md) 或 [hikage-widget-material](./hikage-widget-material.md) 模块。
+
+其中 Android 基础组件的声明依赖模块 [hikage-widget-foundation](./hikage-widget-foundation.md) 已被自动引入到当前模块中，你无需再单独引入它。
 
 > 示例如下
 
@@ -390,7 +392,9 @@ Button {
 }
 ```
 
-如果提供的组件不满足你的需求，你可以手动创建自己的组件。
+你可以继续参考 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md)，或者手动引入 [hikage-compiler](./hikage-compiler.md) 模块来自动生成你自己的布局组件函数。
+
+我们不再推荐手动创建组件函数，因为其实现成本过高且可能会发生非预期问题，如果你依然决定想要自己创建它，你可以参考以下方案进入完全手动创建组件函数的流程。
 
 > 示例如下
 
@@ -415,12 +419,6 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomVi
     // performer: HikagePerformer<LP> = {}
 ) = View<MyCustomView>({ context, attrs -> MyCustomView(context, attrs) } ,lparams, id, attrs, init)
 ```
-
-::: tip
-
-每次都手动实现这样复杂的函数看起来会很繁琐，如果你希望能够自动生成组件函数，可以引入并参考 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md)，或者手动引入 [hikage-compiler](./hikage-compiler.md) 模块。
-
-:::
 
 ### 组合与拆分布局
 

@@ -18,7 +18,7 @@
 
 ::: tip
 
-如果你使用了通过 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 或 [hikage-compiler](../library/hikage-compiler.md) 生成的组件函数，则不再需要上述规则。
+如果你使用了通过 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 或 [hikage-compiler](../library/hikage-compiler.md) 生成的布局组件函数 (Hikage Performer)，则不再需要上述规则。
 
 :::
 

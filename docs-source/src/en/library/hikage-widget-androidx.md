@@ -51,7 +51,8 @@ You need to manually introduce the relevant dependencies of Jetpack AndroidX as 
 ::: tip
 
 This dependency needs to be used in conjunction with [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md),
-the plugin will automatically read the view declaration files in the dependency and generate corresponding Hikage component functions in the current module through [hikage-compiler](./hikage-compiler.md).
+the plugin will automatically read the view declaration files in the dependency and generate corresponding
+Hikage layout component functions (Hikage Performer) in the current module through [hikage-compiler](./hikage-compiler.md).
 
 :::
 

@@ -23,7 +23,7 @@ The following are all Lint rules currently in effect (Only effective for Kotlin 
 | [HikageableBeyondScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableBeyondScopeDetector.kt)                  | `CORRECTNESS` | `ERROR`   | `10`     | Functions marked with `@Hikageable` can only be passed in `Hikage.Performer`.                                 |
 | [MissingHikageableAnnotation](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageablePropagationDetector.kt)            | `CORRECTNESS` | `ERROR`   | `10`     | Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.              |
 | [ReplaceWithHikageSafeTypeCast](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageSafeTypeCastDetector.kt)             | `USABILITY`   | `WARNING` | `5`      | Recommended to use `hikage.get<YourView>("your_id")` instead of `hikage["your_id"] as YourView`.              |
-| [ReplaceWithHikageComponents](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageComponentsUsageDetector.kt)            | `USABILITY`   | `WARNING` | `5`      | Use the generated Hikage component function like `TextView(...)` instead.                                     |
+| [ReplaceWithGeneratedHikagePerformer](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/GeneratedHikagePerformerDetector.kt) | `USABILITY`   | `WARNING` | `5`      | Use the generated Hikage layout component function (Hikage Performer) like `TextView(...)` instead.           |
 
 </div>
 
@@ -36,7 +36,7 @@ If you want to disable a specific rule or change its severity, you can create a 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <issue id="ReplaceWithHikageComponents" severity="ignore" />
+    <issue id="ReplaceWithGeneratedHikagePerformer" severity="ignore" />
     <issue id="ReplaceWithHikageSafeTypeCast" severity="error" />
 </lint>
 ```
@@ -55,7 +55,7 @@ You can also control them directly in Gradle.
 ```kotlin
 android {
     lint {
-        disable += "ReplaceWithHikageComponents"
+        disable += "ReplaceWithGeneratedHikagePerformer"
         warning += "ReplaceWithHikageSafeTypeCast"
         error += "MissingHikageableAnnotation"
     }
@@ -70,7 +70,7 @@ If you only want to check part of the rules, you can also use `checkOnly`.
 android {
     lint {
         checkOnly += setOf(
-            "ReplaceWithHikageComponents",
+            "ReplaceWithGeneratedHikagePerformer",
             "MissingHikageableAnnotation"
         )
     }

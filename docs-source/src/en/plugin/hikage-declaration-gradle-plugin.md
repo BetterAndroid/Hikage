@@ -81,8 +81,10 @@ For the JSON format of the `View` declaration file, please refer to [hikage-comp
 
 This plugin can be applied to Android, Java, or Kotlin JVM projects, and you can flexibly choose the published artifacts and publishing formats.
 
-The plugin is only responsible for packaging `View` declaration files, not for generating component functions, nor will it automatically apply the Maven Publish plugin.
+The plugin is only responsible for packaging `View` declaration files, not for generating layout component functions (Hikage Performer), nor will it automatically apply the Maven Publish plugin.
 
-After applying [hikage-gradle-plugin](./hikage-gradle-plugin.md) in the consumer module, the declaration files from dependencies are collected automatically and passed to [hikage-compiler](../library/hikage-compiler.md) to generate component functions.
+After applying [hikage-gradle-plugin](./hikage-gradle-plugin.md) in the consumer module,
+the declaration files from dependencies are collected automatically and passed to [hikage-compiler](../library/hikage-compiler.md)
+to generate layout component functions (Hikage Performer).
 
 :::

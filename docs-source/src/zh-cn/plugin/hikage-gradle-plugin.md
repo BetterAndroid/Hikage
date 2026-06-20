@@ -54,17 +54,17 @@ plugins {
 - 自动向 `ksp` 配置加入当前版本对应的 [hikage-compiler](./hikage-compiler.md) 依赖
 - 自动读取当前 Android `main` 源集 `resources/hikage-view-declaration` 目录下的 JSON 声明文件，并作为严格声明传递给编译器
 - 自动读取运行时依赖中由 [hikage-declaration-gradle-plugin](./hikage-declaration-gradle-plugin.md) 打包到 `META-INF/hikage/view-declaration/<group>/<module>/` 的 JSON 声明文件，并作为可选声明传递给编译器
-- 自动生成 `View` 组件符号信息，并在最终 APK / AAB 中排除 `META-INF/hikage/**` 与 `hikage-view-declaration/**`
+- 自动生成 Hikage Performer 符号信息，并在最终 APK / AAB 中排除 `META-INF/hikage/**` 与 `hikage-view-declaration/**`
 
 ::: tip
 
-如果你是自定义 `View` 开发者，Hikage 提供了一个 [hikage-declaration-gradle-plugin](./hikage-declaration-gradle-plugin.md) 来处理第三方依赖库的 `View` 声明文件，你可以使用这个插件来自动将你定义的 `View` 声明文件进行打包，供使用者自动生成组件函数。
+如果你是自定义 `View` 开发者，Hikage 提供了一个 [hikage-declaration-gradle-plugin](./hikage-declaration-gradle-plugin.md) 来处理第三方依赖库的 `View` 声明文件，你可以使用这个插件来自动将你定义的 `View` 声明文件进行打包，供使用者自动生成布局组件函数 (Hikage Performer)。
 
 :::
 
 ### 本地 View 声明文件
 
-你可以在 Android 模块的 `main` 源集资源目录中放置 `View` 声明文件，这些文件只用于当前模块生成组件函数，不会被打包到最终 APK / AAB 中。
+你可以在 Android 模块的 `main` 源集资源目录中放置 `View` 声明文件，这些文件只用于当前模块生成布局组件函数 (Hikage Performer)，不会被打包到最终 APK / AAB 中。
 
 ``` :no-line-numbers
 src/

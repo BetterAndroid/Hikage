@@ -356,12 +356,14 @@ val textView = hikage.getOrNull<TextView>("my_text_view")
 
 ### Custom Layout Components
 
-Hikage can generate functions corresponding to component class names through the compiler.
+Hikage can generate corresponding layout component functions (Hikage Performer) for component class names,
+and you can directly use them to create components without having to declare them with generics.
 
-You can directly use these functions to create components without using generics to declare them.
+If you need components provided by Jetpack or Material,
+you can import the [hikage-widget-androidx](./hikage-widget-androidx.md) or [hikage-widget-material](./hikage-widget-material.md) modules.
 
-If you need Android foundation components or components provided by Jetpack or Material,
-the [hikage-widget-foundation](./hikage-widget-foundation.md), [hikage-widget-androidx](./hikage-widget-androidx.md), or [hikage-widget-material](./hikage-widget-material.md) modules can be introduced.
+The declaration of Android basic components depends on the [hikage-widget-foundation](./hikage-widget-foundation.md) module,
+which has been automatically imported into the current module, so you don't need to import it separately.
 
 > The following example
 
@@ -404,7 +406,11 @@ Button {
 }
 ```
 
-If the provided components do not meet your needs, you can create your own components manually.
+You can continue to refer to [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md),
+or manually introduce the [hikage-compiler](./hikage-compiler.md) module to automatically generate your own layout component functions.
+
+We no longer recommend manually creating component functions, as their implementation costs are too high and unexpected problems may occur.
+If you still decide to create it yourself, you can refer to the following scheme to enter the process of completely manually creating component functions.
 
 > The following example
 
@@ -431,14 +437,6 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyCustomVi
     // performer: HikagePerformer<LP> = {}
 ) = View<MyCustomView>({ context, attrs -> MyCustomView(context, attrs) }, lparams, id, attrs, init)
 ```
-
-::: tip
-
-It would seem tedious to implement such complex functions manually every time.
-If you want to be able to automatically generate component functions,
-you can introduce and refer to the [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md), or manually introduce the [hikage-compiler](./hikage-compiler.md) module.
-
-:::
 
 ### Combination and Disassembly Layout
 

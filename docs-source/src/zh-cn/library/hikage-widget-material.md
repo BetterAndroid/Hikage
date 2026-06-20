@@ -50,7 +50,7 @@ implementation("com.highcapable.hikage:hikage-widget-material:<version>")
 
 ::: tip
 
-这个依赖需要配合 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 使用，插件会自动读取依赖中的 `View` 声明文件，并通过 [hikage-compiler](./hikage-compiler.md) 在当前模块生成对应的 Hikage 组件函数。
+这个依赖需要配合 [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md) 使用，插件会自动读取依赖中的 `View` 声明文件，并通过 [hikage-compiler](./hikage-compiler.md) 在当前模块生成对应的 Hikage 布局组件函数 (Hikage Performer)。
 
 :::
 

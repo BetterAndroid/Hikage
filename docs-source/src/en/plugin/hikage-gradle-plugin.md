@@ -54,19 +54,19 @@ The plugin automatically completes the following work.
 - Adds the matching [hikage-compiler](../library/hikage-compiler.md) dependency of the current version to the `ksp` configuration
 - Reads JSON declaration files under `resources/hikage-view-declaration` from the current Android `main` source set and passes them to the compiler as strict declarations
 - Reads JSON declaration files packaged by [hikage-declaration-gradle-plugin](./hikage-declaration-gradle-plugin.md) under `META-INF/hikage/view-declaration/<group>/<module>/` from runtime dependencies and passes them to the compiler as optional declarations
-- Generates view component symbol information for Lint, and excludes `META-INF/hikage/**` and `hikage-view-declaration/**` from the final APK / AAB
+- Generates Hikage performer symbol information for Lint, and excludes `META-INF/hikage/**` and `hikage-view-declaration/**` from the final APK / AAB
 
 ::: tip
 
 If you are a custom view developer, Hikage provides a [hikage-declaration-gradle-plugin](./hikage-declaration-gradle-plugin.md) to handle the view declaration files of third-party dependency libraries,
-you can use this plugin to automatically package your defined view declaration files, so that users can automatically generate component functions.
+you can use this plugin to automatically package your defined view declaration files, so that users can automatically generate layout component functions (Hikage Performer).
 
 :::
 
 ### Local View Declaration Files
 
 You can place view declaration files in the `main` source set resources directory of an Android module,
-these files are only used to generate component functions for the current module and will not be packaged into the final APK / AAB.
+these files are only used to generate layout component functions (Hikage Performer) for the current module and will not be packaged into the final APK / AAB.
 
 ``` :no-line-numbers
 src/

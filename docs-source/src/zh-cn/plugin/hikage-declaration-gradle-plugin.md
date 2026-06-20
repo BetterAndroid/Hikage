@@ -81,8 +81,8 @@ META-INF/
 
 此插件可被应用于 Android、Java 或 Kotlin JVM 项目，你可以灵活选择发布产物和发布形式。
 
-插件仅负责打包 `View` 声明文件，不负责生成组件函数，也不会自动应用 Maven 发布插件。
+插件仅负责打包 `View` 声明文件，不负责生成布局组件函数 (Hikage Performer)，也不会自动应用 Maven 发布插件。
 
-在需要使用的模块中应用 [hikage-gradle-plugin](./hikage-gradle-plugin.md) 后，会自动收集依赖中的声明文件并交由 [hikage-compiler](../library/hikage-compiler.md) 生成组件函数。
+在需要使用的模块中应用 [hikage-gradle-plugin](./hikage-gradle-plugin.md) 后，会自动收集依赖中的声明文件并交由 [hikage-compiler](../library/hikage-compiler.md) 生成布局组件函数 (Hikage Performer)。
 
 :::
