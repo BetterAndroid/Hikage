@@ -26,11 +26,16 @@ package com.highcapable.hikage.core.layout
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ArrayRes
+import androidx.annotation.BoolRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.FontRes
+import androidx.annotation.FractionRes
+import androidx.annotation.IntegerRes
 import androidx.annotation.LayoutRes
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.core.graphics.drawable.toBitmap
 import androidx.viewbinding.ViewBinding
@@ -90,12 +95,24 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         if (formatArgs.isNotEmpty())
             context.getString(resId, *formatArgs)
         else context.getString(resId)
+    override fun pluralStringResource(@PluralsRes resId: Int, quantity: Int, vararg formatArgs: Any) =
+        if (formatArgs.isNotEmpty())
+            context.resources.getQuantityString(resId, quantity, *formatArgs)
+        else context.resources.getQuantityString(resId, quantity)
+    override fun pluralTextResource(@PluralsRes resId: Int, quantity: Int) = context.resources.getQuantityText(resId, quantity)
     override fun textResource(@StringRes resId: Int) = context.getText(resId)
+    override fun stringArrayResource(@ArrayRes resId: Int) = context.resources.getStringArray(resId)
+    override fun integerResource(@IntegerRes resId: Int) = context.resources.getInteger(resId)
+    override fun integerArrayResource(@ArrayRes resId: Int) = context.resources.getIntArray(resId)
+    override fun booleanResource(@BoolRes resId: Int) = context.resources.getBoolean(resId)
     override fun colorResource(@ColorRes resId: Int) = context.getColorCompat(resId)
     override fun stateColorResource(@ColorRes resId: Int) = context.getColorStateListCompat(resId)
     override fun drawableResource(@DrawableRes resId: Int) = context.getDrawableCompat(resId)
     override fun bitmapResource(@DrawableRes resId: Int) = context.getDrawableCompat(resId).toBitmap()
     override fun dimenResource(@DimenRes resId: Int) = context.resources.getDimension(resId)
+    override fun dimenPixelSizeResource(@DimenRes resId: Int) = context.resources.getDimensionPixelSize(resId)
+    override fun dimenPixelOffsetResource(@DimenRes resId: Int) = context.resources.getDimensionPixelOffset(resId)
+    override fun fractionResource(@FractionRes resId: Int, base: Int, pbase: Int) = context.resources.getFraction(resId, base, pbase)
     override fun fontResource(@FontRes resId: Int) = context.getFontCompat(resId)
 
     override fun <N : Number> N.toPx() = toPx(context)

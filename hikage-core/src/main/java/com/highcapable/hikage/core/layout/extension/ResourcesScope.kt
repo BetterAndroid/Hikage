@@ -25,10 +25,15 @@ import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import androidx.annotation.ArrayRes
+import androidx.annotation.BoolRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.FontRes
+import androidx.annotation.FractionRes
+import androidx.annotation.IntegerRes
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.highcapable.hikage.core.Hikage
 
@@ -46,11 +51,56 @@ interface ResourcesScope {
     fun stringResource(@StringRes resId: Int, vararg formatArgs: Any): String
 
     /**
+     * Get the plural string from [resId].
+     * @param resId the resource id.
+     * @param quantity the quantity used to select the plural form.
+     * @param formatArgs the format arguments.
+     * @return [String]
+     */
+    fun pluralStringResource(@PluralsRes resId: Int, quantity: Int, vararg formatArgs: Any): String
+
+    /**
+     * Get the plural text from [resId].
+     * @param resId the resource id.
+     * @param quantity the quantity used to select the plural form.
+     * @return [CharSequence]
+     */
+    fun pluralTextResource(@PluralsRes resId: Int, quantity: Int): CharSequence
+
+    /**
      * Get the text from [resId].
      * @param resId the resource id.
      * @return [CharSequence]
      */
     fun textResource(@StringRes resId: Int): CharSequence
+
+    /**
+     * Get the string array from [resId].
+     * @param resId the resource id.
+     * @return [Array] of [String]
+     */
+    fun stringArrayResource(@ArrayRes resId: Int): Array<String>
+
+    /**
+     * Get the integer from [resId].
+     * @param resId the resource id.
+     * @return [Int]
+     */
+    fun integerResource(@IntegerRes resId: Int): Int
+
+    /**
+     * Get the integer array from [resId].
+     * @param resId the resource id.
+     * @return [IntArray]
+     */
+    fun integerArrayResource(@ArrayRes resId: Int): IntArray
+
+    /**
+     * Get the boolean from [resId].
+     * @param resId the resource id.
+     * @return [Boolean]
+     */
+    fun booleanResource(@BoolRes resId: Int): Boolean
 
     /**
      * Get the color from [resId].
@@ -86,6 +136,29 @@ interface ResourcesScope {
      * @return [Float]
      */
     fun dimenResource(@DimenRes resId: Int): Float
+
+    /**
+     * Get the dimension pixel size from [resId].
+     * @param resId the resource id.
+     * @return [Int]
+     */
+    fun dimenPixelSizeResource(@DimenRes resId: Int): Int
+
+    /**
+     * Get the dimension pixel offset from [resId].
+     * @param resId the resource id.
+     * @return [Int]
+     */
+    fun dimenPixelOffsetResource(@DimenRes resId: Int): Int
+
+    /**
+     * Get the fraction from [resId].
+     * @param resId the resource id.
+     * @param base the base value of this fraction.
+     * @param pbase the parent base value of this fraction.
+     * @return [Float]
+     */
+    fun fractionResource(@FractionRes resId: Int, base: Int, pbase: Int): Float
 
     /**
      * Get the font from [resId].
