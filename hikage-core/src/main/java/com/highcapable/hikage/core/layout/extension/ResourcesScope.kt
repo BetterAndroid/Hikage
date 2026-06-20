@@ -46,6 +46,13 @@ interface ResourcesScope {
     fun stringResource(@StringRes resId: Int, vararg formatArgs: Any): String
 
     /**
+     * Get the text from [resId].
+     * @param resId the resource id.
+     * @return [CharSequence]
+     */
+    fun textResource(@StringRes resId: Int): CharSequence
+
+    /**
      * Get the color from [resId].
      * @param resId the resource id.
      * @return [Int]

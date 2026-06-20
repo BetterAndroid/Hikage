@@ -90,6 +90,7 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         if (formatArgs.isNotEmpty())
             context.getString(resId, *formatArgs)
         else context.getString(resId)
+    override fun textResource(@StringRes resId: Int) = context.getText(resId)
     override fun colorResource(@ColorRes resId: Int) = context.getColorCompat(resId)
     override fun stateColorResource(@ColorRes resId: Int) = context.getColorStateListCompat(resId)
     override fun drawableResource(@DrawableRes resId: Int) = context.getDrawableCompat(resId)
