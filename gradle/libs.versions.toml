@@ -24,6 +24,10 @@ pangutext-android = "1.0.6"
 # suppress the warning about using newer versions of dependencies that may require higher min sdk version.
 # noinspection GradleDependency
 androidx-core = "1.17.0"
+# The project current support min sdk version is 21,
+# suppress the warning about using newer versions of dependencies that may require higher min sdk version.
+# noinspection GradleDependency
+androidx-lifecycle = "2.9.4"
 androidx-appcompat = "1.7.1"
 androidx-constraintlayout = "2.2.1"
 androidx-coordinatorlayout = "1.3.0"
@@ -34,7 +38,7 @@ androidx-cardview = "1.0.0"
 androidx-viewpager = "1.1.0"
 androidx-viewpager2 = "1.1.0"
 androidx-recyclerview = "1.4.0"
-androidx-compose-ui = "1.11.2"
+androidx-compose-ui = "1.11.3"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.3.0"
 androidx-test-espresso-core = "3.7.0"
@@ -77,6 +81,9 @@ kavaref-android = { group = "com.highcapable.kavaref", name = "kavaref-android" 
 kavaref-extension = { group = "com.highcapable.kavaref", name = "kavaref-extension" }
 pangutext-android = { group = "com.highcapable.pangutext", name = "pangutext-android", version.ref = "pangutext-android" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }

@@ -73,6 +73,7 @@ include(
 include(
     ":hikage-core",
     ":hikage-core-lint",
+    ":hikage-runtime",
     ":hikage-extension",
     ":hikage-extension-compose",
     ":hikage-extension-betterandroid",

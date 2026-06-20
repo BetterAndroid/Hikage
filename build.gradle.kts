@@ -186,6 +186,7 @@ object Libraries {
     const val HIKAGE_DECLARATION_GRADLE_PLUGIN = "hikage-declaration-gradle-plugin"
     const val HIKAGE_COMPILER = "hikage-compiler"
     const val HIKAGE_CORE = "hikage-core"
+    const val HIKAGE_RUNTIME = "hikage-runtime"
     const val HIKAGE_EXTENSION = "hikage-extension"
     const val HIKAGE_EXTENSION_COMPOSE = "hikage-extension-compose"
     const val HIKAGE_EXTENSION_BETTERANDROID = "hikage-extension-betterandroid"
@@ -207,6 +208,7 @@ object Libraries {
         HIKAGE_BOM,
         HIKAGE_COMPILER,
         HIKAGE_CORE,
+        HIKAGE_RUNTIME,
         HIKAGE_EXTENSION,
         HIKAGE_EXTENSION_COMPOSE,
         HIKAGE_EXTENSION_BETTERANDROID,

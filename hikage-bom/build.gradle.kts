@@ -10,6 +10,7 @@ dependencies {
     constraints {
         api(projects.hikageCore)
         api(projects.hikageCompiler)
+        api(projects.hikageRuntime)
         api(projects.hikageExtension)
         api(projects.hikageExtensionBetterandroid)
         api(projects.hikageExtensionCompose)
