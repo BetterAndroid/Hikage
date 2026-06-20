@@ -28,6 +28,7 @@ import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.highcapable.hikage.core.lint.detector.GeneratedHikagePerformerDetector
 import com.highcapable.hikage.core.lint.detector.HikageAttributeDetector
+import com.highcapable.hikage.core.lint.detector.HikageResourcesScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageSafeTypeCastDetector
 import com.highcapable.hikage.core.lint.detector.HikageableBeyondScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageablePropagationDetector
@@ -47,6 +48,7 @@ class HikageIssueRegistry : IssueRegistry() {
         HikageableBeyondScopeDetector.ISSUE,
         HikageablePropagationDetector.ISSUE,
         HikageSafeTypeCastDetector.ISSUE,
+        HikageResourcesScopeDetector.ISSUE,
         GeneratedHikagePerformerDetector.ISSUE
     )
 
