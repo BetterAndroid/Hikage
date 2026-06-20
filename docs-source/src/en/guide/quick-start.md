@@ -72,6 +72,7 @@ hikage = { id = "com.highcapable.hikage", version.ref = "hikage-plugin" }
 # ...
 hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
+hikage-runtime = { module = "com.highcapable.hikage:hikage-runtime" }
 hikage-extension = { module = "com.highcapable.hikage:hikage-extension" }
 ```
 
@@ -90,6 +91,7 @@ dependencies {
     // ...
     implementation(platform(libs.hikage.bom))
     implementation(libs.hikage.core)
+    implementation(libs.hikage.runtime)
     implementation(libs.hikage.extension)
 }
 ```
@@ -115,6 +117,7 @@ For details, please see the [changelog](../about/changelog.md).
 - [hikage-bom](../library/hikage-bom.md)
 - [hikage-core](../library/hikage-core.md)
 - [hikage-compiler](../library/hikage-compiler.md)
+- [hikage-runtime](../library/hikage-runtime.md)
 - [hikage-extension](../library/hikage-extension.md)
 - [hikage-extension-betterandroid](../library/hikage-extension-betterandroid.md)
 - [hikage-extension-compose](../library/hikage-extension-compose.md)
