@@ -40,7 +40,13 @@ inline fun <reified LP : ViewGroup.LayoutParams> ViewGroup.addView(
     index: Int = -1,
     noinline factory: HikageFactoryBuilder.() -> Unit = {},
     noinline performer: HikagePerformer<LP>
-) = Hikageable<LP>(context = context, factory = factory, performer = performer).apply { addView(root, index) }
+) = Hikageable<LP>(
+    context = context,
+    parent = this,
+    attachToParent = false,
+    factory = factory,
+    performer = performer
+).apply { addView(root, index) }
 
 /**
  * @see ViewGroup.addView
@@ -67,4 +73,4 @@ fun ViewGroup.addView(index: Int = -1, hikage: Hikage) = addView(hikage.root, in
  */
 @JvmOverloads
 fun ViewGroup.addView(index: Int = -1, delegate: Hikage.Delegate<*>) =
-    delegate.create(context).apply { addView(root, index) }
+    delegate.create(context, parent = this, attachToParent = false).apply { addView(root, index) }

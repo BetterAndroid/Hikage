@@ -30,6 +30,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.Hikageable
+import android.R as Android_R
 
 /**
  * @see Window.setContentView
@@ -39,7 +40,13 @@ import com.highcapable.hikage.core.base.Hikageable
 fun Window.setContentView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
-) = Hikageable(context = context, factory = factory, performer = performer).apply { setContentView(root) }
+) = Hikageable(
+    context = context,
+    parent = contentParent,
+    attachToParent = false,
+    factory = factory,
+    performer = performer
+).apply { setContentView(root) }
 
 /**
  * @see Window.setContentView
@@ -53,4 +60,10 @@ fun Window.setContentView(hikage: Hikage) = setContentView(hikage.root)
  * @return [Hikage]
  */
 fun Window.setContentView(delegate: Hikage.Delegate<*>) =
-    delegate.create(context).apply { setContentView(root) }
+    delegate.create(context, parent = contentParent, attachToParent = false).apply { setContentView(root) }
+
+/**
+ * The content parent used by [Window.setContentView].
+ * @return [FrameLayout]
+ */
+private val Window.contentParent get() = findViewById<FrameLayout>(Android_R.id.content)
