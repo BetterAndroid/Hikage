@@ -84,7 +84,7 @@ class MainActivity : BaseActivity() {
                 )
                 LinearLayout(
                     lparams = LayoutParams(matchParent = true) {
-                        topMargin = dimenResource(Material_R.dimen.m3_appbar_size_compact).toInt()
+                        topMargin = dimenPixelSizeResource(Material_R.dimen.m3_appbar_size_compact)
                     },
                     init = {
                         orientation = LinearLayout.VERTICAL
