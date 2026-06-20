@@ -22,12 +22,12 @@
 package com.highcapable.hikage.core.lint.detector.entity
 
 /**
- * The Hikage view symbol item.
+ * The Hikage performer symbol item.
  * @param viewClass the view class name.
- * @param name the generated component function name.
- * @param packageName the generated component function package name.
+ * @param name the generated performer function name.
+ * @param packageName the generated performer function package name.
  */
-internal data class ViewSymbol(
+internal data class PerformerSymbol(
     val viewClass: String?,
     val name: String?,
     val packageName: String?

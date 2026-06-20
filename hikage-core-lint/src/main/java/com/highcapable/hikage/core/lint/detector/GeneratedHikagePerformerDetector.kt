@@ -37,7 +37,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.highcapable.hikage.core.lint.DeclaredSymbol
-import com.highcapable.hikage.core.lint.detector.entity.ViewSymbol
+import com.highcapable.hikage.core.lint.detector.entity.PerformerSymbol
 import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
 import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
 import com.intellij.psi.PsiClass
@@ -57,20 +57,20 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.jar.JarFile
 
-class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
+class GeneratedHikagePerformerDetector : Detector(), Detector.UastScanner {
 
     companion object {
 
         val ISSUE = Issue.create(
-            id = "ReplaceWithHikageComponents",
-            briefDescription = "Hikage component function can replace the view wrapper.",
-            explanation = "Use the generated Hikage component function like `TextView(...)` " +
-                "instead of wrapping the same component with `View<TextView>(...)` or `ViewGroup<...>(...)`.",
+            id = "ReplaceWithGeneratedHikagePerformer",
+            briefDescription = "Hikage generated performer function usage.",
+            explanation = "Use the generated Hikage layout component function (Hikage Performer) like `TextView(...)` " +
+                "instead of wrapping the same View with `View<TextView>(...)` or `ViewGroup<...>(...)`.",
             category = Category.USABILITY,
             priority = 5,
             severity = Severity.WARNING,
             implementation = Implementation(
-                HikageComponentsUsageDetector::class.java,
+                GeneratedHikagePerformerDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
@@ -80,7 +80,7 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
         private const val VIEW_CLASS_NAME = "android.view.View"
         private const val VIEW_GROUP_CLASS_NAME = "android.view.ViewGroup"
 
-        private const val PARTIAL_COMPONENTS_KEY = "components"
+        private const val PARTIAL_PERFORMER_FUNCTIONS_KEY = "performerFunctions"
         private const val PARTIAL_FUNCTION_NAME_KEY = "functionName"
         private const val PARTIAL_PACKAGE_NAME_KEY = "packageName"
 
@@ -89,14 +89,14 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
 
         private const val GENERATED_KSP_DIR = "build/generated/ksp"
         private const val GENERATED_KSP_RESOURCES_DIR = "resources"
-        private const val VIEW_SYMBOL_DIRECTORY_NAME = "META-INF/hikage/view-symbol"
-        private const val VIEW_SYMBOL_INDEX_FILE_NAME = "index.json"
+        private const val PERFORMER_SYMBOL_DIRECTORY_NAME = "META-INF/hikage/performer-symbol"
+        private const val PERFORMER_SYMBOL_INDEX_FILE_NAME = "index.json"
 
-        private val viewSymbolListType = object : TypeToken<List<ViewSymbol>>() {}.type
+        private val performerSymbolListType = object : TypeToken<List<PerformerSymbol>>() {}.type
         private val gson = Gson()
 
-        private val declaredComponents = ConcurrentHashMap<String, ViewCandidate>()
-        private val projectComponents = ConcurrentHashMap<Project, MutableMap<String, ViewCandidate>>()
+        private val declaredViews = ConcurrentHashMap<String, ViewCandidate>()
+        private val projectViews = ConcurrentHashMap<Project, MutableMap<String, ViewCandidate>>()
     }
 
     override fun getApplicableUastTypes() = listOf(
@@ -107,14 +107,14 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
     )
 
     override fun afterCheckEachProject(context: Context) {
-        val components = context.getPartialResults(ISSUE).map().getMap(PARTIAL_COMPONENTS_KEY) ?: LintMap()
-        projectComponents.remove(context.project).orEmpty().forEach { (viewClassName, view) ->
+        val performerFunctions = context.getPartialResults(ISSUE).map().getMap(PARTIAL_PERFORMER_FUNCTIONS_KEY) ?: LintMap()
+        projectViews.remove(context.project).orEmpty().forEach { (viewClassName, view) ->
             val item = LintMap()
                 .put(PARTIAL_FUNCTION_NAME_KEY, view.functionName)
                 .put(PARTIAL_PACKAGE_NAME_KEY, view.functionPackageName)
-            components.put(viewClassName, item)
+            performerFunctions.put(viewClassName, item)
         }
-        context.getPartialResults(ISSUE).map().put(PARTIAL_COMPONENTS_KEY, components)
+        context.getPartialResults(ISSUE).map().put(PARTIAL_PERFORMER_FUNCTIONS_KEY, performerFunctions)
     }
 
     override fun checkPartialResults(context: Context, partialResults: PartialResult) = Unit
@@ -127,14 +127,14 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
         private val partialViews by lazy { context.getPartialResults(ISSUE).toCandidates() }
 
         private val generatedViews by lazy {
-            context.project.generatedViewSymbols()
+            context.project.generatedPerformerSymbols()
                 .associateBy { it.viewClassName }
         }
 
         private fun registerSourceView(view: ViewCandidate) {
             sourceViews[view.viewClassName] = view
-            declaredComponents[view.viewClassName] = view
-            projectComponents.getOrPut(context.project) { ConcurrentHashMap() }[view.viewClassName] = view
+            declaredViews[view.viewClassName] = view
+            projectViews.getOrPut(context.project) { ConcurrentHashMap() }[view.viewClassName] = view
         }
 
         override fun visitImportStatement(node: UImportStatement) {
@@ -209,7 +209,7 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
 
             val view = sourceViews[viewClassName]
                 ?: importViews[viewClassName]
-                ?: declaredComponents[viewClassName]
+                ?: declaredViews[viewClassName]
                 ?: partialViews[viewClassName]
                 ?: generatedViews[viewClassName]
                 ?: findGeneratedView(viewClassName)
@@ -295,7 +295,7 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
             .trim()
             .takeIf { it.isNotBlank() && !it.endsWith(".*") }
 
-        private fun Project.generatedViewSymbols(): Sequence<ViewCandidate> {
+        private fun Project.generatedPerformerSymbols(): Sequence<ViewCandidate> {
             val generatedResourceRoots = generatedResourceFolders.asSequence()
             val libraryGeneratedResourceRoots = allLibraries.asSequence().flatMap { it.generatedResourceFolders.asSequence() }
             val kspGeneratedResourceRoots = dir.resolve(GENERATED_KSP_DIR)
@@ -310,19 +310,19 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
                 kspGeneratedResourceRoots
             ).flatten()
                 .filter { it.exists() && it.isDirectory }
-                .flatMap { it.readViewSymbolIndexes() }
+                .flatMap { it.readPerformerSymbolIndexes() }
             val archiveSymbols = javaLibraries.asSequence()
                 .filter { it.exists() && it.isFile }
-                .flatMap { it.readViewSymbolIndexes() }
+                .flatMap { it.readPerformerSymbolIndexes() }
 
-            return directorySymbols.plus(archiveSymbols).flatMap { it.toViewSymbols() }
+            return directorySymbols.plus(archiveSymbols).flatMap { it.toPerformerSymbols() }
         }
 
-        private fun File.readViewSymbolIndexes(): Sequence<String> {
-            if (isDirectory) return resolve(VIEW_SYMBOL_DIRECTORY_NAME)
+        private fun File.readPerformerSymbolIndexes(): Sequence<String> {
+            if (isDirectory) return resolve(PERFORMER_SYMBOL_DIRECTORY_NAME)
                 .takeIf { it.exists() && it.isDirectory }
                 ?.walkTopDown()
-                ?.filter { it.isFile && it.name == VIEW_SYMBOL_INDEX_FILE_NAME }
+                ?.filter { it.isFile && it.name == PERFORMER_SYMBOL_INDEX_FILE_NAME }
                 ?.mapNotNull { runCatching { it.readText() }.getOrNull() }
                 ?: emptySequence()
 
@@ -331,8 +331,8 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
                     jar.entries().asSequence()
                         .filter {
                             !it.isDirectory &&
-                                it.name.startsWith(VIEW_SYMBOL_DIRECTORY_NAME) &&
-                                it.name.endsWith("/$VIEW_SYMBOL_INDEX_FILE_NAME")
+                                it.name.startsWith(PERFORMER_SYMBOL_DIRECTORY_NAME) &&
+                                it.name.endsWith("/$PERFORMER_SYMBOL_INDEX_FILE_NAME")
                         }
                         .mapNotNull { entry ->
                             runCatching {
@@ -345,13 +345,13 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
             }.getOrElse { emptySequence() }
         }
 
-        private fun String.toViewSymbols() = runCatching {
-            gson.fromJson<List<ViewSymbol>>(this, viewSymbolListType)
+        private fun String.toPerformerSymbols() = runCatching {
+            gson.fromJson<List<PerformerSymbol>>(this, performerSymbolListType)
                 .asSequence()
                 .mapNotNull { it.toViewCandidate() }
         }.getOrElse { emptySequence() }
 
-        private fun ViewSymbol.toViewCandidate(): ViewCandidate? {
+        private fun PerformerSymbol.toViewCandidate(): ViewCandidate? {
             val viewClass = viewClass?.takeIf { it.isNotBlank() } ?: return null
             val name = name?.takeIf { it.isNotBlank() } ?: return null
             val packageName = packageName?.takeIf { it.isNotBlank() } ?: return null
@@ -365,12 +365,12 @@ class HikageComponentsUsageDetector : Detector(), Detector.UastScanner {
     })
 
     private fun Iterable<Map.Entry<Project, LintMap>>.toCandidates() = flatMap { (_, map) ->
-        map.getMap(PARTIAL_COMPONENTS_KEY)?.keys()?.mapNotNull { viewClassName ->
-            val functionName = map.getMap(PARTIAL_COMPONENTS_KEY)
+        map.getMap(PARTIAL_PERFORMER_FUNCTIONS_KEY)?.keys()?.mapNotNull { viewClassName ->
+            val functionName = map.getMap(PARTIAL_PERFORMER_FUNCTIONS_KEY)
                 ?.getMap(viewClassName)
                 ?.getString(PARTIAL_FUNCTION_NAME_KEY)
                 ?: return@mapNotNull null
-            val packageName = map.getMap(PARTIAL_COMPONENTS_KEY)
+            val packageName = map.getMap(PARTIAL_PERFORMER_FUNCTIONS_KEY)
                 ?.getMap(viewClassName)
                 ?.getString(PARTIAL_PACKAGE_NAME_KEY)
                 ?: return@mapNotNull null

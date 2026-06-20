@@ -78,8 +78,9 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         private const val PROJECT_NAME_OPTION = "hikage.internal.projectName"
 
         private const val VIEW_DECLARATION_FILE_NAME = "HikageViewDeclarationFile"
-        private const val VIEW_SYMBOL_INDEX_FILE_NAME = "index"
-        private const val VIEW_SYMBOL_DIRECTORY_NAME = "META-INF/hikage/view-symbol"
+
+        private const val PERFORMER_SYMBOL_INDEX_FILE_NAME = "index"
+        private const val PERFORMER_SYMBOL_DIRECTORY_NAME = "META-INF/hikage/performer-symbol"
 
         private const val PACKAGE_NAME_PREFIX = "com.highcapable.hikage.widget"
 
@@ -103,7 +104,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
 
     private val generatedFileOwners = mutableMapOf<String, String>()
     private val annotationViewKeys = mutableSetOf<String>()
-    private var hasGeneratedViewSymbol = false
+    private var hasGeneratedPerformerSymbol = false
 
     override fun startProcess(resolver: Resolver) {
         Processor.init(logger, resolver)
@@ -150,7 +151,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val performers = annotationPerformers + filePerformers
 
         processPerformer(performers, mutableSetOf())
-        generateViewSymbolIndex(performers)
+        generatePerformerSymbolIndex(performers)
     }
 
     private fun createViewDeclarationFilePerformers(resolver: Resolver, optionName: String, isOptional: Boolean): List<Performer> {
@@ -210,8 +211,8 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         generatablePerformers.forEach { generateCodeFile(it, roundGeneratedFiles) }
     }
 
-    private fun generateViewSymbolIndex(performers: List<Performer>) {
-        if (performers.isEmpty() || hasGeneratedViewSymbol) return
+    private fun generatePerformerSymbolIndex(performers: List<Performer>) {
+        if (performers.isEmpty() || hasGeneratedPerformerSymbol) return
 
         val group = environment.options[PROJECT_GROUP_OPTION]
             ?.trim()
@@ -220,18 +221,18 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             ?.trim()
             ?.takeIf { it.isNotEmpty() }
 
-        // If the project group or name is not specified, skip generating the view symbol index file.
+        // If the project group or name is not specified, skip generating the performer symbol index file.
         if (group == null || module == null) return
 
         val items = performers.map {
-            ViewSymbol(
+            PerformerSymbol(
                 viewClass = it.declaration.viewClassKey,
                 name = it.declaration.alias ?: it.declaration.className.replace(".", "_"),
                 packageName = "$PACKAGE_NAME_PREFIX.${it.declaration.packageName}"
             )
-        }.sortedWith(compareBy(ViewSymbol::viewClass, ViewSymbol::name, ViewSymbol::packageName))
+        }.sortedWith(compareBy(PerformerSymbol::viewClass, PerformerSymbol::name, PerformerSymbol::packageName))
 
-        val path = "$VIEW_SYMBOL_DIRECTORY_NAME/${group.toSymbolPath()}/${module.toSymbolPath()}/$VIEW_SYMBOL_INDEX_FILE_NAME"
+        val path = "$PERFORMER_SYMBOL_DIRECTORY_NAME/${group.toSymbolPath()}/${module.toSymbolPath()}/$PERFORMER_SYMBOL_INDEX_FILE_NAME"
         val dependencies = Dependencies(
             aggregating = true,
             sources = performers.mapNotNull { it.sourceFile }.distinct().toTypedArray()
@@ -240,7 +241,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         codeGenerator.createNewFileByPath(dependencies, path, extensionName = "json").use {
             it.write(jsonDecoder.encodeToString(items).toByteArray())
         }
-        hasGeneratedViewSymbol = true
+        hasGeneratedPerformerSymbol = true
     }
 
     private fun generateCodeFile(performer: Performer, roundGeneratedFiles: MutableSet<String>) {
@@ -306,7 +307,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             addFunction(FunSpec.builder(classNameSet).apply {
                 addKdoc(
                     """
-                      Resolve the [${performer.declaration.className}].
+                      Perform the [${performer.declaration.className}] in the current [Hikage.Performer] scope.
                       @see Hikage.Performer
                       @return [${performer.declaration.className}]
                     """.trimIndent()
@@ -762,7 +763,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     )
 
     @Serializable
-    private data class ViewSymbol(
+    private data class PerformerSymbol(
         val viewClass: String,
         val name: String,
         val packageName: String
