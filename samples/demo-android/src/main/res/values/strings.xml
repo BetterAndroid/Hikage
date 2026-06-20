@@ -7,8 +7,23 @@
     <string name="text_enable_notification">Enable Notification</string>
     <string name="text_description">As you can see, all layouts are created dynamically through code, and you can customize the layout anywhere.</string>
     <string name="text_submit">Submit</string>
+    <string name="text_submit_count">Submit (%1$d)</string>
     <string name="login_info">Login Info</string>
     <string name="login_info_description">Username: %1$s\nPassword: %2$s</string>
     <string name="login_info_not_fill_tip">Please fill in all fields</string>
     <string name="text_welcome">Welcome to use Hikage!</string>
+    <string name="text_enabled">Enabled</string>
+    <string name="text_disabled">Disabled</string>
+    <string name="runtime_state_summary">StateFlow state\nUsername: %1$s\nPassword: %2$s\nGender: %3$s\nNotification: %4$s</string>
+    <string name="runtime_flow_starting">Flow ticker: starting…</string>
+    <string name="runtime_flow_ticker">Flow ticker: %1$d s</string>
+    <string name="runtime_flow_waiting">Flow ticker: waiting for lifecycle…</string>
+    <string name="runtime_collect_waiting">collectState: waiting for flow…</string>
+    <string name="runtime_collect_state">collectState mirrored %1$s</string>
+    <string name="runtime_livedata_waiting">LiveData: waiting for lifecycle…</string>
+    <string name="runtime_livedata_ready">LiveData: ready.</string>
+    <string name="runtime_livedata_notification_enabled">LiveData: notification enabled.</string>
+    <string name="runtime_livedata_notification_disabled">LiveData: notification disabled.</string>
+    <string name="runtime_livedata_submitted">LiveData: submitted %1$s.</string>
+    <string name="runtime_welcome_toast">Welcome, %1$s!</string>
 </resources>

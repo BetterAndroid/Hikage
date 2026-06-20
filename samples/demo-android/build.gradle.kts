@@ -32,6 +32,7 @@ android {
 
 dependencies {
     implementation(projects.hikageCore)
+    implementation(projects.hikageRuntime)
     implementation(projects.hikageExtension)
     implementation(projects.hikageExtensionBetterandroid)
     implementation(projects.hikageWidgetAndroidx)
@@ -45,6 +46,7 @@ dependencies {
     implementation(libs.pangutext.android)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.coordinatorlayout)
