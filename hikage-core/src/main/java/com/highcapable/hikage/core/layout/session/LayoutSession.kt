@@ -34,9 +34,9 @@ import com.highcapable.hikage.core.attrs.build
 import com.highcapable.hikage.core.attrs.entity.AttributeItem
 import com.highcapable.hikage.core.attrs.runtime.resolver.AttributeSetResolver
 import com.highcapable.hikage.core.base.HikageFactory
-import com.highcapable.hikage.core.base.PerformerException
 import com.highcapable.hikage.core.base.ViewConstructor
 import com.highcapable.hikage.core.layout.PerformContextImpl
+import com.highcapable.hikage.core.layout.exception.PerformerException
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.isNotSubclassOf
 import java.util.concurrent.atomic.AtomicInteger

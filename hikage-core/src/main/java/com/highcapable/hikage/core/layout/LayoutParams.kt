@@ -29,7 +29,7 @@ import com.highcapable.betterandroid.ui.extension.view.LayoutParamsWrapContent
 import com.highcapable.betterandroid.ui.extension.view.ViewLayoutParams
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.LayoutParamsBody
-import com.highcapable.hikage.core.base.PerformerException
+import com.highcapable.hikage.core.layout.exception.PerformerException
 import com.highcapable.hikage.core.layout.session.LayoutSession
 import com.highcapable.kavaref.KavaRef.Companion.asResolver
 import com.highcapable.kavaref.extension.createInstanceOrNull

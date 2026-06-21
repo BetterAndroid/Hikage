@@ -53,9 +53,9 @@ import com.highcapable.hikage.core.attrs.HikageAttribute
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.LayoutParamsBody
-import com.highcapable.hikage.core.base.PerformerException
-import com.highcapable.hikage.core.base.ProvideException
 import com.highcapable.hikage.core.base.ViewConstructor
+import com.highcapable.hikage.core.layout.exception.PerformerException
+import com.highcapable.hikage.core.layout.exception.ProvideException
 import com.highcapable.hikage.core.layout.session.LayoutSession
 import kotlin.reflect.KClass
 

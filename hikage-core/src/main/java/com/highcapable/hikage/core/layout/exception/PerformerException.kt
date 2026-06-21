@@ -17,17 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2025/2/26.
+ * This file is created by fankes on 2026/6/22.
  */
-@file:JvmName("ExceptionsUtils")
-
-package com.highcapable.hikage.core.base
-
-import android.util.AttributeSet
+package com.highcapable.hikage.core.layout.exception
 
 /**
- * The exception to processing attributes (an [AttributeSet]).
+ * The exception to performing view.
  * @param message the exception message.
  */
 @PublishedApi
-internal class XmlParserException(message: String) : Exception(message)
+internal class PerformerException(message: String) : RuntimeException(message)
