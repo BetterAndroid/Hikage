@@ -24,16 +24,15 @@
 
 package com.highcapable.hikage.runtime
 
-import com.highcapable.hikage.core.Hikage
 import kotlin.properties.ReadWriteProperty
 
 /**
- * Definition a [Hikage] runtime state interface.
+ * Definition a `Hikage` runtime state interface.
  */
 interface State<T> : ReadWriteProperty<Any?, T>
 
 /**
- * Definition a [Hikage] runtime state observer.
+ * Definition a `Hikage` runtime state observer.
  */
 fun interface StateObserver<in T> {
 
@@ -45,7 +44,7 @@ fun interface StateObserver<in T> {
 }
 
 /**
- * Definition a [Hikage] runtime state subscription.
+ * Definition a `Hikage` runtime state subscription.
  */
 fun interface StateSubscription {
 
@@ -54,7 +53,7 @@ fun interface StateSubscription {
 }
 
 /**
- * Definition a [Hikage] runtime state interface for non-nullable type.
+ * Definition a `Hikage` runtime state interface for non-nullable type.
  */
 interface NonNullState<T> : State<T> {
 
@@ -77,7 +76,7 @@ interface NonNullState<T> : State<T> {
 }
 
 /**
- * Definition a [Hikage] runtime state interface for nullable type.
+ * Definition a `Hikage` runtime state interface for nullable type.
  */
 interface NullableState<T> : State<T?> {
 

@@ -24,16 +24,15 @@
 
 package com.highcapable.hikage.runtime
 
-import com.highcapable.hikage.core.Hikage
 import kotlin.reflect.KProperty
 
 /**
- * Implementing the [State] interface mutable state of [Hikage].
+ * Implementing the [State] interface mutable state of `Hikage`.
  */
 class MutableState<T> private constructor() {
 
     /**
-     * The non-nullable state of [Hikage].
+     * The non-nullable state of `Hikage`.
      */
     class NonNull<T> internal constructor(private var holder: T) : NonNullState<T> {
 
@@ -63,7 +62,7 @@ class MutableState<T> private constructor() {
     }
 
     /**
-     * The nullable state of [Hikage].
+     * The nullable state of `Hikage`.
      */
     class Nullable<T> internal constructor(private var holder: T?) : NullableState<T?> {
 
@@ -94,14 +93,14 @@ class MutableState<T> private constructor() {
 }
 
 /**
- * Create a mutable state of [Hikage] with the specified value.
+ * Create a mutable state of `Hikage` with the specified value.
  * @param value the initial value of the state.
  * @return [MutableState.NonNull]
  */
 fun <T> mutableStateOf(value: T) = MutableState.NonNull(value)
 
 /**
- * Create a mutable state of [Hikage] with the specified value.
+ * Create a mutable state of `Hikage` with the specified value.
  * @param value the initial value of the state.
  * @return [MutableState.Nullable]
  */

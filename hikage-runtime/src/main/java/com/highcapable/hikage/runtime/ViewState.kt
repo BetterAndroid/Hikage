@@ -25,10 +25,9 @@
 package com.highcapable.hikage.runtime
 
 import android.view.View
-import com.highcapable.hikage.core.Hikage
 
 /**
- * Set the [Hikage] state value.
+ * Set the `Hikage` state value.
  *
  * Usage:
  *
@@ -91,7 +90,7 @@ inline fun <T, R : View> R.setState(state: NonNullState<T>, crossinline apply: R
 }
 
 /**
- * Set the [Hikage] state value.
+ * Set the `Hikage` state value.
  * @see setState
  * @param state the state to be set.
  * @param apply the apply body.
@@ -137,7 +136,7 @@ inline fun <T, R : View> R.setState(state: NullableState<T>, crossinline apply: 
 }
 
 /**
- * Set the [Hikage] state value.
+ * Set the `Hikage` state value.
  *
  * This function creates a long lifecycle observer and will not be automatically canceled.
  *
@@ -150,7 +149,7 @@ inline fun <T, R> R.setState(state: NonNullState<T>, crossinline apply: R.(T) ->
     state.observe(StateObserver { this.apply(it) })
 
 /**
- * Set the [Hikage] state value.
+ * Set the `Hikage` state value.
  *
  * This function creates a long lifecycle observer and will not be automatically canceled.
  *

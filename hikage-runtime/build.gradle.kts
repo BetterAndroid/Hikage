@@ -25,8 +25,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.hikageCore)
-
     implementation(platform(libs.betterandroid.android.bom))
     implementation(libs.betterandroid.ui.extension)
     implementation(libs.betterandroid.system.extension)
