@@ -33,6 +33,7 @@ android {
 dependencies {
     implementation(projects.hikageCore)
     implementation(projects.hikageRuntime)
+    implementation(projects.hikageRuntimeAttribute)
     implementation(projects.hikageExtension)
     implementation(projects.hikageExtensionBetterandroid)
     implementation(projects.hikageWidgetAndroidx)

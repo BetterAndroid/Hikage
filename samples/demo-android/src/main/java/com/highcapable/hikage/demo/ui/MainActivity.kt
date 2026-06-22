@@ -31,8 +31,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
 import com.highcapable.betterandroid.ui.extension.view.toast
-import com.highcapable.hikage.core.attrs.android
-import com.highcapable.hikage.core.attrs.app
+import com.highcapable.hikage.core.attribute.android
+import com.highcapable.hikage.core.attribute.app
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.demo.R
 import com.highcapable.hikage.demo.ui.base.BaseActivity
