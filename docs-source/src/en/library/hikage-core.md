@@ -508,6 +508,14 @@ val SubTextView = Hikageable {
 
 ### XML Attribute Sets
 
+::: danger
+
+This feature is a runtime extension of Hikage, and it is not integrated by default as a main feature.
+You need to manually introduce the [hikage-runtime-attribute](../library/hikage-runtime-attribute.md) module before using it,
+otherwise the following features will not take effect and will explicitly throw an exception at runtime.
+
+:::
+
 Hikage supports passing in the XML attribute set via the parameter `attrs` when creating a component. These attribute values will be parsed dynamically at runtime and set to the component, and it will only take effect once when the component is created.
 
 Hikage supports most of the attributes defined by XML, which is very friendly to some old custom components that cannot modify attributes dynamically. You can directly use XML attributes to set their values without having to consider using reflection or exposing extra setter methods in your component.

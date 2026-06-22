@@ -487,6 +487,12 @@ val SubTextView = Hikageable {
 
 ### XML 属性集合
 
+::: danger
+
+此功能是 Hikage 的一项运行时扩展，它不作为主要功能默认集成，使用前你需要手动引入 [hikage-runtime-attribute](../library/hikage-runtime-attribute.md) 模块，否则以下功能将不会生效且会在运行时显式抛出异常。
+
+:::
+
 Hikage 支持通过参数 `attrs` 在创建组件时传入 XML 属性集合，这些属性值将在运行时动态解析并设置到组件上，它仅会在组件创建时生效一次。
 
 Hikage 支持大部分通过 XML 定义的属性，这对于一些不能动态修改属性的老旧自定义组件非常友好，你可以直接使用 XML 属性来设置它们的值，而不需要考虑使用反射或者在组件中暴露额外的设置方法。

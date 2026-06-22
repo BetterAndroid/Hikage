@@ -73,6 +73,8 @@ hikage = { id = "com.highcapable.hikage", version.ref = "hikage-plugin" }
 hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
 hikage-runtime = { module = "com.highcapable.hikage:hikage-runtime" }
+# (Optional) If you want to introduce the runtime capability of XML attribute sets.
+hikage-runtime-attribute = { module = "com.highcapable.hikage:hikage-runtime-attribute" }
 hikage-extension = { module = "com.highcapable.hikage:hikage-extension" }
 ```
 
@@ -92,6 +94,8 @@ dependencies {
     implementation(platform(libs.hikage.bom))
     implementation(libs.hikage.core)
     implementation(libs.hikage.runtime)
+    // (Optional) If you want to introduce the runtime capability of XML attribute sets.
+    implementation(libs.hikage.runtime.attribute)
     implementation(libs.hikage.extension)
 }
 ```
@@ -118,6 +122,7 @@ For details, please see the [changelog](../about/changelog.md).
 - [hikage-core](../library/hikage-core.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-runtime](../library/hikage-runtime.md)
+- [hikage-runtime-attribute](../library/hikage-runtime-attribute.md)
 - [hikage-extension](../library/hikage-extension.md)
 - [hikage-extension-betterandroid](../library/hikage-extension-betterandroid.md)
 - [hikage-extension-compose](../library/hikage-extension-compose.md)

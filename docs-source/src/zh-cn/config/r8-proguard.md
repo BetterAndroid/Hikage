@@ -30,7 +30,7 @@
 }
 ```
 
-## HikageAttribute 字符串引用
+## XML 属性集合字符串引用
 
 `HikageAttribute` 的字符串资源引用与 XML 写法保持一致。
 
@@ -63,3 +63,13 @@ HikageAttribute {
 ```
 
 同理，自定义 `attrs.xml` 的 `enum`、`flag` 和 `reference` 值如果只通过字符串动态引用，也应使用资源 ID 或通过 `tools:keep` 保留对应资源。
+
+::: warning
+
+如果你因为没有这个功能的需要，没有引入 [hikage-runtime-attribute](../library/hikage-runtime-attribute.md) 模块，你需要配置以下规则来避免 R8 在找不到类时产生警告或者编译时产生错误。
+
+```
+-dontwarn com.highcapable.hikage.runtime.attribute.**
+```
+
+:::

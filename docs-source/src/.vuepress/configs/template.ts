@@ -15,6 +15,7 @@ const navigationLinks = {
         '/library/hikage-core',
         '/library/hikage-compiler',
         '/library/hikage-runtime',
+        '/library/hikage-runtime-attribute',
         '/library/hikage-extension',
         '/library/hikage-extension-betterandroid',
         '/library/hikage-extension-compose',

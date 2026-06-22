@@ -31,6 +31,7 @@ hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hika
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
 hikage-compiler = { module = "com.highcapable.hikage:hikage-compiler" }
 hikage-runtime = { module = "com.highcapable.hikage:hikage-runtime" }
+hikage-runtime-attribute = { module = "com.highcapable.hikage:hikage-runtime-attribute" }
 hikage-extension = { module = "com.highcapable.hikage:hikage-extension" }
 hikage-extension-betterandroid = { module = "com.highcapable.hikage:hikage-extension-betterandroid" }
 hikage-extension-compose = { module = "com.highcapable.hikage:hikage-extension-compose" }
@@ -52,6 +53,7 @@ ksp(libs.hikage.compiler)
 
 implementation(libs.hikage.core)
 implementation(libs.hikage.runtime)
+implementation(libs.hikage.runtime.attribute)
 implementation(libs.hikage.extension)
 implementation(libs.hikage.extension.betterandroid)
 implementation(libs.hikage.extension.compose)
@@ -77,6 +79,7 @@ ksp("com.highcapable.hikage:hikage-compiler")
 
 implementation("com.highcapable.hikage:hikage-core")
 implementation("com.highcapable.hikage:hikage-runtime")
+implementation("com.highcapable.hikage:hikage-runtime-attribute")
 implementation("com.highcapable.hikage:hikage-extension")
 implementation("com.highcapable.hikage:hikage-extension-betterandroid")
 implementation("com.highcapable.hikage:hikage-extension-compose")
@@ -105,6 +108,7 @@ It currently manages the versions of the following modules:
 - [hikage-core](./hikage-core.md)
 - [hikage-compiler](./hikage-compiler.md)
 - [hikage-runtime](./hikage-runtime.md)
+- [hikage-runtime-attribute](./hikage-runtime-attribute.md)
 - [hikage-extension](./hikage-extension.md)
 - [hikage-extension-betterandroid](./hikage-extension-betterandroid.md)
 - [hikage-extension-compose](./hikage-extension-compose.md)

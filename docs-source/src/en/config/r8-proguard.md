@@ -33,7 +33,7 @@ you also need to keep its constructors.
 }
 ```
 
-## HikageAttribute String References
+## XML Attribute Set String References
 
 `HikageAttribute` string resource references follow the same form as XML.
 
@@ -70,3 +70,14 @@ If you must keep the XML-style string reference, add a resource keep file in the
 The same applies to custom `attrs.xml` enum, flag, and reference values
 that are only reached through dynamic strings.
 Use resource IDs where possible, or keep the corresponding resources with `tools:keep`.
+
+::: warning
+
+If you do not include the [hikage-runtime-attribute](../library/hikage-runtime-attribute.md) module because you do not need this feature,
+you need to configure the following rule to avoid warnings from R8 about missing classes or errors during compilation.
+
+```
+-dontwarn com.highcapable.hikage.runtime.attribute.**
+```
+
+:::

@@ -70,6 +70,8 @@ hikage = { id = "com.highcapable.hikage", version.ref = "hikage-plugin" }
 hikage-bom = { module = "com.highcapable.hikage:hikage-bom", version.ref = "hikage-bom" }
 hikage-core = { module = "com.highcapable.hikage:hikage-core" }
 hikage-runtime = { module = "com.highcapable.hikage:hikage-runtime" }
+# (可选) 如果你希望引入 XML 属性集合运行时能力
+hikage-runtime-attribute = { module = "com.highcapable.hikage:hikage-runtime-attribute" }
 hikage-extension = { module = "com.highcapable.hikage:hikage-extension" }
 ```
 
@@ -89,6 +91,8 @@ dependencies {
     implementation(platform(libs.hikage.bom))
     implementation(libs.hikage.core)
     implementation(libs.hikage.runtime)
+    // (可选) 如果你希望引入 XML 属性集合运行时能力
+    implementation(libs.hikage.runtime.attribute)
     implementation(libs.hikage.extension)
 }
 ```
@@ -113,6 +117,7 @@ dependencies {
 - [hikage-core](../library/hikage-core.md)
 - [hikage-compiler](../library/hikage-compiler.md)
 - [hikage-runtime](../library/hikage-runtime.md)
+- [hikage-runtime-attribute](../library/hikage-runtime-attribute.md)
 - [hikage-extension](../library/hikage-extension.md)
 - [hikage-extension-betterandroid](../library/hikage-extension-betterandroid.md)
 - [hikage-extension-compose](../library/hikage-extension-compose.md)
