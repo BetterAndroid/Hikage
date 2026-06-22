@@ -30,7 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.highcapable.hikage.core.Hikage
-import com.highcapable.hikage.core.layout.bypass.createViewFromBridgeInflaterOrNull
+import com.highcapable.hikage.core.extension.createViewFromBridgeInflaterOrNull
 import kotlin.reflect.KClass
 
 /**

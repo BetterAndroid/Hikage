@@ -30,7 +30,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.highcapable.hikage.annotation.Hikageable
 import com.highcapable.hikage.core.Hikage
-import com.highcapable.hikage.core.attrs.HikageAttribute
+import com.highcapable.hikage.core.attribute.HikageAttribute
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.core.layout.View

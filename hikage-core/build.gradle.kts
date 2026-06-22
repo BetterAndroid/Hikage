@@ -27,14 +27,13 @@ android {
 dependencies {
     lintPublish(projects.hikageCoreLint)
 
+    compileOnly(projects.hikageRuntimeAttribute)
     api(projects.hikageWidgetFoundation)
 
     implementation(platform(libs.kavaref.bom))
     implementation(libs.kavaref.core)
     implementation(libs.kavaref.android)
     implementation(libs.kavaref.extension)
-
-    implementation(libs.hiddenapibypass)
 
     implementation(platform(libs.betterandroid.android.bom))
     api(libs.betterandroid.ui.extension)

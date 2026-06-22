@@ -24,21 +24,24 @@
 package com.highcapable.hikage.core.layout.session
 
 import android.content.Context
-import android.content.res.XmlResourceParser
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import com.highcapable.hikage.core.Hikage
-import com.highcapable.hikage.core.attrs.HikageAttribute
-import com.highcapable.hikage.core.attrs.build
-import com.highcapable.hikage.core.attrs.entity.AttributeItem
-import com.highcapable.hikage.core.attrs.runtime.resolver.AttributeSetResolver
+import com.highcapable.hikage.core.attribute.HikageAttribute
+import com.highcapable.hikage.core.attribute.build
+import com.highcapable.hikage.core.attribute.exception.AttributeResolvingException
+import com.highcapable.hikage.core.attribute.isNotEmpty
+import com.highcapable.hikage.core.attribute.widget.HikageAttributeView
 import com.highcapable.hikage.core.base.HikageFactory
 import com.highcapable.hikage.core.base.ViewConstructor
+import com.highcapable.hikage.core.extension.identityKey
 import com.highcapable.hikage.core.layout.PerformContextImpl
 import com.highcapable.hikage.core.layout.exception.PerformerException
+import com.highcapable.hikage.runtime.attribute.AttributeSetResolver
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.isNotSubclassOf
+import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KClass
 
@@ -46,7 +49,7 @@ import kotlin.reflect.KClass
  * The [Hikage] layout session.
  * @param factories the factories to customize the custom view in the initialization.
  */
-internal class LayoutSession private constructor(private val factories: List<HikageFactory>) {
+internal class LayoutSession private constructor(private val factories: List<HikageFactory>) : Closeable {
 
     companion object {
 
@@ -78,6 +81,21 @@ internal class LayoutSession private constructor(private val factories: List<Hik
 
     /** The attribute set resolver map. */
     private val attributeSetResolvers = mutableMapOf<String, AttributeSetResolver>()
+
+    /**
+     * Get the [AttributeSetResolver] from [context].
+     * @receiver the context.
+     * @return [AttributeSetResolver] or null.
+     */
+    private val Context.attributeSetResolver: AttributeSetResolver? get() {
+        val isAvailable = runCatching {
+            @Suppress("UnusedExpression")
+            AttributeSetResolver; true
+        }.getOrNull() ?: false
+        if (!isAvailable) return null
+
+        return attributeSetResolvers.getOrPut(this.identityKey) { AttributeSetResolver.from(this) }
+    }
 
     /**
      * Get the root view.
@@ -143,11 +161,20 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [R]
      */
     fun <R> process(context: Context, attrs: HikageAttribute, block: (Lazy<AttributeSet>, Lazy<AttributeSet>?) -> R): R {
-        val resolver = attributeSetResolverOf(context)
+        val resolver = context.attributeSetResolver ?: return run {
+            // If user add attributes but the resolver is not available, throw an exception to avoid unexpected behavior.
+            if (attrs.isNotEmpty()) throw AttributeResolvingException(
+                "AttributeSetResolver is not available in this context, cannot resolve attributes. " +
+                    "Please make sure you have added the `hikage-runtime-attribute` dependency for attribute resolving."
+            )
+
+            val layoutAttrs = HikageAttributeView.resolveSimpleAttributeSet(context)
+            block(lazyOf(layoutAttrs), null)
+        }
 
         val attributeItems = requireNoPerformers(Hikage.Attribute::class.qualifiedName) { attrs.build() }
         val attributeSet = lazy(LazyThreadSafetyMode.NONE) {
-            resolver.newAttributeSet(context, attributeItems)
+            resolver.newParser(attributeItems)
         }
 
         // Layout params attributes are not necessary for all views,
@@ -155,15 +182,17 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         val lParamsItems = attributeItems.filter { it.name.startsWith("layout_") }
         val lParamsAttributeSet = lParamsItems.takeIf { it.isNotEmpty() }?.let {
             lazy(LazyThreadSafetyMode.NONE) {
-                resolver.newAttributeSet(context, it)
+                resolver.newParser(it)
             }
         }
 
         return try {
             block(attributeSet, lParamsAttributeSet)
         } finally {
+            if (lParamsAttributeSet?.isInitialized() == true)
+                resolver.release(lParamsAttributeSet.value)
             if (attributeSet.isInitialized())
-                (attributeSet.value as? XmlResourceParser)?.let { resolver.release(it) }
+                resolver.release(attributeSet.value)
         }
     }
 
@@ -243,6 +272,11 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         providedViewCount += session.providedViewCount
 
         return hikage
+    }
+
+    override fun close() {
+        attributeSetResolvers.forEach { (_, resolver) -> resolver.close() }
+        attributeSetResolvers.clear()
     }
 
     /**
@@ -334,26 +368,4 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [String]
      */
     private fun generateRandomViewId() = "anonymous@${viewAtomicId.getAndIncrement().toHexString()}"
-
-    /**
-     * Get the [AttributeSetResolver] for [context].
-     * @param context the context.
-     * @return [AttributeSetResolver]
-     */
-    private fun attributeSetResolverOf(context: Context): AttributeSetResolver {
-        val key = context.javaClass.name
-        return attributeSetResolvers.getOrPut(key) { AttributeSetResolver.from(context) }
-    }
-
-    /**
-     * Create a new [AttributeSet] from [AttributeItem].
-     * @receiver the attribute set resolver.
-     * @param context the context.
-     * @param attrs the injected attributes.
-     * @return [AttributeSet]
-     */
-    private fun AttributeSetResolver.newAttributeSet(
-        context: Context,
-        attrs: List<AttributeItem>
-    ): AttributeSet = newParser(context, attrs)
 }

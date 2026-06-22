@@ -113,12 +113,14 @@ class Hikage private constructor(internal val session: LayoutSession) {
             attachToParent: Boolean = parent != null,
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<LP>
-        ) = Hikage(newSession(context, factory)).apply {
-            // If the parent view is specified and mark as attach to parent,
-            // add it directly to the first position.
-            if (parent != null && attachToParent) session.provideParent(parent)
+        ) = newSession(context, factory).use { session ->
+            Hikage(session).apply {
+                // If the parent view is specified and mark as attach to parent,
+                // add it directly to the first position.
+                if (parent != null && attachToParent) session.provideParent(parent)
 
-            session.newPerformer(lpClass, parent, attachToParent, context).apply(performer)
+                session.newPerformer(lpClass, parent, attachToParent, context).apply(performer)
+            }
         }
 
         /**

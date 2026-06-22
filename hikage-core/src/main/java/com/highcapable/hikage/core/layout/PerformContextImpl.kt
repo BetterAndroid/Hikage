@@ -49,7 +49,7 @@ import com.highcapable.betterandroid.ui.extension.component.base.toPx
 import com.highcapable.betterandroid.ui.extension.view.inflate
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.core.Hikage
-import com.highcapable.hikage.core.attrs.HikageAttribute
+import com.highcapable.hikage.core.attribute.HikageAttribute
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.LayoutParamsBody

@@ -93,7 +93,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         val PerformerClass = ClassName(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_CLASS_NAME, "Performer")
         val ViewLambdaClass = ClassName(DeclaredSymbol.HIKAGE_BASE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_VIEW_LAMBDA_CLASS_NAME)
         val PerformerLambdaClass = ClassName(DeclaredSymbol.HIKAGE_BASE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_PERFORMER_LAMBDA_CLASS_NAME)
-        val AttributeClass = ClassName(DeclaredSymbol.HIKAGE_ATTRS_PACKAGE_NAME, DeclaredSymbol.HIKAGE_ATTRIBUTE_LAMBDA_CLASS_NAME)
+        val AttributeClass = ClassName(DeclaredSymbol.HIKAGE_ATTRIBUTE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_ATTRIBUTE_LAMBDA_CLASS_NAME)
         val ViewFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "View")
         val ViewGroupFunction = MemberName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, "ViewGroup")
 

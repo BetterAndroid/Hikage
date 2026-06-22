@@ -11,6 +11,7 @@ dependencies {
         api(projects.hikageCore)
         api(projects.hikageCompiler)
         api(projects.hikageRuntime)
+        api(projects.hikageRuntimeAttribute)
         api(projects.hikageExtension)
         api(projects.hikageExtensionBetterandroid)
         api(projects.hikageExtensionCompose)
