@@ -140,12 +140,12 @@ val context: Context
 // Assume this is the AttributeItem list you need to construct.
 val items: List<AttributeItem>
 // Create an AttributeSet resolver instance and use it in the use block.
-AttributeSetResolver.from(context).use { resolver ->
+val attrs = AttributeSetResolver.from(context).use { resolver ->
     // Returns an XmlResourceParser object, which is AttributeSet.
-    val attrs = resolver.newParser(items)
-    // Create a TextView and pass in the parsed AttributeSet.
-    val tv = TextView(context, attrs)
+    resolver.newParser(items)
 }
+// Create a TextView and pass in the parsed AttributeSet.
+val tv = TextView(context, attrs)
 ```
 
 `AttributeSetResolver` also provides a `release(parser)` method, which is mainly targeted at the `layoutlib` of the Android Studio preview function. There is no need to call this method in actual device operation.

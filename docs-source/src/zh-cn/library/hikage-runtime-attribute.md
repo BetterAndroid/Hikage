@@ -137,12 +137,12 @@ val context: Context
 // 假设这就是你需要构造的 AttributeItem 列表
 val items: List<AttributeItem>
 // 创建 AttributeSet 解析器实例，并在 use 块中使用它
-AttributeSetResolver.from(context).use { resolver ->
+val attrs = AttributeSetResolver.from(context).use { resolver ->
     // 返回一个 XmlResourceParser 对象，即 AttributeSet
-    val attrs = resolver.newParser(items)
-    // 创建 TextView，并传入解析后的 AttributeSet
-    val tv = TextView(context, attrs)
+    resolver.newParser(items)
 }
+// 创建 TextView，并传入解析后的 AttributeSet
+val tv = TextView(context, attrs)
 ```
 
 `AttributeSetResolver` 还提供了一个 `release(parser)` 方法，其主要针对于 Android Studio 预览功能的 `layoutlib`，在实机运行中无需调用此方法。
