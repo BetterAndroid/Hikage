@@ -27,7 +27,6 @@ import android.os.SystemClock
 import android.text.InputType
 import android.util.Log
 import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -37,6 +36,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.io.PlatformTestStorageRegistry
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.annotation.Hikageable
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.android
@@ -65,6 +65,7 @@ import com.highcapable.hikage.widget.com.highcapable.hikage.demo.ui.widget.Check
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 import java.lang.reflect.Constructor
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -72,7 +73,6 @@ import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.atomic.AtomicReference
 import com.google.android.material.R as Material_R
-import com.highcapable.hikage.demo.test.R as Test_R
 
 /**
  * Groups the manual view-tree performance probes for XML, Hikage DSL, attrs-heavy DSL, and constructor reflection.
@@ -111,7 +111,6 @@ class ViewTreeBenchmarkTest {
     }
 
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
-    private val testContext get() = InstrumentationRegistry.getInstrumentation().context
 
     /**
      * Compares the 210-view stress tree across XML, plain Hikage, and attrs-heavy Hikage variants.
@@ -126,7 +125,7 @@ class ViewTreeBenchmarkTest {
             try {
                 Hikage.isAutoProcessWithFactory2 = false
 
-                val xmlRoot = createXmlTree(testContext)
+                val xmlRoot = createXmlTree(context)
                 val hikageRoot = createHikageTree(context)
                 val hikageRootWithAttrs = createHikageTreeWithAttrs(context)
                 val hikageRootWithFullyAttrs = createHikageTreeWithFullyAttrs(context)
@@ -139,7 +138,7 @@ class ViewTreeBenchmarkTest {
                 assertEquals(VIEW_COUNT, hikageRootWithFullViewAttrs.countViews())
 
                 repeat(WARMUP_ITERATIONS) {
-                    createXmlTree(testContext).consume()
+                    createXmlTree(context).consume()
                     createHikageTree(context).consume()
                     createHikageTreeWithAttrs(context).consume()
                     createHikageTreeWithFullyAttrs(context).consume()
@@ -151,7 +150,7 @@ class ViewTreeBenchmarkTest {
                         viewCount = VIEW_COUNT,
                         warmupIterations = WARMUP_ITERATIONS,
                         measuredIterations = MEASURED_ITERATIONS,
-                        xml = measureTreeCreation { createXmlTree(testContext) },
+                        xml = measureTreeCreation { createXmlTree(context) },
                         hikage = measureTreeCreation { createHikageTree(context) },
                         hikageWithAttrs = measureTreeCreation { createHikageTreeWithAttrs(context) },
                         hikageWithFullyAttrs = measureTreeCreation { createHikageTreeWithFullyAttrs(context) },
@@ -272,10 +271,10 @@ class ViewTreeBenchmarkTest {
     }
 
     private fun createXmlTree(context: Context) =
-        LayoutInflater.from(context).inflate(Test_R.layout.benchmark_210_view_tree, null, false)
+        context.layoutInflater.inflate(R.layout.benchmark_210_view_tree, null, false)
 
     private fun createDemoXmlLayout(context: Context) =
-        LayoutInflater.from(context).cloneInContext(context).inflate(R.layout.benchmark_demo_layout, null, false)
+        context.layoutInflater.cloneInContext(context).inflate(R.layout.benchmark_demo_layout, null, false)
 
     private fun createDirectTextInputLayoutBlock(context: Context) =
         LinearLayout(context).apply {
@@ -1240,10 +1239,39 @@ class ViewTreeBenchmarkTest {
             appendLine("</html>")
         }
 
-        PlatformTestStorageRegistry.getInstance().openOutputFile(fileName).bufferedWriter().use {
+        writeBenchmarkReportFile(fileName, html)
+        Log.i(TAG, "Benchmark HTML report written: $fileName")
+    }
+
+    private fun writeBenchmarkReportFile(fileName: String, html: String) {
+        try {
+            PlatformTestStorageRegistry.getInstance().openOutputFile(fileName).bufferedWriter().use {
+                it.write(html)
+            }
+        } catch (exception: RuntimeException) {
+            if (!exception.hasCause<SecurityException>()) throw exception
+            Log.w(TAG, "Platform test storage is not writable, fallback to target app cache.", exception)
+            writeBenchmarkReportFileToTargetCache(fileName, html)
+        }
+    }
+
+    private fun writeBenchmarkReportFileToTargetCache(fileName: String, html: String) {
+        val outputRoot = File(context.externalCacheDir ?: context.cacheDir, "additionalTestOutputDir")
+        if (!outputRoot.exists() && !outputRoot.mkdirs())
+            error("Failed to create benchmark report output directory: ${outputRoot.absolutePath}")
+        File(outputRoot, fileName).bufferedWriter().use {
             it.write(html)
         }
-        Log.i(TAG, "Benchmark HTML report written: $fileName")
+    }
+
+    private inline fun <reified T : Throwable> Throwable.hasCause(): Boolean {
+        var current: Throwable? = this
+        while (current != null) {
+            if (current is T) return true
+            current = current.cause
+        }
+
+        return false
     }
 
     private fun deviceName() = "${Build.BRAND} ${Build.MODEL}".trim().ifBlank { "Unknown Device" }
