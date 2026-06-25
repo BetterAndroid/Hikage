@@ -169,6 +169,7 @@ class ViewTreeBenchmarkTest {
 
         val report = result.get()
         writeBenchmarkReport(
+            fileSuffix = "benchmarkXmlAndHikage210ViewTreeCreation",
             title = "210 View Tree Benchmark",
             body = report.toHtmlBody()
         )
@@ -217,6 +218,7 @@ class ViewTreeBenchmarkTest {
 
         val report = result.get()
         writeBenchmarkReport(
+            fileSuffix = "benchmarkDemoLayoutCreation",
             title = "Demo Layout Benchmark",
             body = report.toHtmlBody()
         )
@@ -263,6 +265,7 @@ class ViewTreeBenchmarkTest {
 
         val report = result.get()
         writeBenchmarkReport(
+            fileSuffix = "benchmarkTextInputLayoutDirectAndReflectCreation",
             title = "TextInputLayout Creation Benchmark",
             body = report.toHtmlBody()
         )
@@ -1093,17 +1096,14 @@ class ViewTreeBenchmarkTest {
         viewSink = viewSink xor ((this as? ViewGroup)?.childCount ?: 0) xor id
     }
 
-    private fun writeBenchmarkReport(title: String, body: String) {
+    private fun writeBenchmarkReport(fileSuffix: String, title: String, body: String) {
         val createdAt = Date()
         val deviceName = deviceName()
         val androidVersionName = androidVersionName()
-        val fileDateTime = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.ROOT).apply {
-            timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE)
-        }.format(createdAt)
         val displayDateTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'", Locale.ROOT).apply {
             timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE)
         }.format(createdAt)
-        val fileName = "${REPORT_FILE_PREFIX}_$fileDateTime.html"
+        val fileName = "${REPORT_FILE_PREFIX}_$fileSuffix.html"
 
         val html = buildString {
             appendLine("<!doctype html>")
