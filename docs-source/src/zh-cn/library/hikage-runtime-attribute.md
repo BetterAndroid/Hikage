@@ -65,11 +65,16 @@ implementation("com.highcapable.hikage:hikage-runtime-attribute:<version>")
 |       5.0.2 (21)        |   ✅    |    Redmi Note 2     |
 |        6.0 (23)         |   ✅    |      OPPO A53       |
 |        7.0 (24)         |   ✅    |    Xiaomi Mi-4c     |
+|       7.1.2 (25)        |   ✅    |  Samsung Galaxy S4  |
 |       8.0.0 (26)        |   ✅    |      Huawei P9      |
+|         9 (28)          |   ✅    |   Huawei P10 Plus   |
 |         10 (29)         |   ✅    |     Hisense A9      |
+|         12 (31)         |   ✅    |    Huawei nova 8    |
+|         13 (33)         |   ✅    |    Xiaomi MIX 2S    |
+|         14 (34)         |   ✅    |   ARM64 Emulator    |
 |         15 (35)         |   ✅    | Redmi Note 12 Turbo |
 |         16 (36)         |   ✅    |   Xiaomi 15 Ultra   |
-|         17 (37)         |   ✅    |      Emulator       |
+|         17 (37)         |   ✅    |   ARM64 Emulator    |
 
 ### 在 Hikage 中使用
 
