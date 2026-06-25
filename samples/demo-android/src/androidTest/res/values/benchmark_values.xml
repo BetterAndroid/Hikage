@@ -14,8 +14,4 @@
     <string name="text_submit">Submit</string>
     <string name="text_welcome">Welcome to use Hikage!</string>
     <string name="hikage_probe_text">Hikage Probe</string>
-
-    <style name="Base.Theme.HikageBenchmarkTest" parent="Theme.Material3.DayNight.NoActionBar" />
-
-    <style name="Theme.HikageBenchmarkTest" parent="Base.Theme.HikageBenchmarkTest" />
 </resources>

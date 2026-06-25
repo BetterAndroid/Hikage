@@ -22,19 +22,21 @@
 package com.highcapable.hikage.demo
 
 import android.content.Context
+import android.os.Build
 import android.os.SystemClock
 import android.text.InputType
 import android.util.Log
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.setPadding
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.io.PlatformTestStorageRegistry
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.annotation.Hikageable
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.android
@@ -64,6 +66,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.reflect.Constructor
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.atomic.AtomicReference
 import com.google.android.material.R as Material_R
 import com.highcapable.hikage.demo.test.R as Test_R
@@ -87,6 +93,8 @@ class ViewTreeBenchmarkTest {
         const val TEXT_INPUT_LAYOUT_SECTION_COUNT = 11
         const val NANOS_PER_MILLI = 1_000_000.0
         const val TAG = "HikageBenchmark"
+        const val REPORT_FILE_PREFIX = "ViewTreeBenchmarkTest"
+        const val UTC_TIME_ZONE = "UTC"
 
         val textInputLayoutConstructor: Constructor<TextInputLayout> =
             TextInputLayout::class.java.getConstructor(Context::class.java)
@@ -98,6 +106,8 @@ class ViewTreeBenchmarkTest {
         fun toMillis(value: Long) = value.toDouble() / NANOS_PER_MILLI
 
         fun formatMs(value: Double) = "%.3f".format(value)
+
+        fun formatRatio(value: Double) = "%.2f".format(value)
     }
 
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
@@ -158,8 +168,10 @@ class ViewTreeBenchmarkTest {
         error.get()?.let { throw it }
 
         val report = result.get()
-        Log.i(TAG, report.toLogString())
-        println(report.toLogString())
+        writeBenchmarkReport(
+            title = "210 View Tree Benchmark",
+            body = report.toHtmlBody()
+        )
     }
 
     /**
@@ -175,7 +187,7 @@ class ViewTreeBenchmarkTest {
             Hikage.isAutoProcessWithFactory2 = false
 
             val demoContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
-            val xmlContext = ContextThemeWrapper(testContext, Test_R.style.Theme_HikageBenchmarkTest)
+            val xmlContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
             val xmlViewCount = runOnMainAndCreate { createDemoXmlLayout(xmlContext) }.countViews()
             val hikageViewCount = runOnMainAndCreate { createDemoHikageLayout(demoContext) }.countViews()
 
@@ -204,8 +216,10 @@ class ViewTreeBenchmarkTest {
         error.get()?.let { throw it }
 
         val report = result.get()
-        Log.i(TAG, report.toLogString())
-        println(report.toLogString())
+        writeBenchmarkReport(
+            title = "Demo Layout Benchmark",
+            body = report.toHtmlBody()
+        )
     }
 
     /**
@@ -248,15 +262,17 @@ class ViewTreeBenchmarkTest {
         error.get()?.let { throw it }
 
         val report = result.get()
-        Log.i(TAG, report.toLogString())
-        println(report.toLogString())
+        writeBenchmarkReport(
+            title = "TextInputLayout Creation Benchmark",
+            body = report.toHtmlBody()
+        )
     }
 
     private fun createXmlTree(context: Context) =
-        context.layoutInflater.inflate(Test_R.layout.benchmark_210_view_tree, null, false)
+        LayoutInflater.from(context).inflate(Test_R.layout.benchmark_210_view_tree, null, false)
 
     private fun createDemoXmlLayout(context: Context) =
-        context.layoutInflater.inflate(Test_R.layout.benchmark_demo_layout, null, false)
+        LayoutInflater.from(context).cloneInContext(context).inflate(R.layout.benchmark_demo_layout, null, false)
 
     private fun createDirectTextInputLayoutBlock(context: Context) =
         LinearLayout(context).apply {
@@ -1077,6 +1093,288 @@ class ViewTreeBenchmarkTest {
         viewSink = viewSink xor ((this as? ViewGroup)?.childCount ?: 0) xor id
     }
 
+    private fun writeBenchmarkReport(title: String, body: String) {
+        val createdAt = Date()
+        val deviceName = deviceName()
+        val androidVersionName = androidVersionName()
+        val fileDateTime = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.ROOT).apply {
+            timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE)
+        }.format(createdAt)
+        val displayDateTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'", Locale.ROOT).apply {
+            timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE)
+        }.format(createdAt)
+        val fileName = "${REPORT_FILE_PREFIX}_$fileDateTime.html"
+
+        val html = buildString {
+            appendLine("<!doctype html>")
+            appendLine("<html lang=\"en\">")
+            appendLine("<head>")
+            appendLine("<meta charset=\"utf-8\">")
+            appendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
+            appendLine("<title>${title.escapeHtml()}</title>")
+            appendLine("<style>")
+            appendLine("""
+                :root {
+                    color-scheme: light dark;
+                    --bg: #f6f7f9;
+                    --surface: #ffffff;
+                    --text: #1f2328;
+                    --muted: #667085;
+                    --line: #d9dee7;
+                    --accent: #006d77;
+                    --accent-soft: #e1f3f1;
+                }
+                @media (prefers-color-scheme: dark) {
+                    :root {
+                        --bg: #111418;
+                        --surface: #1a1f25;
+                        --text: #ecf0f4;
+                        --muted: #aab4c0;
+                        --line: #303844;
+                        --accent: #7dd3c7;
+                        --accent-soft: #173d3b;
+                    }
+                }
+                * { box-sizing: border-box; }
+                body {
+                    margin: 0;
+                    background: var(--bg);
+                    color: var(--text);
+                    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                    line-height: 1.5;
+                }
+                main {
+                    width: min(1180px, calc(100vw - 32px));
+                    margin: 0 auto;
+                    padding: 32px 0 48px;
+                }
+                header {
+                    margin-bottom: 24px;
+                }
+                h1 {
+                    margin: 0 0 8px;
+                    font-size: 30px;
+                    font-weight: 720;
+                    letter-spacing: 0;
+                }
+                h2 {
+                    margin: 28px 0 12px;
+                    font-size: 18px;
+                    letter-spacing: 0;
+                }
+                .meta {
+                    color: var(--muted);
+                    font-size: 14px;
+                }
+                .device-meta {
+                    display: flex;
+                    align-items: baseline;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                }
+                .meta-subtle {
+                    color: color-mix(in srgb, var(--muted) 78%, transparent);
+                    font-size: 13px;
+                }
+                .panel {
+                    background: var(--surface);
+                    border: 1px solid var(--line);
+                    border-radius: 8px;
+                    padding: 18px;
+                    margin: 16px 0;
+                    overflow-x: auto;
+                }
+                .summary {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                    gap: 12px;
+                }
+                .summary div {
+                    background: var(--accent-soft);
+                    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+                    border-radius: 8px;
+                    padding: 12px;
+                }
+                .summary strong {
+                    display: block;
+                    font-size: 22px;
+                    color: var(--accent);
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 14px;
+                }
+                th, td {
+                    padding: 10px 12px;
+                    border-bottom: 1px solid var(--line);
+                    text-align: right;
+                    white-space: nowrap;
+                }
+                th:first-child, td:first-child {
+                    text-align: left;
+                }
+                th {
+                    color: var(--muted);
+                    font-weight: 650;
+                }
+                tr:last-child td {
+                    border-bottom: 0;
+                }
+            """.trimIndent())
+            appendLine("</style>")
+            appendLine("</head>")
+            appendLine("<body>")
+            appendLine("<main>")
+            appendLine("<header>")
+            appendLine("<h1>${title.escapeHtml()}</h1>")
+            appendLine("<div class=\"device-meta\">")
+            appendLine("<span class=\"meta\">${deviceName.escapeHtml()}</span>")
+            appendLine("<span class=\"meta-subtle\">${androidVersionName.escapeHtml()}</span>")
+            appendLine("</div>")
+            appendLine("<div class=\"meta\">Generated at ${displayDateTime.escapeHtml()}</div>")
+            appendLine("</header>")
+            appendLine(body)
+            appendLine("</main>")
+            appendLine("</body>")
+            appendLine("</html>")
+        }
+
+        PlatformTestStorageRegistry.getInstance().openOutputFile(fileName).bufferedWriter().use {
+            it.write(html)
+        }
+        Log.i(TAG, "Benchmark HTML report written: $fileName")
+    }
+
+    private fun deviceName() = "${Build.BRAND} ${Build.MODEL}".trim().ifBlank { "Unknown Device" }
+    private fun androidVersionName() = "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})"
+
+    private fun statsTable(rows: List<Pair<String, BenchmarkStats>>) = buildString {
+        appendLine("<section class=\"panel\">")
+        appendLine("<table>")
+        appendLine("<thead><tr><th>Case</th><th>Min</th><th>Median</th><th>P90</th><th>Average</th><th>Max</th></tr></thead>")
+        appendLine("<tbody>")
+        rows.forEach { (name, stats) ->
+            appendLine(
+                "<tr><td>${name.escapeHtml()}</td><td>${formatMs(stats.minMs)} ms</td>" +
+                    "<td>${formatMs(stats.medianMs)} ms</td><td>${formatMs(stats.p90Ms)} ms</td>" +
+                    "<td>${formatMs(stats.averageMs)} ms</td><td>${formatMs(stats.maxMs)} ms</td></tr>"
+            )
+        }
+        appendLine("</tbody>")
+        appendLine("</table>")
+        appendLine("</section>")
+    }
+
+    private fun ratioTable(rows: List<Triple<String, Double, Double>>) = buildString {
+        appendLine("<section class=\"panel\">")
+        appendLine("<table>")
+        appendLine("<thead><tr><th>Ratio</th><th>Average</th><th>Median</th></tr></thead>")
+        appendLine("<tbody>")
+        rows.forEach { (name, average, median) ->
+            appendLine("<tr><td>${name.escapeHtml()}</td><td>${formatRatio(average)}x</td><td>${formatRatio(median)}x</td></tr>")
+        }
+        appendLine("</tbody>")
+        appendLine("</table>")
+        appendLine("</section>")
+    }
+
+    private fun summaryPanel(vararg rows: Pair<String, String>) = buildString {
+        appendLine("<section class=\"summary\">")
+        rows.forEach { (label, value) ->
+            appendLine("<div><span>${label.escapeHtml()}</span><strong>${value.escapeHtml()}</strong></div>")
+        }
+        appendLine("</section>")
+    }
+
+    private fun String.escapeHtml() =
+        replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&#39;")
+
+    private fun BenchmarkReport.toHtmlBody() = buildString {
+        appendLine(summaryPanel("Views" to "$viewCount", "Warmup" to "$warmupIterations", "Iterations" to "$measuredIterations"))
+        appendLine("<h2>Timing</h2>")
+        appendLine(
+            statsTable(
+                listOf(
+                    "XML" to xml,
+                    "Hikage" to hikage,
+                    "Hikage with attrs" to hikageWithAttrs,
+                    "Hikage fully attrs" to hikageWithFullyAttrs,
+                    "Hikage full view attrs" to hikageWithFullViewAttrs
+                )
+            )
+        )
+        appendLine("<h2>Ratios</h2>")
+        appendLine(
+            ratioTable(
+                listOf(
+                    Triple("Hikage / XML", hikage.averageMs / xml.averageMs, hikage.medianMs / xml.medianMs),
+                    Triple("HikageAttrs / XML", hikageWithAttrs.averageMs / xml.averageMs, hikageWithAttrs.medianMs / xml.medianMs),
+                    Triple("HikageAttrs / Hikage", hikageWithAttrs.averageMs / hikage.averageMs, hikageWithAttrs.medianMs / hikage.medianMs),
+                    Triple("HikageFullAttrs / XML", hikageWithFullyAttrs.averageMs / xml.averageMs, hikageWithFullyAttrs.medianMs / xml.medianMs),
+                    Triple("HikageFullAttrs / Hikage", hikageWithFullyAttrs.averageMs / hikage.averageMs, hikageWithFullyAttrs.medianMs / hikage.medianMs),
+                    Triple(
+                        "HikageFullViewAttrs / XML",
+                        hikageWithFullViewAttrs.averageMs / xml.averageMs,
+                        hikageWithFullViewAttrs.medianMs / xml.medianMs
+                    ),
+                    Triple(
+                        "HikageFullViewAttrs / Hikage",
+                        hikageWithFullViewAttrs.averageMs / hikage.averageMs,
+                        hikageWithFullViewAttrs.medianMs / hikage.medianMs
+                    ),
+                    Triple(
+                        "FullAttrs / FullViewAttrs",
+                        hikageWithFullyAttrs.averageMs / hikageWithFullViewAttrs.averageMs,
+                        hikageWithFullyAttrs.medianMs / hikageWithFullViewAttrs.medianMs
+                    )
+                )
+            )
+        )
+    }
+
+    private fun DemoBenchmarkReport.toHtmlBody() = buildString {
+        appendLine(summaryPanel("Views" to "$viewCount", "Warmup" to "$warmupIterations", "Iterations" to "$measuredIterations"))
+        appendLine("<h2>Timing</h2>")
+        appendLine(statsTable(listOf("Demo XML" to xml, "Demo Hikage" to hikage)))
+        appendLine("<h2>Ratios</h2>")
+        appendLine(ratioTable(listOf(Triple("Demo Hikage / Demo XML", hikage.averageMs / xml.averageMs, hikage.medianMs / xml.medianMs))))
+    }
+
+    private fun TextInputLayoutBenchmarkReport.toHtmlBody() = buildString {
+        appendLine(
+            summaryPanel(
+                "Views" to "$viewCount",
+                "Warmup" to "$warmupIterations",
+                "Iterations" to "$measuredIterations",
+                "Rounds" to "${rounds.size}"
+            )
+        )
+        appendLine("<h2>Timing</h2>")
+        appendLine(
+            statsTable(
+                rounds.flatMapIndexed { index, round ->
+                    listOf(
+                        "Round ${index + 1} direct" to round.direct,
+                        "Round ${index + 1} reflect" to round.reflect
+                    )
+                }
+            )
+        )
+        appendLine("<h2>Ratios</h2>")
+        appendLine(
+            ratioTable(
+                rounds.mapIndexed { index, round ->
+                    Triple("Round ${index + 1} reflect / direct", round.reflect.averageMs / round.direct.averageMs, round.reflect.medianMs / round.direct.medianMs)
+                }
+            )
+        )
+    }
+
     private data class BenchmarkReport(
         val viewCount: Int,
         val warmupIterations: Int,
@@ -1086,32 +1384,7 @@ class ViewTreeBenchmarkTest {
         val hikageWithAttrs: BenchmarkStats,
         val hikageWithFullyAttrs: BenchmarkStats,
         val hikageWithFullViewAttrs: BenchmarkStats
-    ) {
-
-        fun toLogString() =
-            "210-view tree benchmark: views=$viewCount, warmup=$warmupIterations, iterations=$measuredIterations\n" +
-                "XML                 ${xml.toLogString()}\n" +
-                "Hikage              ${hikage.toLogString()}\n" +
-                "Hikage with attrs   ${hikageWithAttrs.toLogString()}\n" +
-                "Hikage fully attrs  ${hikageWithFullyAttrs.toLogString()}\n" +
-                "Hikage full view attrs ${hikageWithFullViewAttrs.toLogString()}\n" +
-                "ratio Hikage/XML             avg=${"%.2f".format(hikage.averageMs / xml.averageMs)}x, " +
-                "median=${"%.2f".format(hikage.medianMs / xml.medianMs)}x\n" +
-                "ratio HikageAttrs/XML        avg=${"%.2f".format(hikageWithAttrs.averageMs / xml.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithAttrs.medianMs / xml.medianMs)}x\n" +
-                "ratio HikageAttrs/Hikage     avg=${"%.2f".format(hikageWithAttrs.averageMs / hikage.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithAttrs.medianMs / hikage.medianMs)}x\n" +
-                "ratio HikageFullAttrs/XML    avg=${"%.2f".format(hikageWithFullyAttrs.averageMs / xml.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithFullyAttrs.medianMs / xml.medianMs)}x\n" +
-                "ratio HikageFullAttrs/Hikage avg=${"%.2f".format(hikageWithFullyAttrs.averageMs / hikage.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithFullyAttrs.medianMs / hikage.medianMs)}x\n" +
-                "ratio HikageFullViewAttrs/XML    avg=${"%.2f".format(hikageWithFullViewAttrs.averageMs / xml.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithFullViewAttrs.medianMs / xml.medianMs)}x\n" +
-                "ratio HikageFullViewAttrs/Hikage avg=${"%.2f".format(hikageWithFullViewAttrs.averageMs / hikage.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithFullViewAttrs.medianMs / hikage.medianMs)}x\n" +
-                "ratio FullAttrs/FullViewAttrs    avg=${"%.2f".format(hikageWithFullyAttrs.averageMs / hikageWithFullViewAttrs.averageMs)}x, " +
-                "median=${"%.2f".format(hikageWithFullyAttrs.medianMs / hikageWithFullViewAttrs.medianMs)}x"
-    }
+    )
 
     private data class BenchmarkStats(
         val minMs: Double,
@@ -1120,9 +1393,6 @@ class ViewTreeBenchmarkTest {
         val averageMs: Double,
         val maxMs: Double
     ) {
-
-        fun toLogString() =
-            "min=${formatMs(minMs)}ms, median=${formatMs(medianMs)}ms, p90=${formatMs(p90Ms)}ms, avg=${formatMs(averageMs)}ms, max=${formatMs(maxMs)}ms"
 
         companion object {
 
@@ -1146,54 +1416,17 @@ class ViewTreeBenchmarkTest {
         val measuredIterations: Int,
         val xml: BenchmarkStats,
         val hikage: BenchmarkStats
-    ) {
-
-        fun toLogString() =
-            "demo layout benchmark: views=$viewCount, warmup=$warmupIterations, iterations=$measuredIterations\n" +
-                "Demo XML    ${xml.toLogString()}\n" +
-                "Demo Hikage ${hikage.toLogString()}\n" +
-                "ratio DemoHikage/DemoXML avg=${"%.2f".format(hikage.averageMs / xml.averageMs)}x, " +
-                "median=${"%.2f".format(hikage.medianMs / xml.medianMs)}x"
-    }
+    )
 
     private data class TextInputLayoutBenchmarkReport(
         val viewCount: Int,
         val warmupIterations: Int,
         val measuredIterations: Int,
         val rounds: List<TextInputLayoutBenchmarkRound>
-    ) {
-
-        fun toLogString(): String {
-            val lines = mutableListOf(
-                "TextInputLayout creation benchmark: views=$viewCount, warmup=$warmupIterations, " +
-                    "iterations=$measuredIterations, rounds=${rounds.size}"
-            )
-            rounds.forEachIndexed { index, round ->
-                lines += "round ${index + 1} direct  ${round.direct.toLogString()}"
-                lines += "round ${index + 1} reflect ${round.reflect.toLogString()}"
-                lines += "round ${index + 1} ratio Reflect/Direct avg=${"%.2f".format(round.reflect.averageMs / round.direct.averageMs)}x, " +
-                    "median=${"%.2f".format(round.reflect.medianMs / round.direct.medianMs)}x"
-            }
-
-            val slowest = rounds.flatMapIndexed { index, round ->
-                listOf(
-                    TextInputLayoutBenchmarkCandidate("round ${index + 1} direct", round.direct),
-                    TextInputLayoutBenchmarkCandidate("round ${index + 1} reflect", round.reflect)
-                )
-            }.maxBy { it.stats.averageMs }
-            lines += "slowest avg ${slowest.name} ${slowest.stats.toLogString()}"
-
-            return lines.joinToString(separator = "\n")
-        }
-    }
+    )
 
     private data class TextInputLayoutBenchmarkRound(
         val direct: BenchmarkStats,
         val reflect: BenchmarkStats
-    )
-
-    private data class TextInputLayoutBenchmarkCandidate(
-        val name: String,
-        val stats: BenchmarkStats
     )
 }
