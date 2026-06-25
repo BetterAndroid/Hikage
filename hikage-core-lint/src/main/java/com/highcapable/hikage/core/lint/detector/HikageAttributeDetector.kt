@@ -163,8 +163,8 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         private const val ATTRIBUTE_STRING_MAX_LENGTH = 0x7FFF
         private const val ANDROID_NAMESPACE = "android"
         private const val APP_NAMESPACE = "app"
-        private const val ATTRS_UTILS_SUFFIX = ".attrs.HikageAttributeUtils"
-        private const val ATTRIBUTE_SCOPE_SUFFIX = ".attrs.AttributeScope"
+        private const val ATTRIBUTE_UTILS_SUFFIX = ".attribute.HikageAttributeUtils"
+        private const val ATTRIBUTE_SCOPE_SUFFIX = ".attribute.AttributeScope"
         private const val HIKAGE_CLASS_SUFFIX = ".Hikage"
 
         private val COLOR_VALUE_REGEX = "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$".toRegex()
@@ -221,7 +221,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             .replace()
             .range(location)
             .with(replacement)
-            .imports("$attrsPackageName.$namespace")
+            .imports("$attributePackageName.$namespace")
             .reformat(true)
             .build()
 
@@ -432,22 +432,22 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
     }
 
     private fun PsiMethod.isHikageNamespaceFunction() =
-        name == NAMESPACE_FUNCTION && containingClass?.qualifiedName == attrsUtilsClassName
+        name == NAMESPACE_FUNCTION && containingClass?.qualifiedName == attributeUtilsClassName
 
     private fun PsiMethod.isHikageRootSetFunction() =
-        name == SET_FUNCTION && containingClass?.qualifiedName == attrsUtilsClassName
+        name == SET_FUNCTION && containingClass?.qualifiedName == attributeUtilsClassName
 
     private fun PsiMethod.isHikageScopeSetFunction() =
         name == SET_FUNCTION && containingClass?.qualifiedName == attributeScopeClassName
 
-    private val attrsUtilsClassName
-        get() = DeclaredSymbol.HIKAGE_CLASS.removeSuffix(HIKAGE_CLASS_SUFFIX) + ATTRS_UTILS_SUFFIX
+    private val attributeUtilsClassName
+        get() = DeclaredSymbol.HIKAGE_CLASS.removeSuffix(HIKAGE_CLASS_SUFFIX) + ATTRIBUTE_UTILS_SUFFIX
 
     private val attributeScopeClassName
         get() = DeclaredSymbol.HIKAGE_CLASS.removeSuffix(HIKAGE_CLASS_SUFFIX) + ATTRIBUTE_SCOPE_SUFFIX
 
-    private val attrsPackageName
-        get() = DeclaredSymbol.HIKAGE_CLASS.removeSuffix(HIKAGE_CLASS_SUFFIX) + ".attrs"
+    private val attributePackageName
+        get() = DeclaredSymbol.HIKAGE_CLASS.removeSuffix(HIKAGE_CLASS_SUFFIX) + ".attribute"
 
     private fun KtCallExpression.findArgument(method: PsiMethod, name: String): KtValueArgument? {
         val parameters = method.parameterList.parameters
