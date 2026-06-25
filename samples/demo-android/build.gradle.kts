@@ -5,6 +5,8 @@ plugins {
 
 android {
     namespace = gropify.project.samples.demo.android.packageName
+    testNamespace = gropify.project.samples.demo.android.testPackageName
+
     compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {
@@ -61,6 +63,7 @@ dependencies {
     implementation(libs.material)
 
     testImplementation(libs.junit)
+    androidTestImplementation(libs.material)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }
