@@ -32,7 +32,7 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
 import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
-import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
+import com.highcapable.hikage.core.lint.detector.extension.hasHikagable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -207,7 +207,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             visitAndReportDuplicate(context, node, callExpr, attributes)
         }
 
-        if (method.hasHikageable()) visitAndReportIneffectiveLayoutAttributes(context, callExpr, method, reportedLayoutAttributes)
+        if (method.hasHikagable()) visitAndReportIneffectiveLayoutAttributes(context, callExpr, method, reportedLayoutAttributes)
     }
 
     private fun visitAndReportNamespaceShortcut(context: JavaContext, callExpr: KtCallExpression) {

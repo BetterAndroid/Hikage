@@ -23,7 +23,7 @@ package com.highcapable.hikage.core.lint
 
 object DeclaredSymbol {
 
-    const val HIKAGEABLE_ANNOTATION_CLASS = "com.highcapable.hikage.annotation.Hikageable"
+    const val HIKAGABLE_ANNOTATION_CLASS = "com.highcapable.hikage.annotation.Hikagable"
     const val HIKAGE_VIEW_ANNOTATION_CLASS = "com.highcapable.hikage.annotation.HikageView"
     const val HIKAGE_VIEW_DECLARATION_ANNOTATION_CLASS = "com.highcapable.hikage.annotation.HikageViewDeclaration"
     const val HIKAGE_CLASS = "com.highcapable.hikage.core.Hikage"

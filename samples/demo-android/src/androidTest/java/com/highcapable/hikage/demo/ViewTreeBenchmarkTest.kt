@@ -37,10 +37,10 @@ import androidx.test.platform.io.PlatformTestStorageRegistry
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.highcapable.betterandroid.ui.extension.view.layoutInflater
-import com.highcapable.hikage.annotation.Hikageable
+import com.highcapable.hikage.annotation.Hikagable
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.android
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.widget.android.widget.Button
 import com.highcapable.hikage.widget.android.widget.CheckBox
@@ -316,13 +316,13 @@ class ViewTreeBenchmarkTest {
             )
         }
 
-    private fun createHikageTree(context: Context) = Hikageable(context) {
+    private fun createHikageTree(context: Context) = Hikagable(context) {
         LinearLayout {
             repeat(SECTION_COUNT) { benchmarkSection() }
         }
     }.root
 
-    private fun createHikageTreeWithAttrs(context: Context) = Hikageable(context) {
+    private fun createHikageTreeWithAttrs(context: Context) = Hikagable(context) {
         LinearLayout(
             attrs = {
                 android {
@@ -334,7 +334,7 @@ class ViewTreeBenchmarkTest {
         }
     }.root
 
-    private fun createHikageTreeWithFullyAttrs(context: Context) = Hikageable(context) {
+    private fun createHikageTreeWithFullyAttrs(context: Context) = Hikagable(context) {
         LinearLayout(
             attrs = {
                 android {
@@ -348,7 +348,7 @@ class ViewTreeBenchmarkTest {
         }
     }.root
 
-    private fun createHikageTreeWithFullViewAttrs(context: Context) = Hikageable(context) {
+    private fun createHikageTreeWithFullViewAttrs(context: Context) = Hikagable(context) {
         LinearLayout(
             lparams = LayoutParams(widthMatchParent = true),
             attrs = {
@@ -361,7 +361,7 @@ class ViewTreeBenchmarkTest {
         }
     }.root
 
-    private fun createDemoHikageLayout(context: Context) = Hikageable(context) {
+    private fun createDemoHikageLayout(context: Context) = Hikagable(context) {
         CoordinatorLayout(
             lparams = LayoutParams(matchParent = true)
         ) {
@@ -385,7 +385,7 @@ class ViewTreeBenchmarkTest {
         }
     }.root
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkDemoSection() {
         LinearLayout(
             lparams = LayoutParams(widthMatchParent = true) {
@@ -489,7 +489,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSection() {
         LinearLayout {
             benchmarkFirstRow()
@@ -498,7 +498,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSectionWithAttrs() {
         LinearLayout(
             attrs = {
@@ -513,7 +513,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSectionWithFullyAttrs() {
         LinearLayout(
             attrs = { benchmarkSectionAttrs() }
@@ -524,7 +524,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSectionWithFullViewAttrs() {
         LinearLayout(
             lparams = LayoutParams(widthMatchParent = true),
@@ -536,7 +536,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkFirstRow() {
         benchmarkRow {
             TextView()
@@ -547,7 +547,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkFirstRowWithAttrs() {
         benchmarkRowWithAttrs {
             TextView(attrs = { benchmarkViewAttrs() })
@@ -558,7 +558,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkFirstRowWithFullyAttrs() {
         benchmarkRowWithFullyAttrs {
             TextView(attrs = { benchmarkTitleAttrs() })
@@ -569,7 +569,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkFirstRowWithFullViewAttrs() {
         benchmarkRowWithFullViewAttrs {
             TextView(
@@ -595,7 +595,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSecondRow() {
         benchmarkRow {
             EditText()
@@ -606,7 +606,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSecondRowWithAttrs() {
         benchmarkRowWithAttrs {
             EditText(attrs = { benchmarkViewAttrs() })
@@ -617,7 +617,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSecondRowWithFullyAttrs() {
         benchmarkRowWithFullyAttrs {
             EditText(attrs = { benchmarkInputAttrs() })
@@ -628,7 +628,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkSecondRowWithFullViewAttrs() {
         benchmarkRowWithFullViewAttrs {
             EditText(
@@ -654,7 +654,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkThirdRow() {
         benchmarkRow {
             Space()
@@ -665,7 +665,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkThirdRowWithAttrs() {
         benchmarkRowWithAttrs {
             Space(attrs = { benchmarkViewAttrs() })
@@ -676,7 +676,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkThirdRowWithFullyAttrs() {
         benchmarkRowWithFullyAttrs {
             Space(attrs = { benchmarkSpaceAttrs() })
@@ -687,7 +687,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkThirdRowWithFullViewAttrs() {
         benchmarkRowWithFullViewAttrs {
             Space(
@@ -712,7 +712,7 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkRow(
         performer: Hikage.Performer<LinearLayout.LayoutParams>.() -> Unit
     ) {
@@ -721,7 +721,7 @@ class ViewTreeBenchmarkTest {
         )
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkRowWithAttrs(
         performer: Hikage.Performer<LinearLayout.LayoutParams>.() -> Unit
     ) {
@@ -735,7 +735,7 @@ class ViewTreeBenchmarkTest {
         )
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkRowWithFullyAttrs(
         performer: Hikage.Performer<LinearLayout.LayoutParams>.() -> Unit
     ) {
@@ -745,7 +745,7 @@ class ViewTreeBenchmarkTest {
         )
     }
 
-    @Hikageable
+    @Hikagable
     private fun Hikage.Performer<LinearLayout.LayoutParams>.benchmarkRowWithFullViewAttrs(
         performer: Hikage.Performer<LinearLayout.LayoutParams>.() -> Unit
     ) {

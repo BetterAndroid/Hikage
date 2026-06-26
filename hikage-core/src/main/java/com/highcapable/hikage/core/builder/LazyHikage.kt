@@ -31,7 +31,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactory
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 
 /**
  * Lazy initialize a [Hikage] layout.
@@ -41,7 +41,7 @@ import com.highcapable.hikage.core.base.Hikageable
  * ```kotlin
  * object MainLayout : HikageBuilder {
  *
- *    override fun build() = Hikageable {
+ *    override fun build() = Hikagable {
  *        LinearLayout(
  *            lparams = LayoutParams(matchParent = true),
  *            init = {
@@ -140,7 +140,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> Context.lazyHikage(
     noinline factory: HikageFactoryBuilder.() -> Unit = {},
     noinline performer: HikagePerformer<LP>
 ) = lazy {
-    Hikageable<LP>(
+    Hikagable<LP>(
         context = this,
         parent = parent,
         attachToParent = attachToParent,
@@ -210,7 +210,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> Fragment.lazyHikage(
     noinline factory: HikageFactoryBuilder.() -> Unit = {},
     noinline performer: HikagePerformer<LP>
 ) = lazy {
-    Hikageable<LP>(
+    Hikagable<LP>(
         context = requireContext(),
         parent = parent,
         attachToParent = attachToParent,

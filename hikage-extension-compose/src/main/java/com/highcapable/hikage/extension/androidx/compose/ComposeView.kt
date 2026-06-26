@@ -28,7 +28,7 @@ import android.view.ViewGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import com.highcapable.hikage.annotation.Hikageable
+import com.highcapable.hikage.annotation.Hikagable
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.HikageAttribute
 import com.highcapable.hikage.core.base.HikageView
@@ -41,7 +41,7 @@ import com.highcapable.hikage.core.layout.View
  * Usage:
  *
  * ```kotlin
- * Hikageable {
+ * Hikagable {
  *    ComposeView(
  *        lparams = LayoutParams(matchParent = true)
  *    ) {
@@ -52,7 +52,7 @@ import com.highcapable.hikage.core.layout.View
  * @see ComposeView
  * @see Hikage.Performer.View
  */
-@Hikageable
+@Hikagable
 fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.ComposeView(
     lparams: LayoutParams? = null,
     id: String? = null,

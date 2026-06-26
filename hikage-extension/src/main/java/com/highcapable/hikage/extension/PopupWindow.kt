@@ -30,19 +30,19 @@ import android.widget.PopupWindow
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 
 /**
  * @see PopupWindow.setContentView
- * @see Hikageable
+ * @see Hikagable
  * @return [Hikage]
  */
 fun PopupWindow.setContentView(
     context: Context = requireContext(),
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
-) = Hikageable(context = context, factory = factory, performer = performer).apply { setContentView(root) }
+) = Hikagable(context = context, factory = factory, performer = performer).apply { setContentView(root) }
 
 /**
  * @see PopupWindow.setContentView

@@ -28,7 +28,7 @@ import android.view.ViewGroup
 import com.highcapable.betterandroid.ui.component.adapter.BaseAdapterBuilder
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewholder.HikageHolderDelegate
 
 /**
@@ -38,7 +38,7 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  *
  * ```kotlin
  * onBindItemView(
- *     Hikageable = {
+ *     Hikagable = {
  *         TextView(
  *             id = "text",
  *             lparams = LayoutParams(widthMatchParent = true)
@@ -53,14 +53,14 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  * ```
  * @see BaseAdapterBuilder.onBindItemView
  * @receiver [BaseAdapterBuilder]<[E]>
- * @param Hikageable the performer body.
+ * @param Hikagable the performer body.
  * @return [BaseAdapterBuilder]<[E]>
  */
 @JvmOverloads
 fun <E> BaseAdapterBuilder<E>.onBindItemView(
-    Hikageable: HikagePerformer<ViewGroup.LayoutParams>,
+    Hikagable: HikagePerformer<ViewGroup.LayoutParams>,
     viewHolder: (hikage: Hikage, entity: E, position: Int) -> Unit = { _, _, _ -> }
-) = onBindItemView(Hikageable(performer = Hikageable), viewHolder)
+) = onBindItemView(Hikagable(performer = Hikagable), viewHolder)
 
 /**
  * Create and add view holder from [Hikage.Delegate].

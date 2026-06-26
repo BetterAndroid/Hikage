@@ -34,7 +34,7 @@ import androidx.compose.ui.viewinterop.NoOpUpdate
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 
 /**
  * [Hikage] in composable.
@@ -69,7 +69,7 @@ fun HikageView(
 ) {
     AndroidView(
         factory = { context ->
-            Hikageable(
+            Hikagable(
                 context = context,
                 factory = factory,
                 performer = performer

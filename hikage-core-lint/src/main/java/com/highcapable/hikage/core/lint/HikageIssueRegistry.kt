@@ -27,11 +27,11 @@ import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.highcapable.hikage.core.lint.detector.GeneratedHikagePerformerDetector
+import com.highcapable.hikage.core.lint.detector.HikagableBeyondScopeDetector
+import com.highcapable.hikage.core.lint.detector.HikagablePropagationDetector
 import com.highcapable.hikage.core.lint.detector.HikageAttributeDetector
 import com.highcapable.hikage.core.lint.detector.HikageResourcesScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageSafeTypeCastDetector
-import com.highcapable.hikage.core.lint.detector.HikageableBeyondScopeDetector
-import com.highcapable.hikage.core.lint.detector.HikageablePropagationDetector
 import com.highcapable.hikage.generated.HikageProperties
 
 class HikageIssueRegistry : IssueRegistry() {
@@ -45,8 +45,8 @@ class HikageIssueRegistry : IssueRegistry() {
         HikageAttributeDetector.INVALID_RESOURCE_REFERENCE_ISSUE,
         HikageAttributeDetector.INVALID_COLOR_VALUE_ISSUE,
         HikageAttributeDetector.TOO_LONG_STRING_ISSUE,
-        HikageableBeyondScopeDetector.ISSUE,
-        HikageablePropagationDetector.ISSUE,
+        HikagableBeyondScopeDetector.ISSUE,
+        HikagablePropagationDetector.ISSUE,
         HikageSafeTypeCastDetector.ISSUE,
         HikageResourcesScopeDetector.ISSUE,
         GeneratedHikagePerformerDetector.ISSUE

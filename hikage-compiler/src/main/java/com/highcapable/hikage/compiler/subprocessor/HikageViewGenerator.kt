@@ -87,7 +87,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         private const val VIEW_FUNCTION_ALIAS = "_View"
         private const val VIEW_GROUP_FUNCTION_ALIAS = "_ViewGroup"
 
-        val HikageableClass = ClassName(DeclaredSymbol.ANNOTATION_PACKAGE_NAME, DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS_NAME)
+        val HikagableClass = ClassName(DeclaredSymbol.ANNOTATION_PACKAGE_NAME, DeclaredSymbol.HIKAGABLE_ANNOTATION_CLASS_NAME)
         val LayoutParamClass = ClassName(DeclaredSymbol.HIKAGE_LAYOUT_PACKAGE_NAME, DeclaredSymbol.HIKAGE_LAYOUT_PARAMS_CLASS_NAME)
         val ViewGroupLpClass = ClassName(DeclaredSymbol.ANDROID_VIEW_PACKAGE_NAME, DeclaredSymbol.ANDROID_LAYOUT_PARAMS_CLASS_NAME)
         val PerformerClass = ClassName(DeclaredSymbol.HIKAGE_CORE_PACKAGE_NAME, DeclaredSymbol.HIKAGE_CLASS_NAME, "Performer")
@@ -199,7 +199,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     }
 
     private fun processPerformer(performers: List<Performer>, roundGeneratedFiles: MutableSet<String>) {
-        val generatablePerformers = performers.filterNot { it.shouldSkipExistingHikageableFunction() }
+        val generatablePerformers = performers.filterNot { it.shouldSkipExistingHikagableFunction() }
         val duplicatedItems = generatablePerformers.groupBy { it.declaration.key }.filter { it.value.size > 1 }.flatMap { it.value }
 
         require(duplicatedItems.isEmpty()) {
@@ -313,7 +313,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     """.trimIndent()
                 )
 
-                addAnnotation(HikageableClass)
+                addAnnotation(HikagableClass)
                 addModifiers(KModifier.INLINE)
                 addTypeVariable(TypeVariableName(name = "LP", ViewGroupLpClass).copy(reified = true))
                 receiver(PerformerClass.parameterizedBy(TypeVariableName("LP")))
@@ -428,15 +428,15 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         }
     }
 
-    private fun Performer.shouldSkipExistingHikageableFunction(): Boolean {
+    private fun Performer.shouldSkipExistingHikagableFunction(): Boolean {
         if (!isViewDeclarationFile) return false
 
         val packageName = generatedPackageName
         val functionName = functionName
-        if (!Processor.hasExistingHikageableFunction(packageName, functionName)) return false
+        if (!Processor.hasExistingHikagableFunction(packageName, functionName)) return false
 
         logger.info(
-            "Skip generating Hikage performer \"$packageName.$functionName\" because an existing @Hikageable function was found.\n" +
+            "Skip generating Hikage performer \"$packageName.$functionName\" because an existing @Hikagable function was found.\n" +
                 declaration.locateDesc
         )
         return true
@@ -503,11 +503,11 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                 "from the current classpath.\nLocated: ${file.path}[$index]\nReason: ${throwable.message}"
         )
 
-        fun hasExistingHikageableFunction(targetPackageName: String, targetFunctionName: String): Boolean {
+        fun hasExistingHikagableFunction(targetPackageName: String, targetFunctionName: String): Boolean {
             fun KSFunctionDeclaration.isTargetFunction() =
                 packageName.asString() == targetPackageName &&
                     simpleName.asString() == targetFunctionName &&
-                    annotations.any { it.isClass(DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS) }
+                    annotations.any { it.isClass(DeclaredSymbol.HIKAGABLE_ANNOTATION_CLASS) }
 
             @OptIn(KspExperimental::class)
             return resolver.getDeclarationsFromPackage(targetPackageName)

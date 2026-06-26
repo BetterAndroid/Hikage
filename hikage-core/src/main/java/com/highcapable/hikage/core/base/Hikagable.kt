@@ -20,7 +20,7 @@
  * This file is created by fankes on 2025/2/25.
  */
 @file:Suppress("unused", "FunctionName")
-@file:JvmName("HikageableUtils")
+@file:JvmName("HikagableUtils")
 
 package com.highcapable.hikage.core.base
 
@@ -58,8 +58,8 @@ internal typealias LayoutParamsBody<LP> = LP.() -> Unit
  * @param performer the performer body.
  * @return [Hikage]
  */
-@JvmName("HikageableTyped")
-inline fun <reified LP : ViewGroup.LayoutParams> Hikageable(
+@JvmName("HikagableTyped")
+inline fun <reified LP : ViewGroup.LayoutParams> Hikagable(
     context: Context,
     parent: ViewGroup? = null,
     attachToParent: Boolean = parent != null,
@@ -77,7 +77,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikageable(
  * @return [Hikage]
  */
 @JvmSynthetic
-fun Hikageable(
+fun Hikagable(
     context: Context,
     parent: ViewGroup? = null,
     attachToParent: Boolean = parent != null,
@@ -91,8 +91,8 @@ fun Hikageable(
  * @param performer the performer body.
  * @return [Hikage.Delegate]<[LP]>
  */
-@JvmName("HikageableTyped")
-inline fun <reified LP : ViewGroup.LayoutParams> Hikageable(
+@JvmName("HikagableTyped")
+inline fun <reified LP : ViewGroup.LayoutParams> Hikagable(
     noinline factory: HikageFactoryBuilder.() -> Unit = {},
     noinline performer: HikagePerformer<LP>
 ) = Hikage.build<LP>(factory, performer)
@@ -104,7 +104,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> Hikageable(
  * @return [Hikage.Delegate]<[ViewGroup.LayoutParams]>
  */
 @JvmSynthetic
-fun Hikageable(
+fun Hikagable(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<ViewGroup.LayoutParams>
 ) = Hikage.build(factory, performer)

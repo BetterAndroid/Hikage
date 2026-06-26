@@ -32,7 +32,7 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
 import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
-import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
+import com.highcapable.hikage.core.lint.detector.extension.hasHikagable
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -42,19 +42,19 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.toUElementOfType
 
-class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
+class HikagableBeyondScopeDetector : Detector(), Detector.UastScanner {
 
     companion object {
 
         val ISSUE = Issue.create(
-            id = "HikageableBeyondScope",
-            briefDescription = "Hikageable beyond scope.",
-            explanation = "Functions marked with `@Hikageable` can only be passed in `Hikage.Performer`.",
+            id = "HikagableBeyondScope",
+            briefDescription = "Hikagable beyond scope.",
+            explanation = "Functions marked with `@Hikagable` can only be passed in `Hikage.Performer`.",
             category = Category.CORRECTNESS,
             priority = 10,
             severity = Severity.ERROR,
             implementation = Implementation(
-                HikageableBeyondScopeDetector::class.java,
+                HikagableBeyondScopeDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
@@ -77,10 +77,10 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
 
         private fun startLint(callExpr: KtCallExpression, method: PsiMethod) {
             val className = method.containingClass?.qualifiedName ?: ""
-            val hasHikageable = method.hasHikageable()
+            val hasHikagable = method.hasHikagable()
             val hasLayoutParams = className == DeclaredSymbol.HIKAGE_PERFORMER_CLASS && method.name == "LayoutParams"
 
-            if (hasHikageable || hasLayoutParams) visitAndLint(callExpr, method)
+            if (hasHikagable || hasLayoutParams) visitAndLint(callExpr, method)
         }
 
         private fun organizeAndReport() {
@@ -133,7 +133,7 @@ class HikageableBeyondScopeDetector : Detector(), Detector.UastScanner {
                 val sCallExpr = expression.sourcePsi as? KtCallExpression ?: return@forEach
                 val sMethod = expression.resolve() ?: return@forEach
 
-                if (sMethod.hasHikageable()) {
+                if (sMethod.hasHikagable()) {
                     val message = "Performers are not allowed to appear in `${method.name}` DSL creation process."
                     reports.add(ReportDetail(message, expression))
 

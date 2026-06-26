@@ -32,7 +32,7 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
 import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
-import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
+import com.highcapable.hikage.core.lint.detector.extension.hasHikagable
 import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UBlockExpression
 import org.jetbrains.uast.UCallExpression
@@ -40,19 +40,19 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UReturnExpression
 import org.jetbrains.uast.tryResolve
 
-class HikageablePropagationDetector : Detector(), Detector.UastScanner {
+class HikagablePropagationDetector : Detector(), Detector.UastScanner {
 
     companion object {
 
         val ISSUE = Issue.create(
-            id = "MissingHikageableAnnotation",
-            briefDescription = "Missing @Hikageable annotation.",
-            explanation = "Functions which invoke `@Hikageable` functions must be marked with the `@Hikageable` annotation.",
+            id = "MissingHikagableAnnotation",
+            briefDescription = "Missing @Hikagable annotation.",
+            explanation = "Functions which invoke `@Hikagable` functions must be marked with the `@Hikagable` annotation.",
             category = Category.CORRECTNESS,
             priority = 10,
             severity = Severity.ERROR,
             implementation = Implementation(
-                HikageablePropagationDetector::class.java,
+                HikagablePropagationDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
@@ -67,20 +67,20 @@ class HikageablePropagationDetector : Detector(), Detector.UastScanner {
         override fun visitMethod(node: UMethod) {
             val uastBody = node.uastBody as? UBlockExpression ?: return
 
-            val bodyHasHikageable = uastBody.expressions.any {
+            val bodyHasHikagable = uastBody.expressions.any {
                 when (it) {
-                    is UCallExpression -> it.resolve()?.hasHikageable() ?: false
+                    is UCallExpression -> it.resolve()?.hasHikagable() ?: false
                     is UReturnExpression ->
-                        (it.returnExpression?.tryResolve() as? PsiMethod?)?.hasHikageable() ?: false
+                        (it.returnExpression?.tryResolve() as? PsiMethod?)?.hasHikagable() ?: false
                     else -> false
                 }
             }
 
-            if (!node.hasHikageable() && bodyHasHikageable) {
+            if (!node.hasHikagable() && bodyHasHikagable) {
                 val location = context.getLocation(node)
                 val nameLocation = context.getNameLocation(node)
 
-                val message = "Function `${node.name}` must be marked with the `@Hikageable` annotation."
+                val message = "Function `${node.name}` must be marked with the `@Hikagable` annotation."
 
                 val functionText = node.asSourceString()
                 val hasDoubleSlash = functionText.startsWith("//")
@@ -88,15 +88,15 @@ class HikageablePropagationDetector : Detector(), Detector.UastScanner {
                 val replacement = functionRegex.replace(functionText) { result ->
                     val functionBody = result.groupValues.getOrNull(0) ?: functionText
                     val prefix = if (hasDoubleSlash) "\n" else ""
-                    "$prefix@Hikageable $functionBody"
+                    "$prefix@Hikagable $functionBody"
                 }
 
                 val lintFix = LintFix.create()
-                    .name("Add '@Hikageable' to '${node.name}'")
+                    .name("Add '@Hikagable' to '${node.name}'")
                     .replace()
                     .range(location)
                     .with(replacement)
-                    .imports(DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS)
+                    .imports(DeclaredSymbol.HIKAGABLE_ANNOTATION_CLASS)
                     .reformat(true)
                     .build()
 

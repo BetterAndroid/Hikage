@@ -28,11 +28,11 @@ import android.view.ViewGroup
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 
 /**
  * @see ViewGroup.addView
- * @see Hikageable
+ * @see Hikagable
  * @return [Hikage]
  */
 @JvmName("addViewTyped")
@@ -40,7 +40,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> ViewGroup.addView(
     index: Int = -1,
     noinline factory: HikageFactoryBuilder.() -> Unit = {},
     noinline performer: HikagePerformer<LP>
-) = Hikageable<LP>(
+) = Hikagable<LP>(
     context = context,
     parent = this,
     attachToParent = false,
@@ -50,7 +50,7 @@ inline fun <reified LP : ViewGroup.LayoutParams> ViewGroup.addView(
 
 /**
  * @see ViewGroup.addView
- * @see Hikageable
+ * @see Hikagable
  * @return [Hikage]
  */
 fun ViewGroup.addView(

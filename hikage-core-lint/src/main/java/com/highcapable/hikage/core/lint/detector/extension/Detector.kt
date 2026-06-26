@@ -24,4 +24,4 @@ package com.highcapable.hikage.core.lint.detector.extension
 import com.highcapable.hikage.core.lint.DeclaredSymbol
 import com.intellij.psi.PsiMethod
 
-internal fun PsiMethod.hasHikageable() = hasAnnotation(DeclaredSymbol.HIKAGEABLE_ANNOTATION_CLASS)
+internal fun PsiMethod.hasHikagable() = hasAnnotation(DeclaredSymbol.HIKAGABLE_ANNOTATION_CLASS)

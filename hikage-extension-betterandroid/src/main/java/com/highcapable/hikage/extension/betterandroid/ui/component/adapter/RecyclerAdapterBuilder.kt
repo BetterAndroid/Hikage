@@ -29,7 +29,7 @@ import com.highcapable.betterandroid.ui.component.adapter.RecyclerAdapterBuilder
 import com.highcapable.betterandroid.ui.component.adapter.entity.AdapterPosition
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewholder.HikageHolderDelegate
 
 /**
@@ -39,7 +39,7 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  *
  * ```kotlin
  * onBindHeaderView(
- *     Hikageable = {
+ *     Hikagable = {
  *         TextView(
  *             id = "text",
  *             lparams = LayoutParams(widthMatchParent = true)
@@ -53,14 +53,14 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  * }
  * ```
  * @see RecyclerAdapterBuilder.onBindHeaderView
- * @param Hikageable the performer body.
+ * @param Hikagable the performer body.
  * @return [RecyclerAdapterBuilder]<[E]>
  */
 @JvmOverloads
 fun <E> RecyclerAdapterBuilder<E>.onBindHeaderView(
-    Hikageable: HikagePerformer<ViewGroup.LayoutParams>,
+    Hikagable: HikagePerformer<ViewGroup.LayoutParams>,
     viewHolder: (hikage: Hikage) -> Unit = {}
-) = onBindHeaderView(Hikageable(performer = Hikageable), viewHolder)
+) = onBindHeaderView(Hikagable(performer = Hikagable), viewHolder)
 
 /**
  * Create and add view holder from [Hikage.Delegate] for a header view.
@@ -81,7 +81,7 @@ fun <E> RecyclerAdapterBuilder<E>.onBindHeaderView(
  *
  * ```kotlin
  * onBindFooterView(
- *     Hikageable = {
+ *     Hikagable = {
  *         TextView(
  *             id = "text",
  *             lparams = LayoutParams(widthMatchParent = true)
@@ -95,14 +95,14 @@ fun <E> RecyclerAdapterBuilder<E>.onBindHeaderView(
  * }
  * ```
  * @see RecyclerAdapterBuilder.onBindFooterView
- * @param Hikageable the performer body.
+ * @param Hikagable the performer body.
  * @return [RecyclerAdapterBuilder]<[E]>
  */
 @JvmOverloads
 fun <E> RecyclerAdapterBuilder<E>.onBindFooterView(
-    Hikageable: HikagePerformer<ViewGroup.LayoutParams>,
+    Hikagable: HikagePerformer<ViewGroup.LayoutParams>,
     viewHolder: (hikage: Hikage) -> Unit = {}
-) = onBindFooterView(Hikageable(performer = Hikageable), viewHolder)
+) = onBindFooterView(Hikagable(performer = Hikagable), viewHolder)
 
 /**
  * Create and add view holder from [Hikage.Delegate] for a footer view.
@@ -123,7 +123,7 @@ fun <E> RecyclerAdapterBuilder<E>.onBindFooterView(
  *
  * ```kotlin
  * onBindItemView(
- *     Hikageable = {
+ *     Hikagable = {
  *         TextView(
  *             id = "text",
  *             lparams = LayoutParams(widthMatchParent = true)
@@ -138,15 +138,15 @@ fun <E> RecyclerAdapterBuilder<E>.onBindFooterView(
  * ```
  * @see RecyclerAdapterBuilder.onBindItemView
  * @receiver [RecyclerAdapterBuilder]<[E]>
- * @param Hikageable the performer body.
+ * @param Hikagable the performer body.
  * @return [RecyclerAdapterBuilder]<[E]>
  */
 @JvmOverloads
 fun <E> RecyclerAdapterBuilder<E>.onBindItemView(
-    Hikageable: HikagePerformer<ViewGroup.LayoutParams>,
+    Hikagable: HikagePerformer<ViewGroup.LayoutParams>,
     viewType: Int = RecyclerAdapterBuilder.DEFAULT_VIEW_TYPE,
     viewHolder: (hikage: Hikage, entity: E, position: AdapterPosition) -> Unit = { _, _, _ -> }
-) = onBindItemView(Hikageable(performer = Hikageable), viewType, viewHolder)
+) = onBindItemView(Hikagable(performer = Hikagable), viewType, viewHolder)
 
 /**
  * Create and add view holder from [Hikage.Delegate].

@@ -28,7 +28,7 @@ import android.view.ViewGroup
 import com.highcapable.betterandroid.ui.component.adapter.PagerAdapterBuilder
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewholder.HikageHolderDelegate
 
 /**
@@ -38,7 +38,7 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  *
  * ```kotlin
  * onBindPageView(
- *     Hikageable = {
+ *     Hikagable = {
  *         LinearLayout(
  *             id = "container",
  *             lparams = LayoutParams(matchParent = true),
@@ -64,14 +64,14 @@ import com.highcapable.hikage.extension.betterandroid.ui.component.adapter.viewh
  * ```
  * @see PagerAdapterBuilder.onBindPageView
  * @receiver [PagerAdapterBuilder]<[E]>
- * @param Hikageable the performer body.
+ * @param Hikagable the performer body.
  * @return [PagerAdapterBuilder]<[E]>
  */
 @JvmOverloads
 fun <E> PagerAdapterBuilder<E>.onBindPageView(
-    Hikageable: HikagePerformer<ViewGroup.LayoutParams>,
+    Hikagable: HikagePerformer<ViewGroup.LayoutParams>,
     viewHolder: (hikage: Hikage, entity: E, position: Int) -> Unit = { _, _, _ -> }
-) = onBindPageView(Hikageable(performer = Hikageable), viewHolder)
+) = onBindPageView(Hikagable(performer = Hikagable), viewHolder)
 
 /**
  * Create and add view holder from [Hikage.Delegate].

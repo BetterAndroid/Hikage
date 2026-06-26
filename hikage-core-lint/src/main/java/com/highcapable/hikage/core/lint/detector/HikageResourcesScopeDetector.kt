@@ -33,7 +33,7 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
 import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
-import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
+import com.highcapable.hikage.core.lint.detector.extension.hasHikagable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
@@ -221,7 +221,7 @@ class HikageResourcesScopeDetector : Detector(), Detector.UastScanner {
     }
 
     private fun PsiMethod.isHikagePerformerFunction() =
-        hasHikageable() && parameterList.parameters.any { it.type.isHikagePerformerType() }
+        hasHikagable() && parameterList.parameters.any { it.type.isHikagePerformerType() }
 
     private fun KtLambdaExpression.isHikagePerformerArgument(): Boolean {
         val argument = findValueArgument() ?: return false

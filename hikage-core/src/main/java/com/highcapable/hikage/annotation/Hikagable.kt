@@ -30,7 +30,7 @@ import com.highcapable.hikage.core.Hikage
  * Usage:
  *
  * ```kotlin
- * @Hikageable
+ * @Hikagable
  * inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.MyView(
  *     lparams: LayoutParams? = null,
  *     id: String? = null,
@@ -43,4 +43,4 @@ import com.highcapable.hikage.core.Hikage
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
-annotation class Hikageable
+annotation class Hikagable

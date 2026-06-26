@@ -29,18 +29,18 @@ import android.widget.FrameLayout
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import android.R as Android_R
 
 /**
  * @see Window.setContentView
- * @see Hikageable
+ * @see Hikagable
  * @return [Hikage]
  */
 fun Window.setContentView(
     factory: HikageFactoryBuilder.() -> Unit = {},
     performer: HikagePerformer<FrameLayout.LayoutParams>
-) = Hikageable(
+) = Hikagable(
     context = context,
     parent = contentParent,
     attachToParent = false,

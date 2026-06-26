@@ -28,7 +28,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import com.highcapable.hikage.core.attribute.android
-import com.highcapable.hikage.core.base.Hikageable
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.core.preview.HikagePreview
 import com.highcapable.hikage.widget.android.widget.Button
@@ -37,7 +37,7 @@ import com.highcapable.hikage.widget.android.widget.TextView
 
 class SamplePreview(context: Context, attrs: AttributeSet) : HikagePreview(context, attrs) {
 
-    override fun build() = Hikageable {
+    override fun build() = Hikagable {
         LinearLayout(
             lparams = LayoutParams(matchParent = true),
             init = {

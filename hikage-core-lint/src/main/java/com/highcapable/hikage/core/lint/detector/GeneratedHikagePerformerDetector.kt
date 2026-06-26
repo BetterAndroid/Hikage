@@ -39,7 +39,7 @@ import com.google.gson.reflect.TypeToken
 import com.highcapable.hikage.core.lint.DeclaredSymbol
 import com.highcapable.hikage.core.lint.detector.entity.PerformerSymbol
 import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastHandler
-import com.highcapable.hikage.core.lint.detector.extension.hasHikageable
+import com.highcapable.hikage.core.lint.detector.extension.hasHikagable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -158,8 +158,8 @@ class GeneratedHikagePerformerDetector : Detector(), Detector.UastScanner {
         }
 
         private fun startLint(node: UCallExpression, callExpr: KtCallExpression, method: PsiMethod) {
-            val hasHikageable = method.hasHikageable()
-            if (hasHikageable) visitAndReport(node, callExpr, method)
+            val hasHikagable = method.hasHikagable()
+            if (hasHikagable) visitAndReport(node, callExpr, method)
         }
 
         private fun visitAndReport(node: UCallExpression, callExpr: KtCallExpression, method: PsiMethod) {
@@ -232,7 +232,7 @@ class GeneratedHikagePerformerDetector : Detector(), Detector.UastScanner {
             val generatedView = functionClass?.methods?.firstNotNullOfOrNull { it.toSourceView() }
             if (generatedView != null) return generatedView
 
-            val hasFunction = functionClass?.methods?.any { it.name == functionName && it.hasHikageable() } == true
+            val hasFunction = functionClass?.methods?.any { it.name == functionName && it.hasHikagable() } == true
 
             return candidate.takeIf { hasFunction }
         }
@@ -254,7 +254,7 @@ class GeneratedHikagePerformerDetector : Detector(), Detector.UastScanner {
         }
 
         private fun PsiMethod.toSourceView(): ViewCandidate? {
-            if (!hasHikageable()) return null
+            if (!hasHikagable()) return null
             val name = name.takeIf { it !in excludedFunctionNames } ?: return null
             val returnType = returnType ?: return null
             val viewClass = context.evaluator.getTypeClass(returnType) ?: return null

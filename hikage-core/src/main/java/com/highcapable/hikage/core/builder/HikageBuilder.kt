@@ -38,7 +38,7 @@ interface HikageBuilder {
      * Usage:
      *
      * ```kotlin
-     * override fun build() = Hikageable {
+     * override fun build() = Hikagable {
      *     TextView(
      *         lparams = LayoutParams(
      *             width = 100.dp,
