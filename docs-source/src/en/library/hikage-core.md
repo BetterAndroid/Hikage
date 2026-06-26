@@ -52,12 +52,12 @@ You can view the KDoc [click here](kdoc://hikage-core).
 
 Use the code below to create your first Hikage layout.
 
-First, use `Hikageable` to create a `Hikage.Delegate` object.
+First, use `Hikagable` to create a `Hikage.Delegate` object.
 
 > The following example
 
 ```kotlin
-val myLayout = Hikageable {
+val myLayout = Hikagable {
     LinearLayout {
         TextView {
             text = "Hello, World!"
@@ -94,9 +94,9 @@ which is called the "player" of the layout, that is, the role object that plays 
 
 This object can be created and maintained in the following ways.
 
-#### Hikageable
+#### Hikagable
 
-As shown in [Basic Usage](#basic-usage), `Hikageable` can directly create a `Hikage.Delegate` or `Hikage` object.
+As shown in [Basic Usage](#basic-usage), `Hikagable` can directly create a `Hikage.Delegate` or `Hikage` object.
 
 In DSL, you can get the `Hikage.Performer` object to create the layout content.
 
@@ -106,7 +106,7 @@ The first solution is created anywhere.
 
 ```kotlin
 // myLayout is a Hikage.Delegate object.
-val myLayout = Hikageable {
+val myLayout = Hikagable {
     // ...
 }
 // Assume that's your Context.
@@ -123,7 +123,7 @@ The second solution is created directly where `Context` exists.
 // Assume that's your Context.
 val context: Context
 // Create a layout, myLayout is a Hikage object.
-val myLayout = Hikageable(context) {
+val myLayout = Hikagable(context) {
     // ...
 }
 ```
@@ -139,7 +139,7 @@ First, we need to create a `HikageBuilder` object and define it as a singleton.
 ```kotlin
 object MyLayout : HikageBuilder {
 
-    override fun build() = Hikageable {
+    override fun build() = Hikagable {
         // ...
     }
 }
@@ -337,7 +337,7 @@ After setting the ID, you can use the `Hikage.get` method to get them.
 > The following example
 
 ```kotlin
-val myLayout = Hikageable {
+val myLayout = Hikagable {
     View<TextView>(id = "my_text_view") {
         text = "Hello, World!"
     }
@@ -424,7 +424,7 @@ class MyCustomView(context: Context, attrs: AttributeSet? = null) : View(context
 // Custom components must declare this annotation.
 // Declaring the annotation of the component is contagious,
 // and this annotation is required in every scope used to build the layout.
-@Hikageable
+@Hikagable
 // The naming of functions can be done at will, but it is recommended to use a big camel name.
 // The signature part of the function needs to be fixedly
 // declared as `inline fun <reified LP : ViewGroup.LayoutParams> Hikage.Performer<LP>`.
@@ -444,13 +444,13 @@ When building a UI, we usually use reusable layouts as components.
 
 If you don't want each part to be customized separately using a native custom `View`, you can split the layout logic parts directly.
 
-Hikage supports splitting layouts into multiple parts and combining them, you can use the `Hikageable` function anywhere to create a new `Hikage.Delegate` object.
+Hikage supports splitting layouts into multiple parts and combining them, you can use the `Hikagable` function anywhere to create a new `Hikage.Delegate` object.
 
 > The following example
 
 ```kotlin
 // Assume this is your main layout.
-val mainLayout = Hikageable {
+val mainLayout = Hikagable {
     LinearLayout(
         lparams = LayoutParams(matchParent = true),
         init = {
@@ -467,7 +467,7 @@ val mainLayout = Hikageable {
 // Assume this is your layout submodule.
 // Since the upper layout uses LinearLayout,
 // you can declare LinearLayout.LayoutParams for the sublayout.
-val subLayout = Hikageable<LinearLayout.LayoutParams> {
+val subLayout = Hikagable<LinearLayout.LayoutParams> {
     TextView(
         lparams = LayoutParams {
             topMargin = 16.dp
@@ -483,7 +483,7 @@ You can also use Kotlin's **Context parameters** feature to make combined layout
 > The following example
 
 ```kotlin
-Hikageable {
+Hikagable {
     LinearLayout(
         lparams = LayoutParams(matchParent = true),
         init = {
@@ -498,7 +498,7 @@ Hikageable {
     }
 }
 
-val SubTextView = Hikageable {
+val SubTextView = Hikagable {
     TextView {
         textSize = 14f
         text = "Hello, Sub World!"
@@ -674,7 +674,7 @@ Then set it to the Hikage layout you need to inflate.
 // Assume that's your Context.
 val context: Context
 // Create Hikage object.
-val hikage = Hikageable(
+val hikage = Hikagable(
     context = context,
     factory = {
         // Add a custom HikageFactory object.
@@ -725,7 +725,7 @@ You just need to define a custom `View` for the preview layout and inherit from 
 ```kotlin
 class MyLayoutPreview(context: Context, attrs: AttributeSet?) : HikagePreview(context, attrs) {
 
-    override fun build() = Hikageable {
+    override fun build() = Hikagable {
         LinearLayout {
             TextView {
                 text = "Hello, World!"

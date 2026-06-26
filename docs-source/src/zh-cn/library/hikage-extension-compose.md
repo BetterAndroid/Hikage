@@ -61,7 +61,7 @@ implementation("com.highcapable.hikage:hikage-extension-compose:<version>")
 > 示例如下
 
 ```kotlin
-Hikageable {
+Hikagable {
    ComposeView(
        lparams = LayoutParams(matchParent = true)
    ) {

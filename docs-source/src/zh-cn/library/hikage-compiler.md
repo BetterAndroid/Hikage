@@ -127,7 +127,7 @@ class MyLayout(context: Context, attrs: AttributeSet? = null) : LinearLayout(con
 > 示例如下
 
 ```kotlin
-Hikageable {
+Hikagable {
     MyLayout {
         TextView(
             lparams = LayoutParams {
@@ -168,7 +168,7 @@ object ThirdPartyViewDeclaration
 > 示例如下
 
 ```kotlin
-Hikageable {
+Hikagable {
     ThirdPartyView {
         // ...
     }

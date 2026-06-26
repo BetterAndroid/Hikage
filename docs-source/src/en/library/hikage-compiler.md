@@ -130,7 +130,7 @@ Once compiled, you can use `MyLayout` as the layout component in the Hikage layo
 > The following example
 
 ```kotlin
-Hikageable {
+Hikagable {
     MyLayout {
         TextView(
             lparams = LayoutParams {
@@ -171,7 +171,7 @@ Similarly, after compilation, you can use `ThirdPartyView` as the layout compone
 > The following example
 
 ```kotlin
-Hikageable {
+Hikagable {
     ThirdPartyView {
         // ...
     }

@@ -20,8 +20,8 @@
 | [InvalidHikageAttributeResourceReference](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)      | `CORRECTNESS` | `ERROR`   | `6`    | Hikage attribute resource reference invalid. |
 | [InvalidHikageAttributeColorValue](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)             | `CORRECTNESS` | `ERROR`   | `6`    | Hikage attribute color value invalid.        |
 | [TooLongHikageAttributeString](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageAttributeDetector.kt)                 | `CORRECTNESS` | `ERROR`   | `6`    | Hikage attribute string too long.            |
-| [HikageableBeyondScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageableBeyondScopeDetector.kt)                  | `CORRECTNESS` | `ERROR`   | `10`   | Hikageable beyond scope.                     |
-| [MissingHikageableAnnotation](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageablePropagationDetector.kt)            | `CORRECTNESS` | `ERROR`   | `10`   | Missing @Hikageable annotation.              |
+| [HikagableBeyondScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikagableBeyondScopeDetector.kt)                    | `CORRECTNESS` | `ERROR`   | `10`   | Hikagable beyond scope.                      |
+| [MissingHikagableAnnotation](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikagablePropagationDetector.kt)              | `CORRECTNESS` | `ERROR`   | `10`   | Missing @Hikagable annotation.               |
 | [ReplaceWithHikageSafeTypeCast](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageSafeTypeCastDetector.kt)             | `USABILITY`   | `WARNING` | `5`    | Hikage safe type cast usage.                 |
 | [UseHikageResourcesScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageResourcesScopeDetector.kt)                 | `CORRECTNESS` | `WARNING` | `5`    | Hikage resources scope violation.            |
 | [ReplaceWithGeneratedHikagePerformer](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/GeneratedHikagePerformerDetector.kt) | `USABILITY`   | `WARNING` | `5`    | Hikage generated performer function usage.   |
@@ -58,7 +58,7 @@ android {
     lint {
         disable += "ReplaceWithGeneratedHikagePerformer"
         warning += "ReplaceWithHikageSafeTypeCast"
-        error += "MissingHikageableAnnotation"
+        error += "MissingHikagableAnnotation"
     }
 }
 ```
@@ -72,7 +72,7 @@ android {
     lint {
         checkOnly += setOf(
             "ReplaceWithGeneratedHikagePerformer",
-            "MissingHikageableAnnotation"
+            "MissingHikagableAnnotation"
         )
     }
 }

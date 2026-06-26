@@ -63,7 +63,7 @@ You can use the following methods to embed Jetpack Compose components in a Hikag
 > The following example
 
 ```kotlin
-Hikageable {
+Hikagable {
    ComposeView(
        lparams = LayoutParams(matchParent = true)
    ) {

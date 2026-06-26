@@ -15,7 +15,7 @@
 ```kotlin
 object MyLayout : HikageBuilder {
 
-    override fun build() = Hikageable(context) {
+    override fun build() = Hikagable(context) {
         LinearLayout(
             id = "lin_layout",
             lparams = LayoutParams(matchParent = true),

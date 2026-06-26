@@ -66,7 +66,7 @@ val listData = ArrayList<MyEntity>()
 val adapter = recyclerView.bindAdapter<MyEntity> {
     onBindData { listData }
     onBindItemView(
-        Hikageable = {
+        Hikagable = {
             TextView(id = "text_view") {
                 text = "Hello, World!"
                 textSize = 16f
