@@ -35,7 +35,7 @@ import java.io.StringWriter
  * Layoutlib resolves attributes from XML text through `BridgeXmlPullAttributes`, so this path keeps
  * XML-equivalent string values while adapting raw Kotlin values into their corresponding XML forms.
  */
-internal object PreviewXmlBuilder {
+internal object PreviewXmlBuilder : BaseXmlBuilder() {
 
     /** The synthetic element tag name. */
     private const val ELEMENT_NAME = "View"
@@ -52,7 +52,7 @@ internal object PreviewXmlBuilder {
         serializer.setOutput(writer)
         serializer.startDocument("utf-8", true)
         attrs.map { it.namespaceUri }.distinct().forEach { uri ->
-            serializer.setPrefix(prefixForUri(uri), uri)
+            serializer.setPrefix(uriPrefix(uri), uri)
         }
         serializer.startTag(null, ELEMENT_NAME)
         attrs.forEach { attr ->
@@ -68,10 +68,5 @@ internal object PreviewXmlBuilder {
         return Xml.newPullParser().apply {
             setInput(StringReader(writer.toString()))
         }
-    }
-
-    private fun prefixForUri(uri: String) = when (uri) {
-        "http://schemas.android.com/apk/res/android" -> "android"
-        else -> "app"
     }
 }

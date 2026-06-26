@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap
  *  └─ RES_XML_END_NAMESPACE_TYPE    (reverse order)
  * ```
  */
-internal object BinaryXmlBuilder {
+internal object BinaryXmlBuilder : BaseXmlBuilder() {
 
     // ResChunk types.
     private const val TYPE_STRING_POOL = 0x0001
@@ -128,7 +128,7 @@ internal object BinaryXmlBuilder {
         val nsUriByAttr = attrs.map { it.namespaceUri }
         val distinctUris = nsUriByAttr.distinct()
         val namespaces = distinctUris.map { uri ->
-            val prefix = prefixForUri(uri)
+            val prefix = uriPrefix(uri)
             Namespace(prefixIndex = pool.add(prefix), uriIndex = pool.add(uri), uri = uri)
         }
         val uriIndexByUri = namespaces.associate { it.uri to it.uriIndex }
@@ -238,11 +238,6 @@ internal object BinaryXmlBuilder {
         u32(NO_ENTRY) // comment
         u32(NO_ENTRY) // ns
         u32(elementNameIndex) // name
-    }
-
-    private fun prefixForUri(uri: String) = when (uri) {
-        "http://schemas.android.com/apk/res/android" -> "android"
-        else -> "app"
     }
 
     /**
