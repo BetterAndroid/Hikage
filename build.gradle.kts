@@ -54,6 +54,12 @@ allprojects {
                 "-Xno-call-assertions",
                 "-Xno-receiver-assertions"
             )
+
+            // Workaround for Android Studio / IntelliJ IDEA,
+            // to avoid red squiggles in the IDE for context receivers.
+            val isIdea = System.getProperty("idea.active") == "true" ||
+                project.hasProperty("android.injected.invoked.from.ide")
+            if (isIdea) freeCompilerArgs.add("-Xcontext-parameters")
         }
     }
 }
