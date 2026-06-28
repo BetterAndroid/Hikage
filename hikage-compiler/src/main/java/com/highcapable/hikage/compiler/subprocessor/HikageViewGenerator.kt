@@ -334,7 +334,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                             name = "attrs",
                             type = AttributeClass,
                             modifiers = listOf(KModifier.NOINLINE)
-                        ).build()
+                        ).defaultValue("{}").build()
                     )
                 if (performer.annotation.init)
                     addParameter(
@@ -342,7 +342,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                             name = "init",
                             type = ViewLambdaClass.parameterizedBy(viewClass.second),
                             modifiers = listOf(KModifier.NOINLINE)
-                        ).build()
+                        ).defaultValue("{}").build()
                     )
 
                 val viewConstructor = createViewConstructorStatement(viewClass.second)
@@ -353,7 +353,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                                 name = "performer",
                                 type = PerformerLambdaClass.parameterizedBy(it),
                                 modifiers = listOf(KModifier.NOINLINE)
-                            ).build()
+                            ).defaultValue("{}").build()
                         )
                     addStatement(
                         "%L", createViewGroupStatement(
