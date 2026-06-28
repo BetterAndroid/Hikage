@@ -143,8 +143,8 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
     @Hikagable
     fun Layout(
         @LayoutRes resId: Int,
-        lparams: LayoutParams?,
-        id: String?
+        lparams: LayoutParams? = null,
+        id: String? = null
     ): View
 
     /**
@@ -157,8 +157,8 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
     @Hikagable
     fun <VB : ViewBinding> Layout(
         bindingBuilder: ViewBindingBuilder<VB>,
-        lparams: LayoutParams?,
-        id: String?
+        lparams: LayoutParams? = null,
+        id: String? = null
     ): VB
 
     /**
@@ -171,8 +171,8 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
     @Hikagable
     fun Layout(
         view: View,
-        lparams: LayoutParams?,
-        id: String?
+        lparams: LayoutParams? = null,
+        id: String? = null
     ): View
 
     /**
@@ -185,8 +185,8 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
     @Hikagable
     fun Layout(
         hikage: Hikage,
-        lparams: LayoutParams?,
-        id: String?
+        lparams: LayoutParams? = null,
+        id: String? = null
     ): Hikage
 
     /**
@@ -200,9 +200,9 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
     @Hikagable
     fun Layout(
         delegate: Hikage.Delegate<*>,
-        lparams: LayoutParams?,
-        id: String?,
-        embedded: Boolean
+        lparams: LayoutParams? = null,
+        id: String? = null,
+        embedded: Boolean = true
     ): Hikage
 
     /**
@@ -212,11 +212,11 @@ internal interface PerformContext<LP : ViewGroup.LayoutParams> {
      * @return [LayoutParams]
      */
     fun LayoutParams(
-        width: Int?,
-        height: Int?,
-        matchParent: Boolean,
-        widthMatchParent: Boolean,
-        heightMatchParent: Boolean,
-        body: LayoutParamsBody<LP>
+        width: Int? = null,
+        height: Int? = null,
+        matchParent: Boolean = false,
+        widthMatchParent: Boolean = false,
+        heightMatchParent: Boolean = false,
+        body: LayoutParamsBody<LP> = {}
     ): LayoutParams
 }
