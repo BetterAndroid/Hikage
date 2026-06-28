@@ -26,6 +26,7 @@ package com.highcapable.hikage.core.attribute
 
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.exception.AttributeResolvingException
+import com.highcapable.hikage.runtime.attribute.AttributeSetResolver
 import com.highcapable.hikage.runtime.attribute.entity.AttributeItem
 
 /**
@@ -111,12 +112,21 @@ internal fun HikageAttribute.build() = AttributeContextImpl().apply(this).build(
 /**
  * Check if the attributes declared by this [HikageAttribute] are not empty.
  *
- * If it fails, it proves that there may not have `hikage-runtime-attribute`dependency, so always returns `true`.
+ * If it fails, it proves that there may not have `hikage-runtime-attribute` dependency, so always returns `true`.
  * @see HikageAttribute.build
  * @receiver the attribute body.
  * @return [Boolean]
  */
 internal fun HikageAttribute.isNotEmpty() = runCatching { build().isNotEmpty() }.getOrNull() ?: true
+
+/**
+ * Check if the `hikage-runtime-attribute` dependency is available.
+ * @return [Boolean]
+ */
+internal fun hikageAttributeIsAvailable() = runCatching {
+    // Try to access the `AttributeSetResolver` to check if the attribute resolving feature is available.
+    AttributeSetResolver.let {}; true
+}.getOrNull() ?: false
 
 /**
  * Resolve the [AttributeContext] from the [Hikage.Attribute].

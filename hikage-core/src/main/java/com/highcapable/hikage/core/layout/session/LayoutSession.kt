@@ -31,6 +31,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.HikageAttribute
 import com.highcapable.hikage.core.attribute.build
 import com.highcapable.hikage.core.attribute.exception.AttributeResolvingException
+import com.highcapable.hikage.core.attribute.hikageAttributeIsAvailable
 import com.highcapable.hikage.core.attribute.isNotEmpty
 import com.highcapable.hikage.core.attribute.widget.HikageAttributeView
 import com.highcapable.hikage.core.base.HikageFactory
@@ -88,12 +89,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [AttributeSetResolver] or null.
      */
     private val Context.attributeSetResolver: AttributeSetResolver? get() {
-        val isAvailable = runCatching {
-            @Suppress("UnusedExpression")
-            AttributeSetResolver; true
-        }.getOrNull() ?: false
-        if (!isAvailable) return null
-
+        if (!hikageAttributeIsAvailable()) return null
         return attributeSetResolvers.getOrPut(this.identityKey) { AttributeSetResolver.from(this) }
     }
 
