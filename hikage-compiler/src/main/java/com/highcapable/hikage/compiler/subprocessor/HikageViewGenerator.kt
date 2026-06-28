@@ -355,7 +355,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                                 modifiers = listOf(KModifier.NOINLINE)
                             ).defaultValue("{}").build()
                         )
-                    addStatement(
+                    addCode(
                         "%L", createViewGroupStatement(
                             performFunctionAlias = performFunctionAlias,
                             viewClass = viewClass.second,
@@ -364,7 +364,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                             spec = performer.annotation
                         )
                     )
-                } ?: addStatement(
+                } ?: addCode(
                     "%L", createViewStatement(
                         performFunctionAlias = performFunctionAlias,
                         viewClass = viewClass.second,
@@ -396,13 +396,16 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         viewConstructor: CodeBlock,
         spec: HikageAnnotationSpec
     ) = CodeBlock.builder().apply {
-        add("return %L(viewClass = %T::class", performFunctionAlias, viewClass)
-        add(", factory = %L", viewConstructor)
-        add(", lparams = lparams")
-        add(", id = id")
-        if (spec.attrs) add(", attrs = attrs")
-        if (spec.init) add(", init = init")
-        add(")")
+        add("return %L(\n", performFunctionAlias)
+        indent()
+        add("viewClass = %T::class,\n", viewClass)
+        add("factory = %L,\n", viewConstructor)
+        add("lparams = lparams,\n")
+        add("id = id")
+        if (spec.attrs) add(",\nattrs = attrs")
+        if (spec.init) add(",\ninit = init")
+        unindent()
+        add("\n)\n")
     }.build()
 
     private fun createViewGroupStatement(
@@ -412,15 +415,18 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         viewConstructor: CodeBlock,
         spec: HikageAnnotationSpec
     ) = CodeBlock.builder().apply {
-        add("return %L(viewClass = %T::class", performFunctionAlias, viewClass)
-        add(", childLpClass = %T::class", lparamsClass)
-        add(", factory = %L", viewConstructor)
-        add(", lparams = lparams")
-        add(", id = id")
-        if (spec.attrs) add(", attrs = attrs")
-        if (spec.init) add(", init = init")
-        if (spec.performer) add(", performer = performer")
-        add(")")
+        add("return %L(\n", performFunctionAlias)
+        indent()
+        add("viewClass = %T::class,\n", viewClass)
+        add("childLpClass = %T::class,\n", lparamsClass)
+        add("factory = %L,\n", viewConstructor)
+        add("lparams = lparams,\n")
+        add("id = id")
+        if (spec.attrs) add(",\nattrs = attrs")
+        if (spec.init) add(",\ninit = init")
+        if (spec.performer) add(",\nperformer = performer")
+        unindent()
+        add("\n)\n")
     }.build()
 
     private fun createViewConstructorStatement(viewClass: ClassName) = CodeBlock.of("{ context, attrs -> %T(context, attrs) }", viewClass)
