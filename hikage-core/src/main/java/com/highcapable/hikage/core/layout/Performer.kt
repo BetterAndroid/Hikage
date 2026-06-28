@@ -36,6 +36,7 @@ import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.HikageAttribute
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.base.HikageView
+import com.highcapable.hikage.core.base.LayoutParamsBody
 import com.highcapable.hikage.core.base.ViewConstructor
 import com.highcapable.hikage.core.layout.exception.PerformerException
 import kotlin.reflect.KClass
@@ -244,7 +245,7 @@ fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.LayoutParams(
     matchParent: Boolean = false,
     widthMatchParent: Boolean = false,
     heightMatchParent: Boolean = false,
-    body: LP.() -> Unit = {}
+    body: LayoutParamsBody<LP> = {}
 ) = resolveContext().LayoutParams(width, height, matchParent, widthMatchParent, heightMatchParent, body)
 
 /**
