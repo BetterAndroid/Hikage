@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2025/2/18.
  */
-@file:Suppress("SetTextI18n", "PrivateResource")
+@file:Suppress("SetTextI18n", "PrivateResource", "PrivatePropertyName")
 
 package com.highcapable.hikage.demo.ui
 
@@ -33,7 +33,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.highcapable.betterandroid.ui.extension.view.toast
 import com.highcapable.hikage.core.attribute.android
 import com.highcapable.hikage.core.attribute.app
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.core.layout.LayoutParams
+import com.highcapable.hikage.core.layout.invoke
 import com.highcapable.hikage.demo.R
 import com.highcapable.hikage.demo.ui.base.BaseActivity
 import com.highcapable.hikage.demo.ui.vm.MainCompatibilityStatus
@@ -50,7 +52,6 @@ import com.highcapable.hikage.widget.androidx.coordinatorlayout.widget.Coordinat
 import com.highcapable.hikage.widget.com.google.android.material.appbar.MaterialToolbar
 import com.highcapable.hikage.widget.com.google.android.material.card.MaterialCardView
 import com.highcapable.hikage.widget.com.google.android.material.chip.ChipGroup
-import com.highcapable.hikage.widget.com.google.android.material.materialswitch.MaterialSwitch
 import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputEditText
 import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputLayout
 import com.highcapable.hikage.widget.com.highcapable.hikage.demo.ui.widget.CheckableChip
@@ -91,180 +92,173 @@ class MainActivity : BaseActivity() {
                         setPadding(16.dp)
                     }
                 ) {
-                    TextInputLayout(
-                        lparams = LayoutParams(widthMatchParent = true),
-                        init = {
-                            hint = stringResource(R.string.text_username)
-                        }
-                    ) {
-                        TextInputEditText(
-                            lparams = LayoutParams(widthMatchParent = true)
-                        ) {
-                            isSingleLine = true
-                            doOnTextChanged { text, _, _, _ ->
-                                viewModel.updateUsername(text.toString())
-                            }
-                        }
+                    LoginPanel()
+                }
+            }
+        }
+    }
+
+    private val LoginPanel = Hikagable<LinearLayout.LayoutParams> {
+        TextInputLayout(
+            lparams = LayoutParams(widthMatchParent = true),
+            init = {
+                hint = stringResource(R.string.text_username)
+            }
+        ) {
+            TextInputEditText(
+                lparams = LayoutParams(widthMatchParent = true)
+            ) {
+                isSingleLine = true
+                doOnTextChanged { text, _, _, _ ->
+                    viewModel.updateUsername(text.toString())
+                }
+            }
+        }
+        TextInputLayout(
+            lparams = LayoutParams(widthMatchParent = true) {
+                topMargin = 12.dp
+            },
+            attrs = {
+                android.set("hint", R.string.text_password)
+                app.set("endIconMode", TextInputLayout.END_ICON_PASSWORD_TOGGLE)
+            }
+        ) {
+            TextInputEditText(
+                lparams = LayoutParams(widthMatchParent = true)
+            ) {
+                isSingleLine = true
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                doOnTextChanged { text, _, _, _ ->
+                    viewModel.updatePassword(text.toString())
+                }
+            }
+        }
+        ChipGroup(
+            lparams = LayoutParams(widthMatchParent = true) {
+                topMargin = 16.dp
+            },
+            init = {
+                isSingleSelection = true
+            }
+        ) {
+            listOf(
+                stringResource(R.string.text_gender_man),
+                stringResource(R.string.text_gender_woman)
+            ).forEach { gender ->
+                CheckableChip {
+                    text = gender
+                    setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) viewModel.selectGender(gender)
+                        else viewModel.unselectGender(gender)
                     }
-                    TextInputLayout(
-                        lparams = LayoutParams(widthMatchParent = true) {
-                            topMargin = 12.dp
-                        },
-                        attrs = {
-                            android.set("hint", R.string.text_password)
-                            app.set("endIconMode", TextInputLayout.END_ICON_PASSWORD_TOGGLE)
-                        }
-                    ) {
-                        TextInputEditText(
-                            lparams = LayoutParams(widthMatchParent = true)
-                        ) {
-                            isSingleLine = true
-                            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                            doOnTextChanged { text, _, _, _ ->
-                                viewModel.updatePassword(text.toString())
-                            }
-                        }
+                    setState(viewModel.uiState) {
+                        val shouldBeChecked = it.gender == gender
+                        if (isChecked != shouldBeChecked)
+                            isChecked = shouldBeChecked
                     }
-                    ChipGroup(
-                        lparams = LayoutParams(widthMatchParent = true) {
-                            topMargin = 16.dp
-                        },
-                        init = {
-                            isSingleSelection = true
-                        }
-                    ) {
-                        listOf(
-                            stringResource(R.string.text_gender_man),
-                            stringResource(R.string.text_gender_woman)
-                        ).forEach { gender ->
-                            CheckableChip {
-                                text = gender
-                                setOnCheckedChangeListener { _, isChecked ->
-                                    if (isChecked) viewModel.selectGender(gender)
-                                    else viewModel.unselectGender(gender)
-                                }
-                                setState(viewModel.uiState) {
-                                    val shouldBeChecked = it.gender == gender
-                                    if (isChecked != shouldBeChecked)
-                                        isChecked = shouldBeChecked
-                                }
-                            }
-                        }
-                    }
-                    MaterialSwitch(
-                        lparams = LayoutParams(widthMatchParent = true) {
-                            topMargin = 16.dp
-                        },
-                        init = {
-                            text = stringResource(R.string.text_enable_notification)
-                            setOnCheckedChangeListener { _, isChecked ->
-                                viewModel.setNotificationEnabled(isChecked)
-                            }
-                            setState(viewModel.uiState) {
-                                if (isChecked != it.isNotificationEnabled)
-                                    isChecked = it.isNotificationEnabled
-                            }
-                        }
-                    )
-                    MaterialCardView(
-                        lparams = LayoutParams(matchParent = true) {
-                            topMargin = 16.dp
-                            weight = 1f
-                        }
-                    ) {
-                        LinearLayout(
-                            lparams = LayoutParams(matchParent = true),
-                            init = {
-                                orientation = LinearLayout.VERTICAL
-                                setPadding(16.dp)
-                            }
-                        ) {
-                            TextView {
-                                text = stringResource(R.string.text_welcome)
-                            }
-                            TextView(
-                                lparams = LayoutParams {
-                                    topMargin = 8.dp
-                                }
-                            ) {
-                                text = stringResource(R.string.text_description)
-                            }
-                            TextView(
-                                lparams = LayoutParams {
-                                    topMargin = 16.dp
-                                }
-                            ) {
-                                setState(viewModel.uiState) {
-                                    text = stringResource(
-                                        R.string.runtime_state_summary,
-                                        it.username.ifBlank { "-" },
-                                        it.passwordMask.ifBlank { "-" },
-                                        it.gender.ifBlank { "-" },
-                                        if (it.isNotificationEnabled)
-                                            stringResource(R.string.text_enabled)
-                                        else stringResource(R.string.text_disabled)
-                                    )
-                                }
-                            }
-                            TextView(
-                                lparams = LayoutParams {
-                                    topMargin = 12.dp
-                                }
-                            ) {
-                                text = stringResource(R.string.runtime_flow_waiting)
-                                setState(
-                                    flow = viewModel.runtimeTicker,
-                                    initialValue = 0
-                                ) {
-                                    text = stringResource(R.string.runtime_flow_ticker, it)
-                                }
-                            }
-                            TextView(
-                                lparams = LayoutParams {
-                                    topMargin = 12.dp
-                                }
-                            ) {
-                                text = stringResource(R.string.runtime_collect_waiting)
-                                collectState(viewModel.runtimeTicker) {
-                                    text = stringResource(
-                                        R.string.runtime_collect_state,
-                                        stringResource(R.string.runtime_flow_ticker, it)
-                                    )
-                                }
-                            }
-                            TextView(
-                                lparams = LayoutParams {
-                                    topMargin = 12.dp
-                                }
-                            ) {
-                                text = stringResource(R.string.runtime_livedata_waiting)
-                                setState(viewModel.compatibilityStatus) {
-                                    text = when (it) {
-                                        MainCompatibilityStatus.Ready -> stringResource(R.string.runtime_livedata_ready)
-                                        MainCompatibilityStatus.NotificationEnabled ->
-                                            stringResource(R.string.runtime_livedata_notification_enabled)
-                                        MainCompatibilityStatus.NotificationDisabled ->
-                                            stringResource(R.string.runtime_livedata_notification_disabled)
-                                        is MainCompatibilityStatus.Submitted ->
-                                            stringResource(R.string.runtime_livedata_submitted, it.username)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Button(
-                        lparams = LayoutParams(widthMatchParent = true) {
-                            topMargin = 20.dp
-                        }
-                    ) {
-                        setState(viewModel.uiState) {
-                            isEnabled = it.canSubmit
-                            text = stringResource(R.string.text_submit_count, it.submitCount)
-                        }
-                        setOnClickListener {
-                            viewModel.submit()
-                        }
-                    }
+                }
+            }
+        }
+        MaterialCardView(
+            lparams = LayoutParams(matchParent = true) {
+                topMargin = 16.dp
+                weight = 1f
+            }
+        ) {
+            LinearLayout(
+                lparams = LayoutParams(matchParent = true),
+                init = {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(16.dp)
+                }
+            ) {
+                CardContent()
+            }
+        }
+        Button(
+            lparams = LayoutParams(widthMatchParent = true) {
+                topMargin = 20.dp
+            }
+        ) {
+            setState(viewModel.uiState) {
+                isEnabled = it.canSubmit
+                text = stringResource(R.string.text_submit_count, it.submitCount)
+            }
+            setOnClickListener {
+                viewModel.submit()
+            }
+        }
+    }
+
+    private val CardContent = Hikagable<LinearLayout.LayoutParams> {
+        TextView {
+            text = stringResource(R.string.text_welcome)
+        }
+        TextView(
+            lparams = LayoutParams {
+                topMargin = 8.dp
+            }
+        ) {
+            text = stringResource(R.string.text_description)
+        }
+        TextView(
+            lparams = LayoutParams {
+                topMargin = 16.dp
+            }
+        ) {
+            setState(viewModel.uiState) {
+                text = stringResource(
+                    R.string.runtime_state_summary,
+                    it.username.ifBlank { "-" },
+                    it.passwordMask.ifBlank { "-" },
+                    it.gender.ifBlank { "-" },
+                    if (it.isNotificationEnabled)
+                        stringResource(R.string.text_enabled)
+                    else stringResource(R.string.text_disabled)
+                )
+            }
+        }
+        TextView(
+            lparams = LayoutParams {
+                topMargin = 12.dp
+            }
+        ) {
+            text = stringResource(R.string.runtime_flow_waiting)
+            setState(
+                flow = viewModel.runtimeTicker,
+                initialValue = 0
+            ) {
+                text = stringResource(R.string.runtime_flow_ticker, it)
+            }
+        }
+        TextView(
+            lparams = LayoutParams {
+                topMargin = 12.dp
+            }
+        ) {
+            text = stringResource(R.string.runtime_collect_waiting)
+            collectState(viewModel.runtimeTicker) {
+                text = stringResource(
+                    R.string.runtime_collect_state,
+                    stringResource(R.string.runtime_flow_ticker, it)
+                )
+            }
+        }
+        TextView(
+            lparams = LayoutParams {
+                topMargin = 12.dp
+            }
+        ) {
+            text = stringResource(R.string.runtime_livedata_waiting)
+            setState(viewModel.compatibilityStatus) {
+                text = when (it) {
+                    MainCompatibilityStatus.Ready -> stringResource(R.string.runtime_livedata_ready)
+                    MainCompatibilityStatus.NotificationEnabled ->
+                        stringResource(R.string.runtime_livedata_notification_enabled)
+                    MainCompatibilityStatus.NotificationDisabled ->
+                        stringResource(R.string.runtime_livedata_notification_disabled)
+                    is MainCompatibilityStatus.Submitted ->
+                        stringResource(R.string.runtime_livedata_submitted, it.username)
                 }
             }
         }
