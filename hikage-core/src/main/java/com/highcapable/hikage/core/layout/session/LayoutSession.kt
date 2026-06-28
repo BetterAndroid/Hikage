@@ -250,17 +250,10 @@ internal class LayoutSession private constructor(private val factories: List<Hik
     }
 
     /**
-     * Include a delegate.
-     * @param delegate the delegate.
-     * @param context the context.
-     * @param embedded the embedded flag.
-     * @return [Hikage]
+     * Include a child [session].
+     * @param session the child session.
      */
-    fun include(delegate: Hikage.Delegate<*>, context: Context, embedded: Boolean): Hikage {
-        val hikage = delegate.create(context)
-        if (!embedded) return hikage
-
-        val session = hikage.session
+    fun include(session: LayoutSession) {
         val duplicateId = session.viewIds.keys.firstOrNull { it in viewIds }
         if (duplicateId != null) throw PerformerException(
             "Embedded layout view IDs conflict, the view id \"$duplicateId\" is already exists."
@@ -270,8 +263,6 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         views.putAll(session.views)
         performerCount += session.performerCount
         providedViewCount += session.providedViewCount
-
-        return hikage
     }
 
     override fun close() {

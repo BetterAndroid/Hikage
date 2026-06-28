@@ -266,7 +266,16 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         id: String?,
         embedded: Boolean
     ): Hikage {
-        val hikage = session.include(delegate, context, embedded)
+        if (parent != null && attachToParent && lparams == null && id == null) {
+            val hikage = delegate.create(context, parent, attachToParent = true, provideParent = false)
+            if (embedded) session.include(hikage.session)
+
+            return hikage
+        }
+
+        val hikage = delegate.create(context)
+        if (embedded) session.include(hikage.session)
+
         return Layout(hikage, lparams, id)
     }
 
