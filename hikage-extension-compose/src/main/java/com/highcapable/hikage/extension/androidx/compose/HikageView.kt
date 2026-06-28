@@ -32,9 +32,9 @@ import androidx.compose.ui.UiComposable
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.viewinterop.NoOpUpdate
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikagable
 
 /**
  * [Hikage] in composable.
