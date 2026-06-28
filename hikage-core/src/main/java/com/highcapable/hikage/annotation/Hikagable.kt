@@ -19,6 +19,8 @@
  *
  * This file is created by fankes on 2025/3/23.
  */
+@file:Suppress("unused")
+
 package com.highcapable.hikage.annotation
 
 import com.highcapable.hikage.core.Hikage

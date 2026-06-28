@@ -34,7 +34,7 @@
   },
   {
     "viewClass": "androidx.appcompat.widget.Toolbar",
-    "final": true
+    "performer": false
   },
   {
     "viewClass": "androidx.appcompat.widget.AppCompatCheckedTextView"
@@ -44,7 +44,7 @@
   },
   {
     "viewClass": "androidx.appcompat.widget.SearchView",
-    "final": true
+    "performer": false
   },
   {
     "viewClass": "androidx.appcompat.widget.LinearLayoutCompat",

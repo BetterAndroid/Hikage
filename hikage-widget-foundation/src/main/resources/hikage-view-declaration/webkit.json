@@ -1,6 +1,6 @@
 [
   {
     "viewClass": "android.webkit.WebView",
-    "final": true
+    "performer": false
   }
 ]

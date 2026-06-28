@@ -1,6 +1,6 @@
 [
   {
     "viewClass": "com.google.android.material.bottomappbar.BottomAppBar",
-    "final": true
+    "performer": false
   }
 ]

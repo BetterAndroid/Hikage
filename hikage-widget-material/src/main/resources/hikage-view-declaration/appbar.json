@@ -5,7 +5,7 @@
   },
   {
     "viewClass": "com.google.android.material.appbar.MaterialToolbar",
-    "final": true
+    "performer": false
   },
   {
     "viewClass": "com.google.android.material.appbar.CollapsingToolbarLayout",

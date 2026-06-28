@@ -19,6 +19,8 @@
  *
  * This file is created by fankes on 2025/3/31.
  */
+@file:Suppress("unused")
+
 package com.highcapable.hikage.annotation
 
 import android.view.View
@@ -45,13 +47,11 @@ import kotlin.reflect.KClass
  * The parameters must be a class inherited from [ViewGroup.LayoutParams],
  * if the current [View] does not inherit from [ViewGroup], this parameter will be ignored and warned.
  * @param alias the view's class name alias will name the function, default is the [view] class name.
- * @param requireAttrs whether to force the `attrs` parameter to be called, default is false.
- * @param requireInit whether to force the `init` parameter to be called, default is false.
- * @param requirePerformer whether to force the `performer` parameter to be called, default is false,
- * this parameter will be ignored when no `performer` parameter is needed here.
- * @param final whether to declare this layout as "final layout", default is false, that is,
- * whether this layout inherits from or is [ViewGroup], the `performer` parameter will not be generated.
- * After set to `true`, [lparams] and [requirePerformer] will no longer be valid.
+ * @param attrs whether to add the `attrs` parameter to the generated function, default is true.
+ * @param init whether to add the `init` parameter to the generated function, default is true.
+ * @param performer whether to add the `performer` parameter to the generated function, default is true,
+ * that is, after set to false, whether this layout inherits from or is [ViewGroup],
+ * this parameter will not be generated.
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
@@ -60,8 +60,7 @@ annotation class HikageViewDeclaration(
     val view: KClass<*>,
     val lparams: KClass<*> = Any::class,
     val alias: String = "",
-    val requireAttrs: Boolean = false,
-    val requireInit: Boolean = false,
-    val requirePerformer: Boolean = false,
-    val final: Boolean = false
+    val attrs: Boolean = true,
+    val init: Boolean = true,
+    val performer: Boolean = true
 )
