@@ -96,11 +96,9 @@ dependencies {
 
 Hikage 的编译模块会在编译时自动生成代码，在更新后，请重新运行 `assembleDebug` 或 `assembleRelease` Task 以生成最新的代码。
 
-### 生成布局组件
-
 Hikage 可以在编译时为指定的布局组件自动生成对应的布局组件函数 (Hikage Performer)。
 
-#### 自定义 View
+### 生成自定义组件
 
 你可以在你的自定义 `View` 上加入 `HikageView` 注解，以标记它生成为 Hikage 布局组件。
 
@@ -139,7 +137,7 @@ Hikagable {
 }
 ```
 
-#### 第三方组件
+### 生成第三方组件
 
 Hikage 同样可以为第三方提供的 `View` 组件自动生成布局组件函数 (Hikage Performer)，你可以使用 `HikageViewDeclaration` 注解来完成。
 
@@ -173,7 +171,26 @@ Hikagable {
 }
 ```
 
-#### View 声明文件
+### Maven 发布配置
+
+KSP 生成的源码文件会被放置在 `build/generated/ksp` 目录下，这些源码文件将不会默认发布到 Maven 仓库中，你可以按照以下方案进行配置，以便在你的项目或者第三方依赖库中能够索引到 Hikage 生成的布局组件函数 (Hikage Performer)。
+
+建议在需要发布的项目的 `build.gradle.kts` 中添加如下配置。
+
+> 示例如下
+
+```kotlin
+android {
+    // 过滤发布任务的 Task 名称，避免在 assemble 时也将 KSP 生成的源码文件添加到源集
+    if (gradle.startParameter.taskNames.any { it.startsWith("publish") })
+        sourceSets.configureEach {
+            val kspSources = layout.buildDirectory.dir("generated/ksp/release").get().asFile
+            if (kspSources.exists()) kotlin.directories += kspSources.path
+        }
+}
+```
+
+### View 声明文件
 
 除了使用 `HikageViewDeclaration` 注解，你还可以通过 `View` 声明文件的方式来声明需要生成布局组件函数 (Hikage Performer) 的第三方 `View` 组件。
 

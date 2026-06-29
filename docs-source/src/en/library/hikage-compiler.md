@@ -99,11 +99,9 @@ and change `<ksp-version>` to the KSP version corresponding to the Kotlin versio
 Hikage's compilation module will automatically generate code at compile time.
 After update, please re-run the `assembleDebug` or `assembleRelease` task to generate the latest code.
 
-### Generate Layout Components
-
 Hikage can automatically generate corresponding layout component functions (Hikage Performer) for specified layout components at compile time.
 
-#### Custom View
+### Generate Custom Components
 
 You can add the `HikageView` annotation on your custom `View` to mark it as a Hikage layout component.
 
@@ -142,7 +140,7 @@ Hikagable {
 }
 ```
 
-#### Third-party Components
+### Generate Third-party Components
 
 Hikage can also automatically generate layout component functions (Hikage Performer) for the `View` component provided by third parties, and you can use the `HikageViewDeclaration` annotation to complete it.
 
@@ -176,7 +174,27 @@ Hikagable {
 }
 ```
 
-#### View Declaration File
+### Maven Publish Configuration
+
+KSP generated source files are placed in the `build/generated/ksp` directory. These source files are not published to the Maven repository by default. You can configure it as follows to allow your project or third-party dependencies to index the Hikage generated layout component functions (Hikage Performer).
+
+It is recommended to add the following configuration in the `build.gradle.kts` of the project that needs to be published.
+
+> The following example
+
+```kotlin
+android {
+    // Filter the task names for publishing,
+    // to avoid adding KSP generated source files to the source set during assemble.
+    if (gradle.startParameter.taskNames.any { it.startsWith("publish") })
+        sourceSets.configureEach {
+            val kspSources = layout.buildDirectory.dir("generated/ksp/release").get().asFile
+            if (kspSources.exists()) kotlin.directories += kspSources.path
+        }
+}
+```
+
+### View Declaration File
 
 In addition to using the `HikageViewDeclaration` annotation, you can also declare the third-party `View` components that need to generate layout component functions (Hikage Performer) through a view declaration file.
 
