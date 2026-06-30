@@ -24,6 +24,7 @@
 | [MissingHikagableAnnotation](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikagablePropagationDetector.kt)              | `CORRECTNESS` | `ERROR`   | `10`   | Missing @Hikagable annotation.               |
 | [ReplaceWithHikageSafeTypeCast](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageSafeTypeCastDetector.kt)             | `USABILITY`   | `WARNING` | `5`    | Hikage safe type cast usage.                 |
 | [UseHikageResourcesScope](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikageResourcesScopeDetector.kt)                 | `CORRECTNESS` | `WARNING` | `5`    | Hikage resources scope violation.            |
+| [RemoveHikagePerformerAlias](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/HikagePerformerAliasDetector.kt)              | `CORRECTNESS` | `WARNING` | `6`    | Hikage performer import alias.               |
 | [ReplaceWithGeneratedHikagePerformer](repo://tree/main/hikage-core-lint/src/main/java/com/highcapable/hikage/core/lint/detector/GeneratedHikagePerformerDetector.kt) | `USABILITY`   | `WARNING` | `5`    | Hikage generated performer function usage.   |
 
 </div>
