@@ -30,6 +30,7 @@ import com.highcapable.hikage.core.lint.detector.GeneratedHikagePerformerDetecto
 import com.highcapable.hikage.core.lint.detector.HikagableBeyondScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikagablePropagationDetector
 import com.highcapable.hikage.core.lint.detector.HikageAttributeDetector
+import com.highcapable.hikage.core.lint.detector.HikagePerformerAliasDetector
 import com.highcapable.hikage.core.lint.detector.HikageResourcesScopeDetector
 import com.highcapable.hikage.core.lint.detector.HikageSafeTypeCastDetector
 import com.highcapable.hikage.generated.HikageProperties
@@ -49,6 +50,7 @@ class HikageIssueRegistry : IssueRegistry() {
         HikagablePropagationDetector.ISSUE,
         HikageSafeTypeCastDetector.ISSUE,
         HikageResourcesScopeDetector.ISSUE,
+        HikagePerformerAliasDetector.ISSUE,
         GeneratedHikagePerformerDetector.ISSUE
     )
 
