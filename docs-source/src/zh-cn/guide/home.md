@@ -120,6 +120,8 @@ TextView(
 
 更多使用方法可以前往 [hikage-core → XML 属性集合](../library/hikage-core.md#xml-属性集合) 以继续了解。
 
+同时，Hikage 原生适配了 Android Studio 的布局预览功能，能够在不运行应用的情况下直接在 IDE 中预览布局效果，更多使用方法 [hikage-core → 预览布局](../library/hikage-core.md#预览布局) 以继续了解。
+
 从现在开始，放弃并忘记 XML、ViewBinding 甚至是 `findViewById`，直接来尝试使用代码布局吧！
 
 **不会 Jetpack Compose？没关系，今天 Hikage 就是你的 Kotlin DSL 版 XML，把你最熟悉的肌肉记忆组件重构为最现代的声明式 UI，享受同样的编写体验和更高的开发效率以及更好的运行时性能。**
