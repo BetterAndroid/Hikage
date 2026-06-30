@@ -53,6 +53,17 @@ export default {
     extendsMarkdown: (md: MarkdownIt) => {
         md.use(alignI18nAnchors);
         markdown.injectLinks(md, env.dev ? pageLinkRefs.dev : pageLinkRefs.prod);
+        const defaultFence = md.renderer.rules.fence || function (tokens, idx, options, _env, self) {
+            return self.renderToken(tokens, idx, options);
+        };
+        md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+            const token = tokens[idx];
+            const info = token.info.trim();
+            if (info === 'mermaid') {
+                return `<Mermaid code="${encodeURIComponent(token.content)}"></Mermaid>`;
+            }
+            return defaultFence(tokens, idx, options, env, self);
+        };
     },
     plugins: [
         shikiPlugin({ theme: 'github-dark-dimmed' }),
