@@ -18,13 +18,7 @@ android {
 
     defaultConfig {
         minSdk = gropify.project.android.minSdk
-
         testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
-
-        // Enable AndroidX Benchmark output and suppress errors for emulator and low battery conditions.
-        // Note: Benchmark on a real device is recommended for more accurate results.
-        testInstrumentationRunnerArguments["androidx.benchmark.output.enable"] = "true"
-        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR,LOW-BATTERY"
     }
 
     testBuildType = "release"
@@ -64,13 +58,19 @@ val runViewTreeBenchmark = tasks.register<RunViewTreeBenchmarkTask>("runViewTree
 
     dependsOn("installReleaseAndroidTest")
 
-    targetPackageName.set(gropify.project.samples.demo.benchmark.packageName)
-    testPackageName.set(gropify.project.samples.demo.benchmark.testPackageName)
-    instrumentationRunner.set("androidx.benchmark.junit4.AndroidBenchmarkRunner")
+    targetPackageName.set(android.namespace)
+    testPackageName.set(android.testNamespace)
+
+    instrumentationRunner.set(android.defaultConfig.testInstrumentationRunner)
+
+    // Enable AndroidX Benchmark output and suppress errors for emulator and low battery conditions.
+    // Note: Benchmark on a real device is recommended for more accurate results.
     suppressErrors.set("EMULATOR,LOW-BATTERY")
-    deviceOutputDirectory.set("/sdcard/Android/media/${gropify.project.samples.demo.benchmark.testPackageName}/additional_test_output")
+
+    deviceOutputDirectory.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.deviceOutputDirectory)
     localOutputDirectory.set(viewTreeBenchmarkOutputDirectory)
-    suppressActivityMissing.set(providers.gradleProperty("hikage.benchmark.suppressActivityMissing").map(String::toBoolean))
+
+    suppressActivityMissing.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.suppressActivityMissing)
 }
 
 val generateViewTreeBenchmarkReport = tasks.register<GenerateViewTreeBenchmarkReportTask>("generateViewTreeBenchmarkReport") {
@@ -78,7 +78,8 @@ val generateViewTreeBenchmarkReport = tasks.register<GenerateViewTreeBenchmarkRe
     description = "Generates a single Hikage view-tree benchmark HTML report from AndroidX Benchmark JSON outputs."
 
     benchmarkOutputDirectory.set(viewTreeBenchmarkOutputDirectory)
-    reportFile.set(layout.buildDirectory.file("reports/hikage-benchmark/view-tree/index.html"))
+    reportFile.set(layout.buildDirectory.file(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.reportFile))
+    openReport.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.openReport)
     mustRunAfter(runViewTreeBenchmark)
 }
 
@@ -368,6 +369,9 @@ abstract class GenerateViewTreeBenchmarkReportTask : DefaultTask() {
     @get:OutputFile
     abstract val reportFile: RegularFileProperty
 
+    @get:Input
+    abstract val openReport: Property<Boolean>
+
     @get:Internal
     private val jsonSlurper = JsonSlurper()
 
@@ -401,6 +405,24 @@ abstract class GenerateViewTreeBenchmarkReportTask : DefaultTask() {
         targetFile.writeText(report)
 
         logger.lifecycle("Hikage benchmark report generated: ${targetFile.absolutePath}")
+        if (openReport.get()) openReportFile(targetFile)
+    }
+
+    private fun openReportFile(file: File) {
+        val reportUri = file.toURI().toString()
+        val command = when {
+            operatingSystemName.contains("mac") -> listOf("open", reportUri)
+            operatingSystemName.contains("windows") -> listOf("rundll32", "url.dll,FileProtocolHandler", reportUri)
+            else -> listOf("xdg-open", reportUri)
+        }
+
+        runCatching {
+            ProcessBuilder(command).start()
+        }.onSuccess {
+            logger.lifecycle("Opening Hikage benchmark report in the default browser.")
+        }.onFailure {
+            logger.warn("Unable to open Hikage benchmark report automatically: ${it.message}")
+        }
     }
 
     private fun parseBenchmarkSource(file: File): BenchmarkSource? {
@@ -597,6 +619,8 @@ abstract class GenerateViewTreeBenchmarkReportTask : DefaultTask() {
             .replace(">", "&gt;")
             .replace("\"", "&quot;")
             .replace("'", "&#39;")
+
+    private val operatingSystemName get() = System.getProperty("os.name").lowercase(Locale.ROOT)
 
     private fun reportCss() = """
         :root {
