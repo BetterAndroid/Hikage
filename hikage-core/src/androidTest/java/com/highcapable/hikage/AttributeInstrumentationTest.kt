@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2026/6/9.
  */
-package com.highcapable.hikage.demo
+package com.highcapable.hikage
 
 import android.content.Context
 import android.graphics.Color
@@ -52,24 +52,14 @@ import com.highcapable.hikage.core.attribute.app
 import com.highcapable.hikage.core.base.HikagePerformer
 import com.highcapable.hikage.core.layout.LayoutParams
 import com.highcapable.hikage.core.layout.View
-import com.highcapable.hikage.demo.ui.widget.AttrProbeView
-import com.highcapable.hikage.widget.android.widget.AutoCompleteTextView
-import com.highcapable.hikage.widget.android.widget.GridView
-import com.highcapable.hikage.widget.android.widget.LinearLayout
-import com.highcapable.hikage.widget.android.widget.TextView
-import com.highcapable.hikage.widget.androidx.appcompat.widget.LinearLayoutCompat
-import com.highcapable.hikage.widget.androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.highcapable.hikage.widget.com.google.android.material.appbar.AppBarLayout
-import com.highcapable.hikage.widget.com.google.android.material.appbar.MaterialToolbar
-import com.highcapable.hikage.widget.com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputEditText
-import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputLayout
+import com.highcapable.hikage.core.layout.ViewGroup
+import com.highcapable.hikage.widget.AttrProbeView
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.highcapable.hikage.demo.test.R as Test_R
+import com.highcapable.hikage.core.test.R as Test_R
 
 /**
  * Verifies Hikage runtime attributes against framework attrs, custom attrs, and parent LayoutParams generation.
@@ -83,11 +73,11 @@ class AttributeInstrumentationTest {
     @Test
     fun nativeCommonAttrsAreParsedByFramework() {
         val hikage = createHikage {
-            TextView(
+            View<TextView>(
                 id = "text",
                 attrs = {
                     android {
-                        set("text", R.string.app_name)
+                        set("text", "Hikage")
                         set("textColor", Color.RED)
                         set("background", Color.YELLOW)
                         set("gravity", "center")
@@ -102,7 +92,7 @@ class AttributeInstrumentationTest {
         }
 
         val view = hikage.get<TextView>("text")
-        assertEquals(context.getString(R.string.app_name), view.text.toString())
+        assertEquals("Hikage", view.text.toString())
         assertEquals(Color.RED, view.currentTextColor)
         assertEquals(Color.YELLOW, (view.background as ColorDrawable).color)
         assertEquals(Gravity.CENTER, view.gravity)
@@ -117,7 +107,7 @@ class AttributeInstrumentationTest {
     @Test
     fun nativeFrameworkSymbolsCoverBuiltInAndBagFallback() {
         val hikage = createHikage(testContext) {
-            AutoCompleteTextView(
+            View<AutoCompleteTextView>(
                 id = "autoComplete",
                 attrs = {
                     android {
@@ -126,7 +116,7 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
-            GridView(
+            View<GridView>(
                 id = "grid",
                 attrs = {
                     android {
@@ -134,7 +124,7 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
-            LinearLayout(
+            ViewGroup<LinearLayout, LinearLayout.LayoutParams>(
                 id = "linear",
                 attrs = {
                     android {
@@ -143,7 +133,7 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
-            TextView(
+            View<TextView>(
                 id = "marquee",
                 attrs = {
                     android {
@@ -184,7 +174,7 @@ class AttributeInstrumentationTest {
     }
 
     @Test
-    fun customDemoAttrsCoverRawValuesAndResourceBagSymbols() {
+    fun customAttrsCoverRawValuesAndResourceBagSymbols() {
         val hikage = createHikage(testContext) {
             View<AttrProbeView>(
                 id = "custom",
@@ -234,7 +224,7 @@ class AttributeInstrumentationTest {
     @Test
     fun layoutParamsAreGeneratedFromAttrsByParentViewGroup() {
         val hikage = createHikage {
-            TextView(
+            View<TextView>(
                 id = "frameChild",
                 attrs = {
                     android {
@@ -244,7 +234,7 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
-            TextView(
+            View<TextView>(
                 id = "dynamicSizeChild",
                 lparams = LayoutParams(),
                 attrs = {
@@ -255,7 +245,7 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
-            TextView(
+            View<TextView>(
                 id = "bodyChild",
                 lparams = LayoutParams {
                     gravity = Gravity.BOTTOM
@@ -268,11 +258,11 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
-            LinearLayout(
+            ViewGroup<LinearLayout, LinearLayout.LayoutParams>(
                 id = "linear",
                 init = { orientation = LinearLayout.VERTICAL }
             ) {
-                TextView(
+                View<TextView>(
                     id = "linearChild",
                     attrs = {
                         android {
@@ -284,11 +274,11 @@ class AttributeInstrumentationTest {
                     }
                 )
             }
-            LinearLayoutCompat(
+            ViewGroup<LinearLayoutCompat, LinearLayoutCompat.LayoutParams>(
                 id = "linearCompat",
                 init = { orientation = LinearLayoutCompat.VERTICAL }
             ) {
-                TextView(
+                View<TextView>(
                     id = "linearCompatChild",
                     lparams = LayoutParams(widthMatchParent = true, height = 0) {
                         weight = 1f
@@ -328,9 +318,9 @@ class AttributeInstrumentationTest {
 
     @Test
     fun coordinatorLayoutParamsAreGeneratedAndOverridden() {
-        val themedContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
+        val themedContext = ContextThemeWrapper(testContext, Test_R.style.Theme_HikageCoreTest)
         val hikage = createHikage(themedContext) {
-            CoordinatorLayout(
+            ViewGroup<CoordinatorLayout, CoordinatorLayout.LayoutParams>(
                 id = "coordinator",
                 attrs = {
                     android {
@@ -339,7 +329,7 @@ class AttributeInstrumentationTest {
                     }
                 }
             ) {
-                TextView(
+                View<TextView>(
                     id = "attrsFab",
                     attrs = {
                         android {
@@ -351,7 +341,7 @@ class AttributeInstrumentationTest {
                         }
                     }
                 )
-                AppBarLayout(
+                ViewGroup<AppBarLayout, AppBarLayout.LayoutParams>(
                     id = "attrsAppBar",
                     attrs = {
                         android {
@@ -360,7 +350,7 @@ class AttributeInstrumentationTest {
                         }
                     }
                 ) {
-                    MaterialToolbar(
+                    View<MaterialToolbar>(
                         id = "attrsToolbar",
                         attrs = {
                             android {
@@ -370,7 +360,7 @@ class AttributeInstrumentationTest {
                         }
                     )
                 }
-                FloatingActionButton(
+                View<FloatingActionButton>(
                     id = "materialAttrsFab",
                     attrs = {
                         android {
@@ -382,7 +372,7 @@ class AttributeInstrumentationTest {
                         }
                     }
                 )
-                TextView(
+                View<TextView>(
                     id = "bodyFab",
                     lparams = LayoutParams {
                         gravity = Gravity.BOTTOM or Gravity.END
@@ -390,7 +380,7 @@ class AttributeInstrumentationTest {
                         bottomMargin = 16.dp
                     }
                 )
-                TextView(
+                View<TextView>(
                     id = "mixedFab",
                     lparams = LayoutParams {
                         gravity = Gravity.BOTTOM or Gravity.END
@@ -404,7 +394,7 @@ class AttributeInstrumentationTest {
                         }
                     }
                 )
-                TextView(
+                View<TextView>(
                     id = "mixedIgnoredAttrsFab",
                     lparams = LayoutParams(width = 50.dp),
                     attrs = {
@@ -467,10 +457,10 @@ class AttributeInstrumentationTest {
 
     @Test
     fun childViewsUseParentWrappedContextDuringRender() {
-        val themedContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
+        val themedContext = ContextThemeWrapper(testContext, Test_R.style.Theme_HikageCoreTest)
         val hikage = createHikage(themedContext) {
-            TextInputLayout(id = "textInputLayout") {
-                TextInputEditText(id = "textInputEditText")
+            ViewGroup<TextInputLayout, LinearLayout.LayoutParams>(id = "textInputLayout") {
+                View<TextInputEditText>(id = "textInputEditText")
             }
         }
 

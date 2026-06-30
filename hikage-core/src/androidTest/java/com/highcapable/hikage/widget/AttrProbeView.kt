@@ -19,12 +19,12 @@
  *
  * This file is created by fankes on 2026/6/16.
  */
-package com.highcapable.hikage.demo.ui.widget
+package com.highcapable.hikage.widget
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import com.highcapable.hikage.demo.test.R
+import com.highcapable.hikage.core.test.R
 import android.R as Android_R
 
 /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="hikage_probe_text">Hikage Probe</string>
     <string-array name="hikage_probe_strings">
         <item>alpha</item>
         <item>beta</item>
