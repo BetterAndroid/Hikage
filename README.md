@@ -149,6 +149,9 @@ TextView(
 }
 ```
 
+**Furthermore, Hikage natively supports Android Studio's layout preview feature,
+allowing you to preview layout effects directly in the IDE without running the app.**
+
 From now on, forget about XML, ViewBinding, and even `findViewById`, and just try using code-based layouts!
 
 **Don't know Jetpack Compose? No worries, today Hikage is your Kotlin DSL version of XML,

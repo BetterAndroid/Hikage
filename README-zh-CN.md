@@ -137,6 +137,8 @@ TextView(
 }
 ```
 
+**同时，Hikage 原生适配了 Android Studio 的布局预览功能，能够在不运行应用的情况下直接在 IDE 中预览布局效果。**
+
 从现在开始，放弃并忘记 XML、ViewBinding 甚至是 `findViewById`，直接来尝试使用代码布局吧！
 
 **不会 Jetpack Compose？没关系，今天 Hikage 就是你的 Kotlin DSL 版
