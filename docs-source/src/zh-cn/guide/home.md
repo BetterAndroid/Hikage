@@ -120,7 +120,7 @@ TextView(
 
 更多使用方法可以前往 [hikage-core → XML 属性集合](../library/hikage-core.md#xml-属性集合) 以继续了解。
 
-同时，Hikage 原生适配了 Android Studio 的布局预览功能，能够在不运行应用的情况下直接在 IDE 中预览布局效果，更多使用方法 [hikage-core → 预览布局](../library/hikage-core.md#预览布局) 以继续了解。
+同时，Hikage 原生适配了 Android Studio 的布局预览功能，能够在不运行应用的情况下直接在 IDE 中预览布局效果，更多使用方法可以前往 [hikage-core → 预览布局](../library/hikage-core.md#预览布局) 以继续了解。
 
 从现在开始，放弃并忘记 XML、ViewBinding 甚至是 `findViewById`，直接来尝试使用代码布局吧！
 
