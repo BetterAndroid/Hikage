@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = gropify.project.samples.demo.android.packageName
+    namespace = gropify.project.samples.demo.app.packageName
     compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {
-        applicationId = gropify.project.samples.demo.android.packageName
+        applicationId = gropify.project.samples.demo.app.packageName
         minSdk = gropify.project.android.minSdk
         targetSdk = gropify.project.android.targetSdk
-        versionName = gropify.project.samples.demo.android.versionName
-        versionCode = gropify.project.samples.demo.android.versionCode
+        versionName = gropify.project.samples.demo.app.versionName
+        versionCode = gropify.project.samples.demo.app.versionCode
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -39,7 +39,7 @@ gropify {
     }
 
     projects(
-        ":samples:demo-android",
+        ":samples:demo-app",
         ":samples:demo-benchmark"
     ) {
         android {
@@ -67,7 +67,7 @@ gropify {
 rootProject.name = "Hikage"
 
 include(
-    ":samples:demo-android",
+    ":samples:demo-app",
     ":samples:demo-benchmark"
 )
 include(":hikage-bom")
