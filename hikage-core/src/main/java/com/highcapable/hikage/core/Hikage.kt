@@ -113,41 +113,8 @@ class Hikage private constructor(internal val session: LayoutSession) {
             attachToParent: Boolean = parent != null,
             factory: HikageFactoryBuilder.() -> Unit = {},
             performer: HikagePerformer<LP>
-        ) = create(
-            lpClass = lpClass,
-            context = context,
-            parent = parent,
-            attachToParent = attachToParent,
-            provideParent = parent != null && attachToParent,
-            factory = factory,
-            performer = performer
-        )
-
-        /**
-         * Create a new [Hikage].
-         * @param lpClass the layout params type.
-         * @param context the context to create the layout.
-         * @param parent the parent view group.
-         * @param attachToParent whether to attach the layout to the parent when the [parent] is filled.
-         * @param provideParent whether to provide the [parent] as the root view in current session.
-         * @param factory the [HikageFactory] builder.
-         * @param performer the performer body.
-         * @return [Hikage]
-         */
-        private fun <LP : ViewGroup.LayoutParams> create(
-            lpClass: KClass<LP>,
-            context: Context,
-            parent: ViewGroup? = null,
-            attachToParent: Boolean = parent != null,
-            provideParent: Boolean,
-            factory: HikageFactoryBuilder.() -> Unit = {},
-            performer: HikagePerformer<LP>
         ) = newSession(context, factory).use { session ->
             Hikage(session).apply {
-                // If the parent view is specified and mark as attach to parent,
-                // add it directly to the first position.
-                if (parent != null && provideParent) session.provideParent(parent)
-
                 session.newPerformer(lpClass, parent, attachToParent, context).apply(performer)
             }
         }
@@ -294,16 +261,5 @@ class Hikage private constructor(internal val session: LayoutSession) {
          */
         fun create(context: Context, parent: ViewGroup? = null, attachToParent: Boolean = parent != null) =
             create(lpClass, context, parent, attachToParent, factory, performer)
-
-        /**
-         * Create a new [Hikage].
-         * @param context the context to create the layout.
-         * @param parent the parent view group.
-         * @param attachToParent whether to attach the layout to the parent when the [parent] is filled.
-         * @param provideParent whether to provide the [parent] as the root view in current session.
-         * @return [Hikage]
-         */
-        internal fun create(context: Context, parent: ViewGroup?, attachToParent: Boolean, provideParent: Boolean) =
-            create(lpClass, context, parent, attachToParent, provideParent, factory, performer)
     }
 }

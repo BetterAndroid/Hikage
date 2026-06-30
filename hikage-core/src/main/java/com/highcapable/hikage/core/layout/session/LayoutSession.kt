@@ -115,12 +115,6 @@ internal class LayoutSession private constructor(private val factories: List<Hik
     fun getActualViewId(id: String) = viewIds[id] ?: -1
 
     /**
-     * Provide the parent [ViewGroup] as the root view.
-     * @param parent the parent view group.
-     */
-    fun provideParent(parent: ViewGroup) = provideView(parent, generateRandomViewId())
-
-    /**
      * Create a new [View] via [V].
      * @param viewClass the view class.
      * @param factory the view factory, used to create the view instance.
