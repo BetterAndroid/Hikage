@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hikage Benchmark</string>
+    <string name="text_username">Username</string>
+    <string name="text_password">Password</string>
+    <string name="text_gender_man">Man</string>
+    <string name="text_gender_woman">Woman</string>
+    <string name="text_enable_notification">Enable Notification</string>
+    <string name="text_description">As you can see, all layouts are created dynamically through code, and you can customize the layout anywhere.</string>
+    <string name="text_submit">Submit</string>
+    <string name="text_welcome">Welcome to use Hikage!</string>
+</resources>

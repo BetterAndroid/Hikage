@@ -5,8 +5,6 @@ plugins {
 
 android {
     namespace = gropify.project.samples.demo.android.packageName
-    testNamespace = gropify.project.samples.demo.android.testPackageName
-
     compileSdk = gropify.project.android.compileSdk
 
     defaultConfig {

@@ -173,6 +173,12 @@ registerAggregatePublishTask(
     projectNames = Libraries.entries
 )
 
+tasks.register("benchmarkViewTreeReport") {
+    group = "verification"
+    description = "Runs the demo benchmark module and generates a merged XML vs Hikage HTML report."
+    dependsOn(":samples:demo-benchmark:benchmarkViewTreeReport")
+}
+
 fun registerAggregatePublishTask(name: String, description: String, taskName: String, projectNames: List<String>) {
     tasks.register(name) {
         this.group = "publishing"

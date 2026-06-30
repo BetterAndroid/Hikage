@@ -38,7 +38,10 @@ gropify {
         }
     }
 
-    projects(":samples:demo-android") {
+    projects(
+        ":samples:demo-android",
+        ":samples:demo-benchmark"
+    ) {
         android {
             isEnabled = false
         }
@@ -63,7 +66,10 @@ gropify {
 
 rootProject.name = "Hikage"
 
-include(":samples:demo-android")
+include(
+    ":samples:demo-android",
+    ":samples:demo-benchmark"
+)
 include(":hikage-bom")
 include(
     ":hikage-compiler",

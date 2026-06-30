@@ -17,26 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is created by fankes on 2026/6/15.
+ * This file is created by fankes on 2026/6/30.
  */
-package com.highcapable.hikage.demo
+package com.highcapable.hikage.benchmark
 
 import android.content.Context
-import android.os.Build
-import android.os.SystemClock
 import android.text.InputType
-import android.util.Log
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.benchmark.junit4.BenchmarkRule
+import androidx.benchmark.junit4.measureRepeatedOnMainThread
 import androidx.core.view.setPadding
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.platform.io.PlatformTestStorageRegistry
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.highcapable.betterandroid.ui.extension.view.layoutInflater
 import com.highcapable.hikage.annotation.Hikagable
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.attribute.android
@@ -57,25 +54,19 @@ import com.highcapable.hikage.widget.androidx.coordinatorlayout.widget.Coordinat
 import com.highcapable.hikage.widget.com.google.android.material.appbar.MaterialToolbar
 import com.highcapable.hikage.widget.com.google.android.material.button.MaterialButton
 import com.highcapable.hikage.widget.com.google.android.material.card.MaterialCardView
+import com.highcapable.hikage.widget.com.google.android.material.chip.Chip
 import com.highcapable.hikage.widget.com.google.android.material.chip.ChipGroup
 import com.highcapable.hikage.widget.com.google.android.material.materialswitch.MaterialSwitch
 import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputEditText
 import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputLayout
-import com.highcapable.hikage.widget.com.highcapable.hikage.demo.ui.widget.CheckableChip
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
-import java.lang.reflect.Constructor
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
-import java.util.concurrent.atomic.AtomicReference
 import com.google.android.material.R as Material_R
 
 /**
- * Groups the manual view-tree performance probes for XML, Hikage DSL, attrs-heavy DSL, and constructor reflection.
+ * Measures XML inflation and Hikage view-tree construction with AndroidX Benchmark.
  */
 @RunWith(AndroidJUnit4::class)
 class ViewTreeBenchmarkTest {
@@ -85,236 +76,115 @@ class ViewTreeBenchmarkTest {
         const val SECTION_COUNT = 11
         const val VIEW_COUNT = 210
         const val DEMO_SECTION_COUNT = 11
-        const val WARMUP_ITERATIONS = 10
-        const val MEASURED_ITERATIONS = 80
-        const val HEAVY_WARMUP_ITERATIONS = 3
-        const val HEAVY_MEASURED_ITERATIONS = 30
-        const val TEXT_INPUT_LAYOUT_BENCHMARK_ROUNDS = 5
-        const val TEXT_INPUT_LAYOUT_SECTION_COUNT = 11
-        const val NANOS_PER_MILLI = 1_000_000.0
-        const val TAG = "HikageBenchmark"
-        const val REPORT_FILE_PREFIX = "ViewTreeBenchmarkTest"
-        const val UTC_TIME_ZONE = "UTC"
-
-        val textInputLayoutConstructor: Constructor<TextInputLayout> =
-            TextInputLayout::class.java.getConstructor(Context::class.java)
-        val textInputEditTextConstructor: Constructor<TextInputEditText> =
-            TextInputEditText::class.java.getConstructor(Context::class.java)
 
         var viewSink = 0
-
-        fun toMillis(value: Long) = value.toDouble() / NANOS_PER_MILLI
-
-        fun formatMs(value: Double) = "%.3f".format(value)
-
-        fun formatRatio(value: Double) = "%.2f".format(value)
     }
+
+    @get:Rule
+    val benchmarkRule = BenchmarkRule()
 
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     /**
-     * Compares the 210-view stress tree across XML, plain Hikage, and attrs-heavy Hikage variants.
+     * Measures XML inflation for the 210-view stress tree.
      */
     @Test
-    fun benchmarkXmlAndHikage210ViewTreeCreation() {
-        val result = AtomicReference<BenchmarkReport>()
-        val error = AtomicReference<Throwable>()
-        val previousAutoProcessWithFactory2 = Hikage.isAutoProcessWithFactory2
+    fun xml210ViewTreeCreation() = benchmarkViewTreeCreation(
+        expectedViewCount = VIEW_COUNT
+    ) {
+        createXmlTree(context)
+    }
 
+    /**
+     * Measures Hikage construction for the 210-view stress tree without dynamic attrs.
+     */
+    @Test
+    fun hikage210ViewTreeCreation() = benchmarkViewTreeCreation(
+        expectedViewCount = VIEW_COUNT
+    ) {
+        createHikageTree(context)
+    }
+
+    /**
+     * Measures Hikage construction for the 210-view stress tree with light dynamic attrs.
+     */
+    @Test
+    fun hikage210ViewTreeWithAttrsCreation() = benchmarkViewTreeCreation(
+        expectedViewCount = VIEW_COUNT
+    ) {
+        createHikageTreeWithAttrs(context)
+    }
+
+    /**
+     * Measures Hikage construction for the 210-view stress tree with all XML-equivalent attrs.
+     */
+    @Test
+    fun hikage210ViewTreeWithFullyAttrsCreation() = benchmarkViewTreeCreation(
+        expectedViewCount = VIEW_COUNT
+    ) {
+        createHikageTreeWithFullyAttrs(context)
+    }
+
+    /**
+     * Measures Hikage construction for the 210-view stress tree with LayoutParams DSL plus view attrs.
+     */
+    @Test
+    fun hikage210ViewTreeWithFullViewAttrsCreation() = benchmarkViewTreeCreation(
+        expectedViewCount = VIEW_COUNT
+    ) {
+        createHikageTreeWithFullViewAttrs(context)
+    }
+
+    /**
+     * Measures XML inflation for the Material-style demo layout.
+     */
+    @Test
+    fun demoXmlLayoutCreation() = benchmarkViewTreeCreation(
+        expectedViewCount = createViewOnMain { createDemoXmlLayout(demoContext()) }.countViews()
+    ) {
+        createDemoXmlLayout(demoContext())
+    }
+
+    /**
+     * Measures Hikage construction for the Material-style demo layout.
+     */
+    @Test
+    fun demoHikageLayoutCreation() {
+        val demoContext = demoContext()
+        val xmlViewCount = createViewOnMain { createDemoXmlLayout(demoContext) }.countViews()
+        val hikageViewCount = createViewOnMain { createDemoHikageLayout(demoContext) }.countViews()
+
+        assertEquals(xmlViewCount, hikageViewCount)
+
+        benchmarkRule.measureRepeatedOnMainThread {
+            createDemoHikageLayout(demoContext).consume()
+        }
+    }
+
+    private fun benchmarkViewTreeCreation(expectedViewCount: Int, block: () -> View) {
+        assertEquals(expectedViewCount, createViewOnMain(block).countViews())
+
+        benchmarkRule.measureRepeatedOnMainThread {
+            block().consume()
+        }
+    }
+
+    private fun createViewOnMain(block: () -> View): View {
+        var view: View? = null
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            try {
-                Hikage.isAutoProcessWithFactory2 = false
-
-                val xmlRoot = createXmlTree(context)
-                val hikageRoot = createHikageTree(context)
-                val hikageRootWithAttrs = createHikageTreeWithAttrs(context)
-                val hikageRootWithFullyAttrs = createHikageTreeWithFullyAttrs(context)
-                val hikageRootWithFullViewAttrs = createHikageTreeWithFullViewAttrs(context)
-
-                assertEquals(VIEW_COUNT, xmlRoot.countViews())
-                assertEquals(VIEW_COUNT, hikageRoot.countViews())
-                assertEquals(VIEW_COUNT, hikageRootWithAttrs.countViews())
-                assertEquals(VIEW_COUNT, hikageRootWithFullyAttrs.countViews())
-                assertEquals(VIEW_COUNT, hikageRootWithFullViewAttrs.countViews())
-
-                repeat(WARMUP_ITERATIONS) {
-                    createXmlTree(context).consume()
-                    createHikageTree(context).consume()
-                    createHikageTreeWithAttrs(context).consume()
-                    createHikageTreeWithFullyAttrs(context).consume()
-                    createHikageTreeWithFullViewAttrs(context).consume()
-                }
-
-                result.set(
-                    BenchmarkReport(
-                        viewCount = VIEW_COUNT,
-                        warmupIterations = WARMUP_ITERATIONS,
-                        measuredIterations = MEASURED_ITERATIONS,
-                        xml = measureTreeCreation { createXmlTree(context) },
-                        hikage = measureTreeCreation { createHikageTree(context) },
-                        hikageWithAttrs = measureTreeCreation { createHikageTreeWithAttrs(context) },
-                        hikageWithFullyAttrs = measureTreeCreation { createHikageTreeWithFullyAttrs(context) },
-                        hikageWithFullViewAttrs = measureTreeCreation { createHikageTreeWithFullViewAttrs(context) }
-                    )
-                )
-            } catch (throwable: Throwable) {
-                error.set(throwable)
-            } finally {
-                Hikage.isAutoProcessWithFactory2 = previousAutoProcessWithFactory2
-            }
+            view = block()
         }
 
-        error.get()?.let { throw it }
-
-        val report = result.get()
-        writeBenchmarkReport(
-            fileSuffix = "benchmarkXmlAndHikage210ViewTreeCreation",
-            title = "210 View Tree Benchmark",
-            body = report.toHtmlBody()
-        )
+        return view ?: error("View creation on main thread failed.")
     }
 
-    /**
-     * Compares the sample Material-style demo layout between XML inflation and equivalent Hikage construction.
-     */
-    @Test
-    fun benchmarkDemoLayoutCreation() {
-        val result = AtomicReference<DemoBenchmarkReport>()
-        val error = AtomicReference<Throwable>()
-        val previousAutoProcessWithFactory2 = Hikage.isAutoProcessWithFactory2
-
-        try {
-            Hikage.isAutoProcessWithFactory2 = false
-
-            val demoContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
-            val xmlContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
-            val xmlViewCount = runOnMainAndCreate { createDemoXmlLayout(xmlContext) }.countViews()
-            val hikageViewCount = runOnMainAndCreate { createDemoHikageLayout(demoContext) }.countViews()
-
-            assertEquals(xmlViewCount, hikageViewCount)
-
-            repeat(HEAVY_WARMUP_ITERATIONS) {
-                measureMainTreeCreation { createDemoXmlLayout(xmlContext) }
-                measureMainTreeCreation { createDemoHikageLayout(demoContext) }
-            }
-
-            result.set(
-                DemoBenchmarkReport(
-                    viewCount = xmlViewCount,
-                    warmupIterations = HEAVY_WARMUP_ITERATIONS,
-                    measuredIterations = HEAVY_MEASURED_ITERATIONS,
-                    xml = measureMainTreeCreation(HEAVY_MEASURED_ITERATIONS) { createDemoXmlLayout(xmlContext) },
-                    hikage = measureMainTreeCreation(HEAVY_MEASURED_ITERATIONS) { createDemoHikageLayout(demoContext) }
-                )
-            )
-        } catch (throwable: Throwable) {
-            error.set(throwable)
-        } finally {
-            Hikage.isAutoProcessWithFactory2 = previousAutoProcessWithFactory2
-        }
-
-        error.get()?.let { throw it }
-
-        val report = result.get()
-        writeBenchmarkReport(
-            fileSuffix = "benchmarkDemoLayoutCreation",
-            title = "Demo Layout Benchmark",
-            body = report.toHtmlBody()
-        )
-    }
-
-    /**
-     * Measures direct Material TextInputLayout construction against reflective constructor invocation.
-     */
-    @Test
-    fun benchmarkTextInputLayoutDirectAndReflectCreation() {
-        val result = AtomicReference<TextInputLayoutBenchmarkReport>()
-        val error = AtomicReference<Throwable>()
-
-        try {
-            val demoContext = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
-            val viewCount = runOnMainAndCreate { createDirectTextInputLayoutBlock(demoContext) }.countViews()
-            val reflectViewCount = runOnMainAndCreate { createReflectTextInputLayoutBlock(demoContext) }.countViews()
-
-            assertEquals(viewCount, reflectViewCount)
-
-            repeat(HEAVY_WARMUP_ITERATIONS) {
-                measureMainTreeCreation { createDirectTextInputLayoutBlock(demoContext) }
-                measureMainTreeCreation { createReflectTextInputLayoutBlock(demoContext) }
-            }
-
-            result.set(
-                TextInputLayoutBenchmarkReport(
-                    viewCount = viewCount,
-                    warmupIterations = HEAVY_WARMUP_ITERATIONS,
-                    measuredIterations = HEAVY_MEASURED_ITERATIONS,
-                    rounds = List(TEXT_INPUT_LAYOUT_BENCHMARK_ROUNDS) {
-                        TextInputLayoutBenchmarkRound(
-                            direct = measureMainTreeCreation(HEAVY_MEASURED_ITERATIONS) { createDirectTextInputLayoutBlock(demoContext) },
-                            reflect = measureMainTreeCreation(HEAVY_MEASURED_ITERATIONS) { createReflectTextInputLayoutBlock(demoContext) }
-                        )
-                    }
-                )
-            )
-        } catch (throwable: Throwable) {
-            error.set(throwable)
-        }
-
-        error.get()?.let { throw it }
-
-        val report = result.get()
-        writeBenchmarkReport(
-            fileSuffix = "benchmarkTextInputLayoutDirectAndReflectCreation",
-            title = "TextInputLayout Creation Benchmark",
-            body = report.toHtmlBody()
-        )
-    }
+    private fun demoContext() = ContextThemeWrapper(context, R.style.Theme_DefaultAppTheme)
 
     private fun createXmlTree(context: Context) =
-        context.layoutInflater.inflate(R.layout.benchmark_210_view_tree, null, false)
+        LayoutInflater.from(context).inflate(R.layout.benchmark_210_view_tree, null, false)
 
     private fun createDemoXmlLayout(context: Context) =
-        context.layoutInflater.cloneInContext(context).inflate(R.layout.benchmark_demo_layout, null, false)
-
-    private fun createDirectTextInputLayoutBlock(context: Context) =
-        LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            repeat(TEXT_INPUT_LAYOUT_SECTION_COUNT) {
-                addView(createDirectTextInputLayoutSection(context))
-            }
-        }
-
-    private fun createReflectTextInputLayoutBlock(context: Context) =
-        LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            repeat(TEXT_INPUT_LAYOUT_SECTION_COUNT) {
-                addView(createReflectTextInputLayoutSection(context))
-            }
-        }
-
-    private fun createDirectTextInputLayoutSection(context: Context) =
-        TextInputLayout(context).apply {
-            hint = context.getString(R.string.text_password)
-            endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
-            addView(
-                TextInputEditText(context).apply {
-                    isSingleLine = true
-                    inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                }
-            )
-        }
-
-    private fun createReflectTextInputLayoutSection(context: Context) =
-        textInputLayoutConstructor.newInstance(context).apply {
-            hint = context.getString(R.string.text_password)
-            endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
-            addView(
-                textInputEditTextConstructor.newInstance(context).apply {
-                    isSingleLine = true
-                    inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                }
-            )
-        }
+        LayoutInflater.from(context).cloneInContext(context).inflate(R.layout.benchmark_demo_layout, null, false)
 
     private fun createHikageTree(context: Context) = Hikagable(context) {
         LinearLayout {
@@ -434,7 +304,7 @@ class ViewTreeBenchmarkTest {
                 }
             ) {
                 repeat(2) { index ->
-                    CheckableChip(
+                    Chip(
                         init = {
                             text = when (index) {
                                 0 -> stringResource(R.string.text_gender_man)
@@ -1041,45 +911,6 @@ class ViewTreeBenchmarkTest {
         }
     }
 
-    private fun measureTreeCreation(block: () -> View): BenchmarkStats {
-        val costs = LongArray(MEASURED_ITERATIONS)
-
-        repeat(MEASURED_ITERATIONS) { index ->
-            val start = SystemClock.elapsedRealtimeNanos()
-            block().consume()
-            costs[index] = SystemClock.elapsedRealtimeNanos() - start
-        }
-
-        return BenchmarkStats.from(costs)
-    }
-
-    private fun measureMainTreeCreation(iterations: Int = 1, block: () -> View): BenchmarkStats {
-        val costs = LongArray(iterations)
-
-        repeat(iterations) { index ->
-            val cost = AtomicReference<Long>()
-            InstrumentationRegistry.getInstrumentation().runOnMainSync {
-                val start = SystemClock.elapsedRealtimeNanos()
-                block().consume()
-                cost.set(SystemClock.elapsedRealtimeNanos() - start)
-            }
-            costs[index] = cost.get()
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-        }
-
-        return BenchmarkStats.from(costs)
-    }
-
-    private fun runOnMainAndCreate(block: () -> View): View {
-        val view = AtomicReference<View>()
-        InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            view.set(block())
-        }
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-
-        return view.get()
-    }
-
     private fun View.countViews(): Int {
         if (this !is ViewGroup) return 1
 
@@ -1094,367 +925,4 @@ class ViewTreeBenchmarkTest {
     private fun View.consume() {
         viewSink = viewSink xor ((this as? ViewGroup)?.childCount ?: 0) xor id
     }
-
-    private fun writeBenchmarkReport(fileSuffix: String, title: String, body: String) {
-        val createdAt = Date()
-        val deviceName = deviceName()
-        val androidVersionName = androidVersionName()
-        val displayDateTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'", Locale.ROOT).apply {
-            timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE)
-        }.format(createdAt)
-        val fileName = "${REPORT_FILE_PREFIX}_$fileSuffix.html"
-
-        val html = buildString {
-            appendLine("<!doctype html>")
-            appendLine("<html lang=\"en\">")
-            appendLine("<head>")
-            appendLine("<meta charset=\"utf-8\">")
-            appendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
-            appendLine("<title>${title.escapeHtml()}</title>")
-            appendLine("<style>")
-            appendLine("""
-                :root {
-                    color-scheme: light dark;
-                    --bg: #f6f7f9;
-                    --surface: #ffffff;
-                    --text: #1f2328;
-                    --muted: #667085;
-                    --line: #d9dee7;
-                    --accent: #006d77;
-                    --accent-soft: #e1f3f1;
-                }
-                @media (prefers-color-scheme: dark) {
-                    :root {
-                        --bg: #111418;
-                        --surface: #1a1f25;
-                        --text: #ecf0f4;
-                        --muted: #aab4c0;
-                        --line: #303844;
-                        --accent: #7dd3c7;
-                        --accent-soft: #173d3b;
-                    }
-                }
-                * { box-sizing: border-box; }
-                body {
-                    margin: 0;
-                    background: var(--bg);
-                    color: var(--text);
-                    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                    line-height: 1.5;
-                }
-                main {
-                    width: min(1180px, calc(100vw - 32px));
-                    margin: 0 auto;
-                    padding: 32px 0 48px;
-                }
-                header {
-                    margin-bottom: 24px;
-                }
-                h1 {
-                    margin: 0 0 8px;
-                    font-size: 30px;
-                    font-weight: 720;
-                    letter-spacing: 0;
-                }
-                h2 {
-                    margin: 28px 0 12px;
-                    font-size: 18px;
-                    letter-spacing: 0;
-                }
-                .meta {
-                    color: var(--muted);
-                    font-size: 14px;
-                }
-                .device-meta {
-                    display: flex;
-                    align-items: baseline;
-                    gap: 12px;
-                    flex-wrap: wrap;
-                }
-                .meta-subtle {
-                    color: color-mix(in srgb, var(--muted) 78%, transparent);
-                    font-size: 13px;
-                }
-                .panel {
-                    background: var(--surface);
-                    border: 1px solid var(--line);
-                    border-radius: 8px;
-                    padding: 18px;
-                    margin: 16px 0;
-                    overflow-x: auto;
-                }
-                .summary {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-                    gap: 12px;
-                }
-                .summary div {
-                    background: var(--accent-soft);
-                    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-                    border-radius: 8px;
-                    padding: 12px;
-                }
-                .summary strong {
-                    display: block;
-                    font-size: 22px;
-                    color: var(--accent);
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 14px;
-                }
-                th, td {
-                    padding: 10px 12px;
-                    border-bottom: 1px solid var(--line);
-                    text-align: right;
-                    white-space: nowrap;
-                }
-                th:first-child, td:first-child {
-                    text-align: left;
-                }
-                th {
-                    color: var(--muted);
-                    font-weight: 650;
-                }
-                tr:last-child td {
-                    border-bottom: 0;
-                }
-            """.trimIndent())
-            appendLine("</style>")
-            appendLine("</head>")
-            appendLine("<body>")
-            appendLine("<main>")
-            appendLine("<header>")
-            appendLine("<h1>${title.escapeHtml()}</h1>")
-            appendLine("<div class=\"device-meta\">")
-            appendLine("<span class=\"meta\">${deviceName.escapeHtml()}</span>")
-            appendLine("<span class=\"meta-subtle\">${androidVersionName.escapeHtml()}</span>")
-            appendLine("</div>")
-            appendLine("<div class=\"meta\">Generated at ${displayDateTime.escapeHtml()}</div>")
-            appendLine("</header>")
-            appendLine(body)
-            appendLine("</main>")
-            appendLine("</body>")
-            appendLine("</html>")
-        }
-
-        writeBenchmarkReportFile(fileName, html)
-        Log.i(TAG, "Benchmark HTML report written: $fileName")
-    }
-
-    private fun writeBenchmarkReportFile(fileName: String, html: String) {
-        try {
-            PlatformTestStorageRegistry.getInstance().openOutputFile(fileName).bufferedWriter().use {
-                it.write(html)
-            }
-        } catch (exception: RuntimeException) {
-            if (!exception.hasCause<SecurityException>()) throw exception
-            Log.w(TAG, "Platform test storage is not writable, fallback to target app cache.", exception)
-            writeBenchmarkReportFileToTargetCache(fileName, html)
-        }
-    }
-
-    private fun writeBenchmarkReportFileToTargetCache(fileName: String, html: String) {
-        val outputRoot = File(context.externalCacheDir ?: context.cacheDir, "additionalTestOutputDir")
-        if (!outputRoot.exists() && !outputRoot.mkdirs())
-            error("Failed to create benchmark report output directory: ${outputRoot.absolutePath}")
-        File(outputRoot, fileName).bufferedWriter().use {
-            it.write(html)
-        }
-    }
-
-    private inline fun <reified T : Throwable> Throwable.hasCause(): Boolean {
-        var current: Throwable? = this
-        while (current != null) {
-            if (current is T) return true
-            current = current.cause
-        }
-
-        return false
-    }
-
-    private fun deviceName() = "${Build.BRAND} ${Build.MODEL}".trim().ifBlank { "Unknown Device" }
-    private fun androidVersionName() = "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})"
-
-    private fun statsTable(rows: List<Pair<String, BenchmarkStats>>) = buildString {
-        appendLine("<section class=\"panel\">")
-        appendLine("<table>")
-        appendLine("<thead><tr><th>Case</th><th>Min</th><th>Median</th><th>P90</th><th>Average</th><th>Max</th></tr></thead>")
-        appendLine("<tbody>")
-        rows.forEach { (name, stats) ->
-            appendLine(
-                "<tr><td>${name.escapeHtml()}</td><td>${formatMs(stats.minMs)} ms</td>" +
-                    "<td>${formatMs(stats.medianMs)} ms</td><td>${formatMs(stats.p90Ms)} ms</td>" +
-                    "<td>${formatMs(stats.averageMs)} ms</td><td>${formatMs(stats.maxMs)} ms</td></tr>"
-            )
-        }
-        appendLine("</tbody>")
-        appendLine("</table>")
-        appendLine("</section>")
-    }
-
-    private fun ratioTable(rows: List<Triple<String, Double, Double>>) = buildString {
-        appendLine("<section class=\"panel\">")
-        appendLine("<table>")
-        appendLine("<thead><tr><th>Ratio</th><th>Average</th><th>Median</th></tr></thead>")
-        appendLine("<tbody>")
-        rows.forEach { (name, average, median) ->
-            appendLine("<tr><td>${name.escapeHtml()}</td><td>${formatRatio(average)}x</td><td>${formatRatio(median)}x</td></tr>")
-        }
-        appendLine("</tbody>")
-        appendLine("</table>")
-        appendLine("</section>")
-    }
-
-    private fun summaryPanel(vararg rows: Pair<String, String>) = buildString {
-        appendLine("<section class=\"summary\">")
-        rows.forEach { (label, value) ->
-            appendLine("<div><span>${label.escapeHtml()}</span><strong>${value.escapeHtml()}</strong></div>")
-        }
-        appendLine("</section>")
-    }
-
-    private fun String.escapeHtml() =
-        replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace("\"", "&quot;")
-            .replace("'", "&#39;")
-
-    private fun BenchmarkReport.toHtmlBody() = buildString {
-        appendLine(summaryPanel("Views" to "$viewCount", "Warmup" to "$warmupIterations", "Iterations" to "$measuredIterations"))
-        appendLine("<h2>Timing</h2>")
-        appendLine(
-            statsTable(
-                listOf(
-                    "XML" to xml,
-                    "Hikage" to hikage,
-                    "Hikage with attrs" to hikageWithAttrs,
-                    "Hikage fully attrs" to hikageWithFullyAttrs,
-                    "Hikage full view attrs" to hikageWithFullViewAttrs
-                )
-            )
-        )
-        appendLine("<h2>Ratios</h2>")
-        appendLine(
-            ratioTable(
-                listOf(
-                    Triple("Hikage / XML", hikage.averageMs / xml.averageMs, hikage.medianMs / xml.medianMs),
-                    Triple("HikageAttrs / XML", hikageWithAttrs.averageMs / xml.averageMs, hikageWithAttrs.medianMs / xml.medianMs),
-                    Triple("HikageAttrs / Hikage", hikageWithAttrs.averageMs / hikage.averageMs, hikageWithAttrs.medianMs / hikage.medianMs),
-                    Triple("HikageFullAttrs / XML", hikageWithFullyAttrs.averageMs / xml.averageMs, hikageWithFullyAttrs.medianMs / xml.medianMs),
-                    Triple("HikageFullAttrs / Hikage", hikageWithFullyAttrs.averageMs / hikage.averageMs, hikageWithFullyAttrs.medianMs / hikage.medianMs),
-                    Triple(
-                        "HikageFullViewAttrs / XML",
-                        hikageWithFullViewAttrs.averageMs / xml.averageMs,
-                        hikageWithFullViewAttrs.medianMs / xml.medianMs
-                    ),
-                    Triple(
-                        "HikageFullViewAttrs / Hikage",
-                        hikageWithFullViewAttrs.averageMs / hikage.averageMs,
-                        hikageWithFullViewAttrs.medianMs / hikage.medianMs
-                    ),
-                    Triple(
-                        "FullAttrs / FullViewAttrs",
-                        hikageWithFullyAttrs.averageMs / hikageWithFullViewAttrs.averageMs,
-                        hikageWithFullyAttrs.medianMs / hikageWithFullViewAttrs.medianMs
-                    )
-                )
-            )
-        )
-    }
-
-    private fun DemoBenchmarkReport.toHtmlBody() = buildString {
-        appendLine(summaryPanel("Views" to "$viewCount", "Warmup" to "$warmupIterations", "Iterations" to "$measuredIterations"))
-        appendLine("<h2>Timing</h2>")
-        appendLine(statsTable(listOf("Demo XML" to xml, "Demo Hikage" to hikage)))
-        appendLine("<h2>Ratios</h2>")
-        appendLine(ratioTable(listOf(Triple("Demo Hikage / Demo XML", hikage.averageMs / xml.averageMs, hikage.medianMs / xml.medianMs))))
-    }
-
-    private fun TextInputLayoutBenchmarkReport.toHtmlBody() = buildString {
-        appendLine(
-            summaryPanel(
-                "Views" to "$viewCount",
-                "Warmup" to "$warmupIterations",
-                "Iterations" to "$measuredIterations",
-                "Rounds" to "${rounds.size}"
-            )
-        )
-        appendLine("<h2>Timing</h2>")
-        appendLine(
-            statsTable(
-                rounds.flatMapIndexed { index, round ->
-                    listOf(
-                        "Round ${index + 1} direct" to round.direct,
-                        "Round ${index + 1} reflect" to round.reflect
-                    )
-                }
-            )
-        )
-        appendLine("<h2>Ratios</h2>")
-        appendLine(
-            ratioTable(
-                rounds.mapIndexed { index, round ->
-                    Triple("Round ${index + 1} reflect / direct", round.reflect.averageMs / round.direct.averageMs, round.reflect.medianMs / round.direct.medianMs)
-                }
-            )
-        )
-    }
-
-    private data class BenchmarkReport(
-        val viewCount: Int,
-        val warmupIterations: Int,
-        val measuredIterations: Int,
-        val xml: BenchmarkStats,
-        val hikage: BenchmarkStats,
-        val hikageWithAttrs: BenchmarkStats,
-        val hikageWithFullyAttrs: BenchmarkStats,
-        val hikageWithFullViewAttrs: BenchmarkStats
-    )
-
-    private data class BenchmarkStats(
-        val minMs: Double,
-        val medianMs: Double,
-        val p90Ms: Double,
-        val averageMs: Double,
-        val maxMs: Double
-    ) {
-
-        companion object {
-
-            fun from(costsNanos: LongArray): BenchmarkStats {
-                val sorted = costsNanos.sorted()
-
-                return BenchmarkStats(
-                    minMs = toMillis(sorted.first()),
-                    medianMs = toMillis(sorted[sorted.size / 2]),
-                    p90Ms = toMillis(sorted[(sorted.lastIndex * 0.9f).toInt()]),
-                    averageMs = costsNanos.average() / NANOS_PER_MILLI,
-                    maxMs = toMillis(sorted.last())
-                )
-            }
-        }
-    }
-
-    private data class DemoBenchmarkReport(
-        val viewCount: Int,
-        val warmupIterations: Int,
-        val measuredIterations: Int,
-        val xml: BenchmarkStats,
-        val hikage: BenchmarkStats
-    )
-
-    private data class TextInputLayoutBenchmarkReport(
-        val viewCount: Int,
-        val warmupIterations: Int,
-        val measuredIterations: Int,
-        val rounds: List<TextInputLayoutBenchmarkRound>
-    )
-
-    private data class TextInputLayoutBenchmarkRound(
-        val direct: BenchmarkStats,
-        val reflect: BenchmarkStats
-    )
 }

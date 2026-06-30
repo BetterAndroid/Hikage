@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hikage 基准测试</string>
+    <string name="text_username">用户名</string>
+    <string name="text_password">密码</string>
+    <string name="text_gender_man">男</string>
+    <string name="text_gender_woman">女</string>
+    <string name="text_enable_notification">启用通知</string>
+    <string name="text_description">如你所见，所有布局都通过代码动态创建，你可以在任何地方对布局进行自定义。</string>
+    <string name="text_submit">提交</string>
+    <string name="text_welcome">欢迎使用 Hikage！</string>
+</resources>

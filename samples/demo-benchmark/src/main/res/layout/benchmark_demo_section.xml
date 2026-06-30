@@ -37,12 +37,12 @@
         android:layout_marginTop="16dp"
         app:singleSelection="true">
 
-        <com.highcapable.hikage.demo.ui.widget.CheckableChip
+        <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_gender_man" />
 
-        <com.highcapable.hikage.demo.ui.widget.CheckableChip
+        <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_gender_woman" />
