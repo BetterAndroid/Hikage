@@ -60,21 +60,23 @@ implementation("com.highcapable.hikage:hikage-runtime-attribute:<version>")
 
 以下是通过 Hikage 测试的系统版本列表和其对应的设备信息，以供参考。
 
-| Android 版本 / API 版本 | 可用性 |      测试设备       |
-| :---------------------: | :----: | :-----------------: |
-|       5.0.2 (21)        |   ✅    |    Redmi Note 2     |
-|        6.0 (23)         |   ✅    |      OPPO A53       |
-|        7.0 (24)         |   ✅    |    Xiaomi Mi-4c     |
-|       7.1.2 (25)        |   ✅    |  Samsung Galaxy S4  |
-|       8.0.0 (26)        |   ✅    |      Huawei P9      |
-|         9 (28)          |   ✅    |   Huawei P10 Plus   |
-|         10 (29)         |   ✅    |     Hisense A9      |
-|         12 (31)         |   ✅    |    Huawei nova 8    |
-|         13 (33)         |   ✅    |    Xiaomi MIX 2S    |
-|         14 (34)         |   ✅    |   ARM64 Emulator    |
-|         15 (35)         |   ✅    | Redmi Note 12 Turbo |
-|         16 (36)         |   ✅    |   Xiaomi 15 Ultra   |
-|         17 (37)         |   ✅    |   ARM64 Emulator    |
+| Android 版本 / API 版本 | 可用性 |          测试设备          |
+| :---------------------: | :----: | :------------------------: |
+|       5.0.2 (21)        |   ✅    |        Redmi Note 2        |
+|        6.0 (23)         |   ✅    |          OPPO A53          |
+|        7.0 (24)         |   ✅    |        Xiaomi Mi-4c        |
+|       7.1.2 (25)        |   ✅    |     Samsung Galaxy S4      |
+|       8.0.0 (26)        |   ✅    | Xiaomi Mi-5s<br/>Huawei P9 |
+|       8.1.0 (27)        |   ✅    |           SC801A           |
+|         9 (28)          |   ✅    |      Huawei P10 Plus       |
+|         10 (29)         |   ✅    |         Hisense A9         |
+|         11 (30)         |   ✅    |          OPPO A9           |
+|         12 (31)         |   ✅    |       Huawei nova 8        |
+|         13 (33)         |   ✅    |       Xiaomi MIX 2S        |
+|         14 (34)         |   ✅    |       ARM64 Emulator       |
+|         15 (35)         |   ✅    |    Redmi Note 12 Turbo     |
+|         16 (36)         |   ✅    |      Xiaomi 15 Ultra       |
+|         17 (37)         |   ✅    |       ARM64 Emulator       |
 
 ### 在 Hikage 中使用
 
