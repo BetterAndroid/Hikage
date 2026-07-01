@@ -157,7 +157,6 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
         logger.lifecycle("Running AndroidX Benchmark with a shell workaround to avoid rooted shell detection hangs.")
         ensureMiuiBackgroundActivityStartAllowed(testPackage)
 
-        val commandPrefix = $$"PATH=$$SHELL_WORKAROUND_DIRECTORY:$PATH "
         val instrumentationArguments = listOf(
             "am",
             "instrument",
@@ -177,10 +176,12 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
             remoteDirectory,
             "$testPackage/${instrumentationRunner.get()}"
         )
-        val instrumentationResult = runAdb("shell", commandPrefix + instrumentationArguments.toShellCommand())
 
-        if (!instrumentationResult.output.contains("OK ("))
-            error("AndroidX Benchmark instrumentation did not finish successfully.\n${instrumentationResult.output}")
+        val instrumentationResult = runAdbWithShellWorkaround(instrumentationArguments)
+        if (!instrumentationResult.output.contains("OK (")) error(
+            "AndroidX Benchmark instrumentation did not finish successfully. " +
+                "Exit code: ${instrumentationResult.exitCode}.\n${instrumentationResult.output}"
+        )
 
         runAdb("pull", remoteDirectory, localDirectory.absolutePath)
 
@@ -204,6 +205,12 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
                 "chmod 755 $SHELL_WORKAROUND_DIRECTORY/su"
         )
     }
+
+    private fun runAdbWithShellWorkaround(arguments: List<String>) =
+        runAdb("shell", shellCommandWithWorkaround(arguments), failOnError = false)
+
+    private fun shellCommandWithWorkaround(arguments: List<String>) =
+        $$"PATH=$$SHELL_WORKAROUND_DIRECTORY:$PATH exec " + arguments.toShellCommand()
 
     private fun ensureMiuiBackgroundActivityStartAllowed(packageName: String) {
         if (!isMiuiDevice()) return
