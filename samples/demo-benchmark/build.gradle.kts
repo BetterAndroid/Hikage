@@ -52,6 +52,7 @@ dependencies {
 }
 
 val viewTreeBenchmarkOutputDirectory = layout.buildDirectory.dir("outputs/hikage_benchmark/releaseAndroidTest")
+val viewTreeBenchmarkCompletionMarker = viewTreeBenchmarkOutputDirectory.map { it.file("completed.marker") }
 val runViewTreeBenchmark = tasks.register<RunViewTreeBenchmarkTask>("runViewTreeBenchmark") {
     group = "verification"
     description = "Runs view-tree benchmarks with a root-safe AndroidX Benchmark instrumentation command."
@@ -69,6 +70,7 @@ val runViewTreeBenchmark = tasks.register<RunViewTreeBenchmarkTask>("runViewTree
 
     deviceOutputDirectory.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.deviceOutputDirectory)
     localOutputDirectory.set(viewTreeBenchmarkOutputDirectory)
+    completionMarkerFile.set(viewTreeBenchmarkCompletionMarker)
 
     suppressActivityMissing.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.suppressActivityMissing)
 }
@@ -78,6 +80,7 @@ val generateViewTreeBenchmarkReport = tasks.register<GenerateViewTreeBenchmarkRe
     description = "Generates a single Hikage view-tree benchmark HTML report from AndroidX Benchmark JSON outputs."
 
     benchmarkOutputDirectory.set(viewTreeBenchmarkOutputDirectory)
+    completionMarkerFile.set(viewTreeBenchmarkCompletionMarker)
     reportFile.set(layout.buildDirectory.file(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.reportFile))
     openReport.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.openReport)
     mustRunAfter(runViewTreeBenchmark)
@@ -99,6 +102,8 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
 
         const val SHELL_WORKAROUND_DIRECTORY = "/data/local/tmp/hikage-benchmark-bin"
         const val MIUI_BACKGROUND_ACTIVITY_OP = "10021"
+        const val WRITE_EXTERNAL_STORAGE_OP = "WRITE_EXTERNAL_STORAGE"
+        const val READ_EXTERNAL_STORAGE_OP = "READ_EXTERNAL_STORAGE"
         const val ROOT_COMMAND_TIMEOUT_MILLIS = 10_000L
         const val MANUAL_PERMISSION_WAIT_MILLIS = 15_000L
         const val MANUAL_PERMISSION_CHECK_INTERVAL_MILLIS = 1_000L
@@ -131,6 +136,9 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
     @get:OutputDirectory
     abstract val localOutputDirectory: DirectoryProperty
 
+    @get:OutputFile
+    abstract val completionMarkerFile: RegularFileProperty
+
     init {
         outputs.upToDateWhen { false }
     }
@@ -138,6 +146,7 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
     @TaskAction
     fun run() {
         val localDirectory = localOutputDirectory.asFile.get()
+        val completionMarker = completionMarkerFile.asFile.get()
         val remoteDirectory = deviceOutputDirectory.get()
         val testPackage = testPackageName.get()
         val effectiveSuppressErrors = buildList {
@@ -147,6 +156,7 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
 
         localDirectory.deleteRecursively()
         localDirectory.mkdirs()
+        completionMarker.delete()
 
         runAdb("shell", "am", "force-stop", targetPackageName.get(), failOnError = false)
         runAdb("shell", "am", "force-stop", testPackage, failOnError = false)
@@ -156,6 +166,7 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
         installShellWorkaround()
         logger.lifecycle("Running AndroidX Benchmark with a shell workaround to avoid rooted shell detection hangs.")
         ensureMiuiBackgroundActivityStartAllowed(testPackage)
+        ensureExternalStoragePermissionAllowed(testPackage)
 
         val instrumentationArguments = listOf(
             "am",
@@ -187,6 +198,8 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
 
         if (localDirectory.walkTopDown().none { it.isFile && it.name.endsWith("benchmarkData.json") })
             error("No AndroidX Benchmark JSON files were pulled from $remoteDirectory.")
+
+        completionMarker.writeText("completed")
     }
 
     private fun installShellWorkaround() {
@@ -316,6 +329,63 @@ abstract class RunViewTreeBenchmarkTask : DefaultTask() {
         )
     }
 
+    private fun ensureExternalStoragePermissionAllowed(packageName: String) {
+        logger.lifecycle("Pre-granting legacy external storage access for AndroidX Benchmark on $packageName.")
+        if (isRootShellAvailable()) {
+            val rootResults = setExternalStoragePermissionAllowed(packageName) { command ->
+                runAdb(
+                    "shell",
+                    "su",
+                    "-c",
+                    command.toShellCommand(),
+                    timeoutMillis = ROOT_COMMAND_TIMEOUT_MILLIS,
+                    failOnError = false
+                )
+            }
+            if (rootResults.all { it.exitCode == 0 }) return
+        }
+
+        val shellResults = setExternalStoragePermissionAllowed(packageName) { command ->
+            runAdb("shell", *command.toTypedArray(), failOnError = false, logOutput = false)
+        }
+        if (shellResults.all { it.exitCode == 0 }) return
+
+        logger.warn(
+            "Unable to pre-grant legacy external storage access for AndroidX Benchmark. " +
+                "The benchmark will continue, but AndroidX Benchmark may fail before running tests on API 30+ devices."
+        )
+    }
+
+    private fun isRootShellAvailable() =
+        runAdb(
+            "shell",
+            "su",
+            "-c",
+            "id",
+            timeoutMillis = ROOT_COMMAND_TIMEOUT_MILLIS,
+            failOnError = false,
+            logOutput = false
+        ).output.contains("uid=0")
+
+    private fun setExternalStoragePermissionAllowed(
+        packageName: String,
+        executor: (List<String>) -> CommandResult
+    ): List<CommandResult> {
+        val appOpsResults = listOf(WRITE_EXTERNAL_STORAGE_OP, READ_EXTERNAL_STORAGE_OP).map { operationName ->
+            executor(listOf("cmd", "appops", "set", packageName, operationName, "allow"))
+        }
+        val permissionResults = listOf(
+            "android.permission.$WRITE_EXTERNAL_STORAGE_OP",
+            "android.permission.$READ_EXTERNAL_STORAGE_OP"
+        ).map { permissionName ->
+            // AndroidX Benchmark 1.4.1 still requests this legacy permission before each test.
+            // On API 30+ it can only be force-granted from a privileged shell/root path.
+            executor(listOf("pm", "grant", packageName, permissionName))
+        }
+
+        return appOpsResults + permissionResults
+    }
+
     private fun runAdb(
         vararg arguments: String,
         prefixArguments: Array<String> = emptyArray(),
@@ -376,6 +446,9 @@ abstract class GenerateViewTreeBenchmarkReportTask : DefaultTask() {
     @get:OutputFile
     abstract val reportFile: RegularFileProperty
 
+    @get:Internal
+    abstract val completionMarkerFile: RegularFileProperty
+
     @get:Input
     abstract val openReport: Property<Boolean>
 
@@ -388,6 +461,9 @@ abstract class GenerateViewTreeBenchmarkReportTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
+        val completionMarker = completionMarkerFile.asFile.get()
+        if (!completionMarker.isFile) error("View-tree benchmark did not complete in this build. Report generation has been skipped.")
+
         val outputDirectory = benchmarkOutputDirectory.asFile.get()
         val benchmarkDataFiles = outputDirectory
             .takeIf(File::exists)
