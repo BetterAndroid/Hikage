@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2026/6/2.
  */
-@file:Suppress("unused")
+@file:Suppress("unused", "NOTHING_TO_INLINE")
 @file:JvmName("HikageAttributeUtils")
 
 package com.highcapable.hikage.core.attribute
@@ -102,12 +102,34 @@ fun Hikage.Attribute.set(name: String, value: Int) = resolveContext().set(name, 
 fun Hikage.Attribute.set(name: String, value: Boolean) = resolveContext().set(name, value)
 
 /**
+ * Convert a [Collection]<[AttributeItem]> to [HikageAttribute].
+ * @see HikageAttribute.build
+ * @receiver the resolved attribute item.
+ * @return [HikageAttribute]
+ */
+fun Collection<AttributeItem>.toHikageAttribute() = HikageAttribute {
+    forEach { item ->
+        val scope = namespace(item.namespace)
+        when (val value = item.value) {
+            is AttributeItem.Value.Str -> scope.set(item.name, value.value)
+            is AttributeItem.Value.Raw -> scope.set(item.name, value.value)
+            is AttributeItem.Value.Bool -> scope.set(item.name, value.value)
+        }
+    }
+}
+
+/**
  * Build the attributes declared by this [HikageAttribute].
  * @see HikageAttribute.isNotEmpty
  * @receiver the attribute body.
  * @return [List]<[AttributeItem]>
+ * @throws AttributeResolvingException if the `hikage-runtime-attribute` dependency is not available.
  */
-internal fun HikageAttribute.build() = AttributeContextImpl().apply(this).build()
+fun HikageAttribute.build() = runCatching { buildUnchecked() }.getOrElse {
+    if (it is ClassNotFoundException || it is NoClassDefFoundError) throw AttributeResolvingException(
+        "Failed to build attributes. Please make sure you have added the `hikage-runtime-attribute` dependency for attribute resolving."
+    ) else throw it
+}
 
 /**
  * Check if the attributes declared by this [HikageAttribute] are not empty.
@@ -117,7 +139,24 @@ internal fun HikageAttribute.build() = AttributeContextImpl().apply(this).build(
  * @receiver the attribute body.
  * @return [Boolean]
  */
-internal fun HikageAttribute.isNotEmpty() = runCatching { build().isNotEmpty() }.getOrNull() ?: true
+fun HikageAttribute.isNotEmpty() = runCatching { buildUnchecked().isNotEmpty() }.getOrNull() ?: true
+
+/**
+ * Check if the attributes declared by this [HikageAttribute] are empty.
+ *
+ * If it fails, it proves that there may not have `hikage-runtime-attribute` dependency, so always returns `false`.
+ * @see HikageAttribute.build
+ * @receiver the attribute body.
+ * @return [Boolean]
+ */
+inline fun HikageAttribute.isEmpty() = !isNotEmpty()
+
+/**
+ * Build the attributes declared by this [HikageAttribute] without checking.
+ * @receiver the attribute body.
+ * @return [List]<[AttributeItem]>
+ */
+private fun HikageAttribute.buildUnchecked() = AttributeContextImpl().apply(this).build()
 
 /**
  * Check if the `hikage-runtime-attribute` dependency is available.
