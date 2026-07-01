@@ -605,6 +605,34 @@ val myAttrs = HikageAttribute {
 // Then set to the component.
 TextView(attrs = myAttrs)
 ```
+
+The created `HikageAttribute` supports using the `isNotEmpty` or `isEmpty` functions to check if it is empty.
+
+Hikage supports converting between `HikageAttribute` and `AttributeItem`. You can use the `HikageAttribute.build()` function to construct a `List<AttributeItem>`.
+
+> The following example
+
+```kotlin
+val myAttrs = HikageAttribute {
+    android {
+        set("text", "Hello, World!")
+    }
+}
+// Convert HikageAttribute to List<AttributeItem>
+val items = myAttrs.build()
+```
+
+You can also create a `HikageAttribute` object from a `List<AttributeItem>`.
+
+> The following example
+
+```kotlin
+// Suppose this is your List<AttributeItem>
+val items: List<AttributeItem>
+// Convert List<AttributeItem> to HikageAttribute
+val myAttrs = items.toHikageAttribute()
+```
+
 ::: warning
 
 When you set an attribute value, Hikage will dynamically parse and set it according to the type of the attribute.

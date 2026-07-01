@@ -582,6 +582,34 @@ val myAttrs = HikageAttribute {
 // 然后设置到组件上
 TextView(attrs = myAttrs)
 ```
+
+创建的 `HikageAttribute` 支持使用 `isNotEmpty` 或 `isEmpty` 方法判断是否为空。
+
+Hikage 支持 `HikageAttribute` 与 `AttributeItem` 的互相转换，你可以使用 `HikageAttribute.build()` 方法构造 `List<AttributeItem>`。
+
+> 示例如下
+
+```kotlin
+val myAttrs = HikageAttribute {
+    android {
+        set("text", "Hello, World!")
+    }
+}
+// 将 HikageAttribute 转换为 List<AttributeItem>
+val items = myAttrs.build()
+```
+
+同时，你也可以通过一个 `List<AttributeItem>` 来创建一个 `HikageAttribute` 对象。
+
+> 示例如下
+
+```kotlin
+// 假设这就是你的 List<AttributeItem>
+val items: List<AttributeItem>
+// 将 List<AttributeItem> 转换为 HikageAttribute
+val myAttrs = items.toHikageAttribute()
+```
+
 ::: warning
 
 当你设置一个属性值时，Hikage 会根据属性的类型进行动态解析和设置，如果你提供的属性值类型与属性的实际类型不匹配，可能会导致运行时抛出异常或者静默失败。
