@@ -64,9 +64,9 @@ val runViewTreeBenchmark = tasks.register<RunViewTreeBenchmarkTask>("runViewTree
 
     instrumentationRunner.set(android.defaultConfig.testInstrumentationRunner)
 
-    // Enable AndroidX Benchmark output and suppress errors for emulator and low battery conditions.
+    // Enable AndroidX Benchmark output and suppress errors for emulator conditions.
     // Note: Benchmark on a real device is recommended for more accurate results.
-    suppressErrors.set("EMULATOR,LOW-BATTERY")
+    suppressErrors.set("EMULATOR")
 
     deviceOutputDirectory.set(gropify.project.samples.demo.benchmark.benchmarkViewTreeReport.deviceOutputDirectory)
     localOutputDirectory.set(viewTreeBenchmarkOutputDirectory)
