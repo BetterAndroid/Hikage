@@ -161,7 +161,7 @@ val tv = TextView(context, attrs)
 
 `AttributeItem` is a data class used to create an `AttributeSet`. You can construct any XML attribute set through it.
 
-`AttributeItem.Value` provides three types involved in the construction process: `Str`, `Raw`, and `Bool`.
+`AttributeItem.Value` provides four types involved in the construction process: `Str`, `Raw`, `Bool`, and `Real`.
 
 > The following example
 
@@ -186,6 +186,11 @@ val items = listOf(
         name = "android:enabled", 
         // Only supports true or false.
         value = AttributeItem.Value.Bool(true)
+    ),
+    AttributeItem.from(
+        name = "android:alpha",
+        // Corresponds to XML's float format, such as 1.0 or 0.5.
+        value = AttributeItem.Value.Real(0.5f)
     ),
     AttributeItem.from(
         name = "android:layout_weight", 

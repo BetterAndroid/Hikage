@@ -158,7 +158,7 @@ val tv = TextView(context, attrs)
 
 `AttributeItem` 是用于创建 `AttributeSet` 的数据类，你可以通过它来构造任意的 XML 属性集合。
 
-`AttributeItem.Value` 提供了在构造过程中涉及到的三种类型：`Str`、`Raw` 和 `Bool`。
+`AttributeItem.Value` 提供了在构造过程中涉及到的四种类型：`Str`、`Raw`、`Bool` 和 `Real`。
 
 > 示例如下
 
@@ -183,6 +183,11 @@ val items = listOf(
         name = "android:enabled", 
         // 只支持 true 或 false
         value = AttributeItem.Value.Bool(true)
+    ),
+    AttributeItem.from(
+        name = "android:alpha",
+        // 对应 XML 中的 float 格式，例如 1.0 或 0.5
+        value = AttributeItem.Value.Real(0.5f)
     ),
     AttributeItem.from(
         name = "android:layout_weight", 
