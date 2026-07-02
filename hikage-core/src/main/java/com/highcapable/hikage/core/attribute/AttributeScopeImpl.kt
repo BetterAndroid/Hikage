@@ -32,8 +32,8 @@ internal class AttributeScopeImpl(
     private val namespace: String,
     private val context: AttributeContextImpl
 ) : AttributeScope {
-
     override fun set(name: String, value: String) = context.set(namespace, name, value)
     override fun set(name: String, value: Int) = context.set(namespace, name, value)
     override fun set(name: String, value: Boolean) = context.set(namespace, name, value)
+    override fun set(name: String, value: Float) = context.set(namespace, name, value)
 }

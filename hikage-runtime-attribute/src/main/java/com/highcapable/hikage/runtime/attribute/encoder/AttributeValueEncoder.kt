@@ -87,6 +87,7 @@ internal object AttributeValueEncoder {
         is AttributeItem.Value.Raw -> encodeRawInt(context, attr, value.value)
         is AttributeItem.Value.Bool ->
             EncodedAttributeValue(TypedValue.TYPE_INT_BOOLEAN, if (value.value) -1 else 0, -1)
+        is AttributeItem.Value.Real -> EncodedAttributeValue(TypedValue.TYPE_FLOAT, floatToRawIntBits(value.value), -1)
         is AttributeItem.Value.Str -> encodeString(context, attr, value.value, resolver, intern)
     }
 

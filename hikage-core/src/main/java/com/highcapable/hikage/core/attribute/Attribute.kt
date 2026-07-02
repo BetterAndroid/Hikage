@@ -102,6 +102,14 @@ fun Hikage.Attribute.set(name: String, value: Int) = resolveContext().set(name, 
 fun Hikage.Attribute.set(name: String, value: Boolean) = resolveContext().set(name, value)
 
 /**
+ * Set an attribute with a real number value.
+ * @receiver the attribute.
+ * @param name the qualified attribute name, e.g. `android:layout_weight`.
+ * @param value the real number value.
+ */
+fun Hikage.Attribute.set(name: String, value: Float) = resolveContext().set(name, value)
+
+/**
  * Convert a [Collection]<[AttributeItem]> to [HikageAttribute].
  * @see HikageAttribute.build
  * @receiver the resolved attribute item.
@@ -114,6 +122,7 @@ fun Collection<AttributeItem>.toHikageAttribute() = HikageAttribute {
             is AttributeItem.Value.Str -> scope.set(item.name, value.value)
             is AttributeItem.Value.Raw -> scope.set(item.name, value.value)
             is AttributeItem.Value.Bool -> scope.set(item.name, value.value)
+            is AttributeItem.Value.Real -> scope.set(item.name, value.value)
         }
     }
 }

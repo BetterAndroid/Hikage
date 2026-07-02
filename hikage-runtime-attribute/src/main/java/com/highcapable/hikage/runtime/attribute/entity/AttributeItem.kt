@@ -86,5 +86,10 @@ data class AttributeItem(
          * A boolean value.
          */
         data class Bool(val value: Boolean) : Value
+
+        /**
+         * A real number value.
+         */
+        data class Real(val value: Float) : Value
     }
 }

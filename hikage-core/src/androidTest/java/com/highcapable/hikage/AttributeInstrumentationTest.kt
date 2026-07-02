@@ -189,7 +189,7 @@ class AttributeInstrumentationTest {
                         set("hikageProbeString", Test_R.string.hikage_probe_text)
                         set("hikageProbeReference", "@array/hikage_probe_strings")
                         set("hikageProbeFraction", "50%")
-                        set("hikageProbeFloat", "1.5")
+                        set("hikageProbeFloat", 1.5f)
                     }
                 }
             )
@@ -268,7 +268,7 @@ class AttributeInstrumentationTest {
                         android {
                             set("layout_width", "match_parent")
                             set("layout_height", "0dp")
-                            set("layout_weight", "1")
+                            set("layout_weight", 1f)
                             set("layout_gravity", "center_horizontal")
                         }
                     }

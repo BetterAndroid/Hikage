@@ -46,6 +46,10 @@ internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
         attrs += AttributeItem.from(name, AttributeItem.Value.Bool(value))
     }
 
+    override fun set(name: String, value: Float) {
+        attrs += AttributeItem.from(name, AttributeItem.Value.Real(value))
+    }
+
     /** Set an attribute with a string value. */
     fun set(namespace: String, name: String, value: String) {
         attrs += AttributeItem.from(name, AttributeItem.Value.Str(value), namespace)
@@ -59,6 +63,11 @@ internal class AttributeContextImpl : Hikage.Attribute, AttributeContext {
     /** Set an attribute with a boolean value. */
     fun set(namespace: String, name: String, value: Boolean) {
         attrs += AttributeItem.from(name, AttributeItem.Value.Bool(value), namespace)
+    }
+
+    /** Set an attribute with a real number value. */
+    fun set(namespace: String, name: String, value: Float) {
+        attrs += AttributeItem.from(name, AttributeItem.Value.Real(value), namespace)
     }
 
     /**

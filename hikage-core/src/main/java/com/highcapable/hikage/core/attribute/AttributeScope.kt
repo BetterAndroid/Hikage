@@ -56,4 +56,11 @@ interface AttributeScope {
      * @param value the boolean value.
      */
     fun set(name: String, value: Boolean)
+
+    /**
+     * Set an attribute with a real number value.
+     * @param name the attribute name (without namespace prefix).
+     * @param value the real number value.
+     */
+    fun set(name: String, value: Float)
 }

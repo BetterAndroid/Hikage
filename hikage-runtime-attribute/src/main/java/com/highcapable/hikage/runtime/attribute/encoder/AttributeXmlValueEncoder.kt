@@ -41,6 +41,7 @@ internal object AttributeXmlValueEncoder {
     fun encode(context: Context, attr: AttributeItem) = when (val value = attr.value) {
         is AttributeItem.Value.Str -> value.value
         is AttributeItem.Value.Bool -> value.value.toString()
+        is AttributeItem.Value.Real -> value.value.toString()
         is AttributeItem.Value.Raw -> encodeRawInt(context, attr, value.value)
     }
 
