@@ -104,15 +104,43 @@ hikage {
         enabled = true
         version = "<version>"
         viewDeclarationFiles = true
+        useEmbeddedKsp = true
     }
 }
 ```
 
-| Parameter Name         | Description                                                                                                |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `enabled`              | Whether to enable Hikage compiler wiring, enabled by default                                               |
-| `version`              | The [hikage-compiler](../library/hikage-compiler.md)'s version, aligned with the plugin version by default |
-| `viewDeclarationFiles` | Whether to generate code through `View` declaration files, enabled by default                              |
+| Parameter Name         | Description                                                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `enabled`              | Whether to enable Hikage compiler wiring, enabled by default                                                           |
+| `version`              | The [hikage-compiler](../library/hikage-compiler.md)'s version, aligned with the plugin version by default             |
+| `viewDeclarationFiles` | Whether to generate code through `View` declaration files, enabled by default                                          |
+| `useEmbeddedKsp`       | Whether to apply the embedded KSP plugin automatically when the current project does not apply KSP, enabled by default |
+
+### Advanced Usage
+
+If your project needs to control Kotlin and KSP versions by itself, declare the KSP plugin in the root project or current module, and disable the embedded KSP fallback.
+
+> The following example
+
+```kotlin
+plugins {
+    id("com.google.devtools.ksp") version "<ksp-version>" apply false
+}
+```
+
+```kotlin
+plugins {
+    // ...
+    id("com.google.devtools.ksp")
+    id("com.highcapable.hikage")
+}
+
+hikage {
+    compiler {
+        useEmbeddedKsp = false
+    }
+}
+```
 
 ::: warning
 

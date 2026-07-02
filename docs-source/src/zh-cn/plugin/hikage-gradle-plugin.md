@@ -102,6 +102,7 @@ hikage {
         enabled = true
         version = "<version>"
         viewDeclarationFiles = true
+        useEmbeddedKsp = true
     }
 }
 ```
@@ -111,6 +112,33 @@ hikage {
 | `enabled`              | 是否启用 Hikage 编译器装配，默认启用                                          |
 | `version`              | [hikage-compiler](../library/hikage-compiler.md) 版本，默认与插件版本保持一致 |
 | `viewDeclarationFiles` | 是否通过 `View` 声明文件生成代码，默认启用                                    |
+| `useEmbeddedKsp`       | 当前项目没有应用 KSP 插件时，是否使用插件内置的 KSP 插件自动装配，默认启用    |
+
+### 高级用法
+
+如果你的项目需要自行控制 Kotlin 与 KSP 的版本，可以在根项目或当前模块声明 KSP 插件，并关闭内置 KSP 自动装配。
+
+> 示例如下
+
+```kotlin
+plugins {
+    id("com.google.devtools.ksp") version "<ksp-version>" apply false
+}
+```
+
+```kotlin
+plugins {
+    // ...
+    id("com.google.devtools.ksp")
+    id("com.highcapable.hikage")
+}
+
+hikage {
+    compiler {
+        useEmbeddedKsp = false
+    }
+}
+```
 
 ::: warning
 
