@@ -139,6 +139,17 @@ val resolver = AttributeSetResolver.from(context)
 val attrs = resolver.newParser(items, params)
 ```
 
+You can also change the global default parameters of `AttributeSetResolver`,
+which will affect the default parsing behavior of all `AttributeSetResolver` instances in the entire project.
+
+> The following example
+
+```kotlin
+AttributeSetResolver.defaultResolverParams = AttributeResolverParams(
+    // ...
+)
+```
+
 `AttributeSetResolver` implements the `Closeable` interface. You can call the `close()` method to release the resources it occupies when you don't need to use it, or use `use` to automatically manage resource release.
 
 > The following example

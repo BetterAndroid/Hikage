@@ -136,6 +136,16 @@ val resolver = AttributeSetResolver.from(context)
 val attrs = resolver.newParser(items, params)
 ```
 
+你也可以更改 `AttributeSetResolver` 的全局默认参数，这将对整个项目中所有 `AttributeSetResolver` 的默认解析行为生效。
+
+> 示例如下
+
+```kotlin
+AttributeSetResolver.defaultResolverParams = AttributeResolverParams(
+    // ...
+)
+```
+
 `AttributeSetResolver` 实现了 `Closeable` 接口，你可以在不需要使用它时调用 `close()` 方法来释放其占用的资源，或使用 `use` 来自动管理资源的释放。
 
 > 示例如下
