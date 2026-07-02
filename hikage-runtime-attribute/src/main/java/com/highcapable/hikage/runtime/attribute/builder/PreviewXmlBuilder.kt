@@ -24,6 +24,7 @@ package com.highcapable.hikage.runtime.attribute.builder
 import android.content.Context
 import android.util.Xml
 import com.highcapable.hikage.runtime.attribute.encoder.AttributeXmlValueEncoder
+import com.highcapable.hikage.runtime.attribute.entity.AttributeResolverParams
 import com.highcapable.hikage.runtime.attribute.entity.ResolvedAttribute
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
@@ -44,9 +45,14 @@ internal object PreviewXmlBuilder : BaseXmlBuilder() {
      * Build a text XML parser from the given [attrs].
      * @param context the context.
      * @param attrs the resolved attributes.
+     * @param params the parameters.
      * @return [XmlPullParser]
      */
-    fun build(context: Context, attrs: List<ResolvedAttribute>): XmlPullParser {
+    fun build(
+        context: Context,
+        attrs: List<ResolvedAttribute>,
+        params: AttributeResolverParams
+    ): XmlPullParser {
         val writer = StringWriter()
         val serializer = Xml.newSerializer()
         serializer.setOutput(writer)
@@ -59,7 +65,7 @@ internal object PreviewXmlBuilder : BaseXmlBuilder() {
             serializer.attribute(
                 attr.namespaceUri,
                 attr.item.name,
-                AttributeXmlValueEncoder.encode(context, attr.item)
+                AttributeXmlValueEncoder.encode(context, attr.item, params)
             )
         }
         serializer.endTag(null, ELEMENT_NAME)

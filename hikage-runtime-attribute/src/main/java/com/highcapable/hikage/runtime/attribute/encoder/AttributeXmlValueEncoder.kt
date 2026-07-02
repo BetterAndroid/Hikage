@@ -24,6 +24,7 @@ package com.highcapable.hikage.runtime.attribute.encoder
 import android.content.Context
 import android.util.TypedValue
 import com.highcapable.hikage.runtime.attribute.entity.AttributeItem
+import com.highcapable.hikage.runtime.attribute.entity.AttributeResolverParams
 import com.highcapable.hikage.runtime.attribute.resolver.BuiltInEnumFlagResolver
 import java.util.Locale
 
@@ -36,19 +37,29 @@ internal object AttributeXmlValueEncoder {
      * Encode the value of the given [attr].
      * @param context the context.
      * @param attr the attribute.
+     * @param params the parameters.
      * @return the XML text value.
      */
-    fun encode(context: Context, attr: AttributeItem) = when (val value = attr.value) {
+    fun encode(
+        context: Context,
+        attr: AttributeItem,
+        params: AttributeResolverParams
+    ) = when (val value = attr.value) {
         is AttributeItem.Value.Str -> value.value
         is AttributeItem.Value.Bool -> value.value.toString()
         is AttributeItem.Value.Real -> value.value.toString()
-        is AttributeItem.Value.Raw -> encodeRawInt(context, attr, value.value)
+        is AttributeItem.Value.Raw -> encodeRawInt(context, attr, value.value, params)
     }
 
-    private fun encodeRawInt(context: Context, attr: AttributeItem, value: Int): String {
-        val encoded = AttributeValueEncoder.encode(context, attr, BuiltInEnumFlagResolver) { -1 }
+    private fun encodeRawInt(
+        context: Context,
+        attr: AttributeItem,
+        value: Int,
+        params: AttributeResolverParams
+    ): String {
+        val encoded = AttributeValueEncoder.encode(context, attr, BuiltInEnumFlagResolver, params) { -1 }
         return when (encoded.dataType) {
-            TypedValue.TYPE_REFERENCE -> resourceReferenceOf(context, value)
+            TypedValue.TYPE_REFERENCE -> resourceReferenceOf(context, value, params)
             TypedValue.TYPE_INT_COLOR_ARGB8,
             TypedValue.TYPE_INT_COLOR_RGB8,
             TypedValue.TYPE_INT_COLOR_ARGB4,
@@ -59,7 +70,7 @@ internal object AttributeXmlValueEncoder {
         }
     }
 
-    private fun resourceReferenceOf(context: Context, resId: Int) = runCatching {
+    private fun resourceReferenceOf(context: Context, resId: Int, params: AttributeResolverParams) = runCatching {
         val resources = context.resources
         val pkg = resources.getResourcePackageName(resId)
         val type = resources.getResourceTypeName(resId)
@@ -67,7 +78,7 @@ internal object AttributeXmlValueEncoder {
 
         when (pkg) {
             "android" -> "@android:$type/$name"
-            context.packageName -> "@$type/$name"
+            params.resourcePackageName(context) -> "@$type/$name"
             else -> "@$pkg:$type/$name"
         }
     }.getOrElse { resId.toString() }

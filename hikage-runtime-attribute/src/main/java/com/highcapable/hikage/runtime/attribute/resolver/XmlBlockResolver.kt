@@ -184,9 +184,9 @@ internal class XmlBlockResolver(private val context: Context) : XmlResourceParse
         params: AttributeResolverParams
     ) = if (attrs.isEmpty())
         if (AndroidVersion.isAtLeast(AndroidVersion.P)) 
-            getOrCreateSourceXmlBlock()?.block?.let { createParserOf(it, params.sourceResId) } ?: createEmptyParser()
-        else createEmptyParser()
-    else createParser(attrs)
+            getOrCreateSourceXmlBlock()?.block?.let { createParserOf(it, params.sourceResId) } ?: createEmptyParser(params)
+        else createEmptyParser(params)
+    else createParser(attrs, params)
 
     override fun close() {
         xmlBlockCache.values.forEach { closeXmlBlock(it) }
@@ -258,12 +258,13 @@ internal class XmlBlockResolver(private val context: Context) : XmlResourceParse
     /**
      * Create a new parser from a synthesized binary XML with [attrs].
      * @param attrs the resolved attribute item.
+     * @param params the parameters.
      * @return [XmlResourceParser]
      */
-    private fun createParser(attrs: List<AttributeItem>): XmlResourceParser {
-        if (attrs.isEmpty()) return createEmptyParser()
+    private fun createParser(attrs: List<AttributeItem>, params: AttributeResolverParams): XmlResourceParser {
+        if (attrs.isEmpty()) return createEmptyParser(params)
 
-        val block = getOrCreateXmlBlock(attrs) ?: error(
+        val block = getOrCreateXmlBlock(attrs, params) ?: error(
             "Failed to create XmlBlock from the synthesized XML on Android ${AndroidVersion.code}."
         )
         val parser = createParserOf(block) ?: error(
@@ -276,10 +277,11 @@ internal class XmlBlockResolver(private val context: Context) : XmlResourceParse
 
     /**
      * Create an empty parser from a synthesized binary XML.
+     * @param params the parameters.
      * @return [XmlResourceParser]
      */
-    private fun createEmptyParser(): XmlResourceParser {
-        val data = BinaryXmlBuilder.build(context, emptyList())
+    private fun createEmptyParser(params: AttributeResolverParams): XmlResourceParser {
+        val data = BinaryXmlBuilder.build(context, emptyList(), params)
         val parser = createParserFrom(data) ?: error(
             "Failed to create an empty parser from the synthesized XmlBlock on Android ${AndroidVersion.code}."
         )
@@ -308,13 +310,14 @@ internal class XmlBlockResolver(private val context: Context) : XmlResourceParse
      * `XmlResourceParser` instances are stateful and must be recreated, but the backing `XmlBlock`
      * can serve multiple fresh parsers for identical attributes.
      * @param attrs the injected attributes.
+     * @param params the parameters.
      * @return `XmlBlock` instance or null.
      */
-    private fun getOrCreateXmlBlock(attrs: List<AttributeItem>): Any? {
-        val cacheKey = CacheKey(context.packageName, attrs.toList())
+    private fun getOrCreateXmlBlock(attrs: List<AttributeItem>, params: AttributeResolverParams): Any? {
+        val cacheKey = CacheKey(context.packageName, params.resourcePackageName(context), attrs.toList())
         xmlBlockCache[cacheKey]?.let { return it }
 
-        val data = BinaryXmlBuilder.build(context, attrs)
+        val data = BinaryXmlBuilder.build(context, attrs, params)
         val block = xmlBlockByteArrayConstructor?.createQuietly(data) ?: return null
         val exists = xmlBlockCache.putIfAbsent(cacheKey, block)
         if (exists != null) {
@@ -375,6 +378,7 @@ internal class XmlBlockResolver(private val context: Context) : XmlResourceParse
      */
     private data class CacheKey(
         val packageName: String,
+        val resourcePackageName: String,
         val attrs: List<AttributeItem>
     )
 

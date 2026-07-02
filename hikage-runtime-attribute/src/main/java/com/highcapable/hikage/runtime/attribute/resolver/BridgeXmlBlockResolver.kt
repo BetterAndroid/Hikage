@@ -126,8 +126,9 @@ internal class BridgeXmlBlockResolver(private val context: Context) : XmlResourc
         val bridgeContext = context.findLayoutPreviewContext() ?: throw XmlParserException(
             "Failed to find $BRIDGE_CONTEXT_CLASS_NAME while creating layout preview attributes."
         )
-        val parser = PreviewXmlBuilder.build(context, AttributeResolver.resolve(context, attrs))
-        val bridgeParser = createBridgeParser(bridgeContext, context.packageName, parser)
+        val resourcePackageName = params.resourcePackageName(context)
+        val parser = PreviewXmlBuilder.build(context, AttributeResolver.resolve(context, attrs, params), params)
+        val bridgeParser = createBridgeParser(bridgeContext, resourcePackageName, parser)
         advanceToStartTag(bridgeParser)
 
         return bridgeParser

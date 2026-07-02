@@ -26,6 +26,7 @@ package com.highcapable.hikage.runtime.attribute.encoder
 import android.content.Context
 import android.util.TypedValue
 import com.highcapable.hikage.runtime.attribute.entity.AttributeItem
+import com.highcapable.hikage.runtime.attribute.entity.AttributeResolverParams
 import com.highcapable.hikage.runtime.attribute.entity.EncodedAttributeValue
 import com.highcapable.hikage.runtime.attribute.exception.XmlParserException
 import com.highcapable.hikage.runtime.attribute.resolver.AttributeBagResolver
@@ -67,13 +68,14 @@ internal object AttributeValueEncoder {
     private val resourceIdCache = ConcurrentHashMap<ResourceIdCacheKey, Int>()
 
     /** Cache of resource id existence checks. */
-    private val resourceExistsCache = ConcurrentHashMap<Int, Boolean>()
+    private val resourceExistsCache = ConcurrentHashMap<ResourceExistsCacheKey, Boolean>()
 
     /**
      * Encode the given [attr].
      * @param context the context (for resolving resource ids).
      * @param attr the attribute.
      * @param resolver the framework symbol resolver.
+     * @param params the parameters.
      * @param intern the string pool interning function (string -> pool index).
      * @return [EncodedAttributeValue]
      * @throws XmlParserException if the value cannot be encoded.
@@ -82,25 +84,31 @@ internal object AttributeValueEncoder {
         context: Context,
         attr: AttributeItem,
         resolver: EnumFlagResolver,
+        params: AttributeResolverParams,
         intern: (String) -> Int
     ) = when (val value = attr.value) {
-        is AttributeItem.Value.Raw -> encodeRawInt(context, attr, value.value)
+        is AttributeItem.Value.Raw -> encodeRawInt(context, attr, value.value, params)
         is AttributeItem.Value.Bool ->
             EncodedAttributeValue(TypedValue.TYPE_INT_BOOLEAN, if (value.value) -1 else 0, -1)
         is AttributeItem.Value.Real -> EncodedAttributeValue(TypedValue.TYPE_FLOAT, floatToRawIntBits(value.value), -1)
-        is AttributeItem.Value.Str -> encodeString(context, attr, value.value, resolver, intern)
+        is AttributeItem.Value.Str -> encodeString(context, attr, value.value, resolver, params, intern)
     }
 
-    private fun encodeRawInt(context: Context, attr: AttributeItem, value: Int): EncodedAttributeValue {
-        val format = AttributeBagResolver.formatOf(context, attr)
-        if (value.isResourceId(context) && format?.acceptsRawInt() != true)
+    private fun encodeRawInt(
+        context: Context,
+        attr: AttributeItem,
+        value: Int,
+        params: AttributeResolverParams
+    ): EncodedAttributeValue {
+        val format = AttributeBagResolver.formatOf(context, attr, params)
+        if (value.isResourceId(context, params) && format?.acceptsRawInt() != true)
             return EncodedAttributeValue(TypedValue.TYPE_REFERENCE, value, -1)
         if (format == null) return EncodedAttributeValue(TypedValue.TYPE_INT_DEC, value, -1)
 
         return when {
             format and (AttributeBagResolver.TYPE_ENUM or AttributeBagResolver.TYPE_FLAGS) != 0 ->
                 EncodedAttributeValue(TypedValue.TYPE_INT_DEC, value, -1)
-            format and AttributeBagResolver.TYPE_REFERENCE != 0 && value.isResourceId(context) ->
+            format and AttributeBagResolver.TYPE_REFERENCE != 0 && value.isResourceId(context, params) ->
                 EncodedAttributeValue(TypedValue.TYPE_REFERENCE, value, -1)
             format and AttributeBagResolver.TYPE_COLOR != 0 ->
                 EncodedAttributeValue(TypedValue.TYPE_INT_COLOR_ARGB8, value, -1)
@@ -125,13 +133,14 @@ internal object AttributeValueEncoder {
         attr: AttributeItem,
         raw: String,
         resolver: EnumFlagResolver,
+        params: AttributeResolverParams,
         intern: (String) -> Int
     ): EncodedAttributeValue {
         val value = raw.trim()
         return when {
-            value.startsWith("@") -> encodeReference(context, attr, value)
-            value.startsWith("?") -> encodeAttribute(context, attr, value)
-            else -> resolveEnumFlag(context, attr, value, resolver)?.let {
+            value.startsWith("@") -> encodeReference(context, attr, value, params)
+            value.startsWith("?") -> encodeAttribute(context, attr, value, params)
+            else -> resolveEnumFlag(context, attr, value, resolver, params)?.let {
                 EncodedAttributeValue(TypedValue.TYPE_INT_DEC, it, -1)
             } ?: when {
                 value.startsWith("#") -> encodeColor(attr, value)
@@ -155,34 +164,50 @@ internal object AttributeValueEncoder {
      * A raw integer literal is accepted for any enum/flag attribute (T0).
      * @return [Int] or null.
      */
-    private fun resolveEnumFlag(context: Context, attr: AttributeItem, value: String, resolver: EnumFlagResolver): Int? {
+    private fun resolveEnumFlag(
+        context: Context,
+        attr: AttributeItem,
+        value: String,
+        resolver: EnumFlagResolver,
+        params: AttributeResolverParams
+    ): Int? {
         // T1 only applies to framework attributes, otherwise custom attributes with the same name would
         // be incorrectly treated as Android framework symbols.
-        val isFramework = namespaceToPackage(context, attr.namespace) == "android"
+        val isFramework = namespaceToPackage(context, attr.namespace, params) == "android"
         val isT1 = isFramework && resolver.isEnumFlag(attr.name)
-        val isT2 = !isFramework && AttributeBagResolver.isEnumFlag(context, attr)
+        val isT2 = !isFramework && AttributeBagResolver.isEnumFlag(context, attr, params)
         if (!isT1 && !isT2) return null
 
         // Allow a raw integer for enum/flag attributes too (T0).
         value.parseIntOrNull()?.let { (data, _) -> return data }
-        return if (isT1) resolver.resolveOrNull(attr.name, value) else AttributeBagResolver.resolve(context, attr, value)
+        return if (isT1) resolver.resolveOrNull(attr.name, value) else AttributeBagResolver.resolve(context, attr, value, params)
     }
 
-    private fun encodeReference(context: Context, attr: AttributeItem, value: String): EncodedAttributeValue {
+    private fun encodeReference(
+        context: Context,
+        attr: AttributeItem,
+        value: String,
+        params: AttributeResolverParams
+    ): EncodedAttributeValue {
         // @null
         if (value == "@null") return EncodedAttributeValue(TypedValue.TYPE_REFERENCE, 0, -1)
 
         // @[+][pkg:]type/name
         val body = value.removePrefix("@").removePrefix("+")
-        val id = resolveResourceId(context, attr, body, defType = null)
+        val id = resolveResourceId(context, attr, body, defType = null, params)
 
         return EncodedAttributeValue(TypedValue.TYPE_REFERENCE, id, -1)
     }
 
-    private fun encodeAttribute(context: Context, attr: AttributeItem, value: String): EncodedAttributeValue {
+    private fun encodeAttribute(
+        context: Context,
+        attr: AttributeItem,
+        value: String,
+        params: AttributeResolverParams
+    ): EncodedAttributeValue {
         // ?[pkg:][attr/]name
         val body = value.removePrefix("?")
-        val id = resolveResourceId(context, attr, body, defType = "attr")
+        val id = resolveResourceId(context, attr, body, defType = "attr", params)
 
         return EncodedAttributeValue(TypedValue.TYPE_ATTRIBUTE, id, -1)
     }
@@ -192,7 +217,13 @@ internal object AttributeValueEncoder {
      * @param defType the default resource type if not present in [body].
      * @return [Int]
      */
-    private fun resolveResourceId(context: Context, attr: AttributeItem, body: String, defType: String?): Int {
+    private fun resolveResourceId(
+        context: Context,
+        attr: AttributeItem,
+        body: String,
+        defType: String?,
+        params: AttributeResolverParams
+    ): Int {
         var pkg: String? = null
         var rest = body
         val colon = rest.indexOf(':')
@@ -216,7 +247,7 @@ internal object AttributeValueEncoder {
             "Cannot resolve resource reference \"$body\" for attribute \"${attr.name}\": missing resource type."
         )
 
-        val pkgName = pkg ?: context.packageName
+        val pkgName = pkg ?: params.resourcePackageName(context)
         val id = resolveResourceId(context, pkgName, type, name)
         if (id == 0) throw XmlParserException(
             "Cannot resolve resource \"$pkgName:$type/$name\" for attribute \"${attr.name}\"."
@@ -229,6 +260,7 @@ internal object AttributeValueEncoder {
         resourceIdCache[cacheKey]?.let { return it }
 
         val id = context.resources.getIdentifier(name, type, packageName)
+        if (id == 0) return 0
         return resourceIdCache.putIfAbsent(cacheKey, id) ?: id
     }
 
@@ -302,12 +334,15 @@ internal object AttributeValueEncoder {
 
     private fun String.parseFloatOrNull() = this.toFloatOrNull()?.let { floatToRawIntBits(it) }
 
-    private fun Int.isResourceId(context: Context): Boolean {
+    private fun Int.isResourceId(context: Context, params: AttributeResolverParams): Boolean {
         if (this == 0) return false
-        resourceExistsCache[this]?.let { return it }
+        val cacheKey = ResourceExistsCacheKey(params.resourcePackageName(context), this)
+        resourceExistsCache[cacheKey]?.let { return it }
 
         val exists = runCatching { context.resources.getResourceTypeName(this) }.isSuccess
-        return resourceExistsCache.putIfAbsent(this, exists) ?: exists
+        if (!exists) return false
+
+        return resourceExistsCache.putIfAbsent(cacheKey, true) ?: true
     }
 
     /**
@@ -340,14 +375,18 @@ internal object AttributeValueEncoder {
      * Resolve a namespace name to a package name for [Context.getResources] `getIdentifier`.
      * @return [String]
      */
-    fun namespaceToPackage(context: Context, namespace: String): String = when {
+    fun namespaceToPackage(
+        context: Context,
+        namespace: String,
+        params: AttributeResolverParams
+    ): String = when {
         namespace == "android" -> "android"
         namespace == "http://schemas.android.com/apk/res/android" -> "android"
-        namespace == "http://schemas.android.com/apk/res-auto" -> context.packageName
+        namespace == "http://schemas.android.com/apk/res-auto" -> params.resourcePackageName(context)
         namespace.startsWith("http://schemas.android.com/apk/res/") ->
             namespace.removePrefix("http://schemas.android.com/apk/res/")
         namespace.contains('.') -> namespace
-        else -> context.packageName
+        else -> params.resourcePackageName(context)
     }
 
     /**
@@ -367,5 +406,13 @@ internal object AttributeValueEncoder {
         val packageName: String,
         val type: String,
         val name: String
+    )
+
+    /**
+     * The resource id existence cache key.
+     */
+    private data class ResourceExistsCacheKey(
+        val resourcePackageName: String,
+        val resId: Int
     )
 }

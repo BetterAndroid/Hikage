@@ -21,14 +21,25 @@
  */
 package com.highcapable.hikage.runtime.attribute.entity
 
+import android.content.Context
 import androidx.annotation.LayoutRes
 import com.highcapable.hikage.runtime.attribute.resolver.XmlBlockResolver
 import com.highcapable.hikage.runtime.attribute.resolver.XmlResourceParserResolver
 
 /**
  * The parameters for creating a new [XmlResourceParserResolver].
- * @property sourceResId the source layout resource ID, available on [XmlBlockResolver] only.
+ * @param sourceResId the source layout resource ID, available on [XmlBlockResolver] only.
+ * @param resourcePackageName the package name used for resolving `app` namespaces and unqualified resource references.
  */
 data class AttributeResolverParams(
-    @field:LayoutRes var sourceResId: Int? = null
-)
+    @field:LayoutRes val sourceResId: Int? = null,
+    val resourcePackageName: String = ""
+) {
+
+    /**
+     * Resolve the actual resource package name from [context].
+     * @param context the context.
+     * @return [String]
+     */
+    internal fun resourcePackageName(context: Context) = resourcePackageName.ifBlank { context.packageName }
+}

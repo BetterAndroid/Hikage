@@ -26,6 +26,7 @@ package com.highcapable.hikage.runtime.attribute.resolver
 import android.content.Context
 import com.highcapable.hikage.runtime.attribute.encoder.AttributeValueEncoder
 import com.highcapable.hikage.runtime.attribute.entity.AttributeItem
+import com.highcapable.hikage.runtime.attribute.entity.AttributeResolverParams
 import com.highcapable.hikage.runtime.attribute.entity.ResolvedAttribute
 import com.highcapable.hikage.runtime.attribute.exception.XmlParserException
 import java.util.concurrent.ConcurrentHashMap
@@ -45,10 +46,16 @@ internal object AttributeResolver {
      * Resolve the given [attrs].
      * @param context the context.
      * @param attrs the injected attributes.
+     * @param params the parameters.
      * @return resolved attributes ordered by resource id.
      */
-    fun resolve(context: Context, attrs: List<AttributeItem>): List<ResolvedAttribute> {
-        val cacheKey = CacheKey(context.packageName, attrs.toList())
+    fun resolve(
+        context: Context,
+        attrs: List<AttributeItem>,
+        params: AttributeResolverParams
+    ): List<ResolvedAttribute> {
+        val resourcePackageName = params.resourcePackageName(context)
+        val cacheKey = CacheKey(context.packageName, resourcePackageName, attrs.toList())
         resolvedCache[cacheKey]?.let { return it }
 
         val seen = hashSetOf<String>()
@@ -57,7 +64,7 @@ internal object AttributeResolver {
                 "Duplicate attribute name \"${attr.name}\" in the same view's attrs."
             )
 
-            val pkg = AttributeValueEncoder.namespaceToPackage(context, attr.namespace)
+            val pkg = AttributeValueEncoder.namespaceToPackage(context, attr.namespace, params)
             val id = resolveResourceId(context, attr.name, pkg)
             if (id == 0) throw XmlParserException(
                 "Cannot resolve attribute \"$pkg:attr/${attr.name}\". " +
@@ -78,6 +85,7 @@ internal object AttributeResolver {
         resourceIdCache[cacheKey]?.let { return it }
 
         val id = context.resources.getIdentifier(name, "attr", pkg)
+        if (id == 0) return 0
         return resourceIdCache.putIfAbsent(cacheKey, id) ?: id
     }
 
@@ -95,6 +103,7 @@ internal object AttributeResolver {
      */
     private data class CacheKey(
         val packageName: String,
+        val resourcePackageName: String,
         val attrs: List<AttributeItem>
     )
 

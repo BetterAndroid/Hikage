@@ -26,6 +26,7 @@ package com.highcapable.hikage.runtime.attribute.builder
 import android.content.Context
 import com.highcapable.hikage.runtime.attribute.encoder.AttributeValueEncoder
 import com.highcapable.hikage.runtime.attribute.entity.AttributeItem
+import com.highcapable.hikage.runtime.attribute.entity.AttributeResolverParams
 import com.highcapable.hikage.runtime.attribute.entity.EncodedAttributeValue
 import com.highcapable.hikage.runtime.attribute.entity.ResolvedAttribute
 import com.highcapable.hikage.runtime.attribute.exception.XmlParserException
@@ -76,6 +77,7 @@ internal object BinaryXmlBuilder : BaseXmlBuilder() {
      * Build the binary XML document.
      * @param context the context.
      * @param attrs the attributes.
+     * @param params the parameters.
      * @param resolver the framework symbol resolver.
      * @return [ByteArray]
      * @throws XmlParserException if an attribute name is duplicated or a value cannot be encoded.
@@ -83,14 +85,16 @@ internal object BinaryXmlBuilder : BaseXmlBuilder() {
     fun build(
         context: Context,
         attrs: List<AttributeItem>,
+        params: AttributeResolverParams,
         resolver: EnumFlagResolver = BuiltInEnumFlagResolver
     ): ByteArray {
-        if (resolver !== BuiltInEnumFlagResolver) return buildResolved(context, AttributeResolver.resolve(context, attrs), resolver)
+        if (resolver !== BuiltInEnumFlagResolver)
+            return buildResolved(context, AttributeResolver.resolve(context, attrs, params), resolver, params)
 
-        val cacheKey = CacheKey(context.packageName, attrs.toList())
+        val cacheKey = CacheKey(context.packageName, params.resourcePackageName(context), attrs.toList())
         binaryXmlCache[cacheKey]?.let { return it }
 
-        val data = buildResolved(context, AttributeResolver.resolve(context, attrs), resolver)
+        val data = buildResolved(context, AttributeResolver.resolve(context, attrs, params), resolver, params)
         return binaryXmlCache.putIfAbsent(cacheKey, data) ?: data
     }
 
@@ -107,12 +111,14 @@ internal object BinaryXmlBuilder : BaseXmlBuilder() {
      * @param context the context.
      * @param attrs the resolved attributes.
      * @param resolver the framework symbol resolver.
+     * @param params the parameters.
      * @return [ByteArray]
      */
     private fun buildResolved(
         context: Context,
         attrs: List<ResolvedAttribute>,
-        resolver: EnumFlagResolver
+        resolver: EnumFlagResolver,
+        params: AttributeResolverParams
     ): ByteArray {
         val pool = StringPool()
 
@@ -135,7 +141,7 @@ internal object BinaryXmlBuilder : BaseXmlBuilder() {
 
         // 4) Encode each attribute value (interns value strings into the pool after the names).
         val encoded = attrs.map { attr ->
-            AttributeValueEncoder.encode(context, attr.item, resolver, pool::add)
+            AttributeValueEncoder.encode(context, attr.item, resolver, params, pool::add)
         }
 
         // 5) Assemble chunks.
@@ -254,6 +260,7 @@ internal object BinaryXmlBuilder : BaseXmlBuilder() {
      */
     private data class CacheKey(
         val packageName: String,
+        val resourcePackageName: String,
         val attrs: List<AttributeItem>
     )
 
