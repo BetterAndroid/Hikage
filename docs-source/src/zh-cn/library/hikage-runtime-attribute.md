@@ -126,7 +126,9 @@ val items: List<AttributeItem>
 // 创建参数对象
 val params = AttributeResolverParams(
     // 指定伪造的来源 XML 布局资源 ID，仅用于提供上下文信息，不会实际进行 inflate 操作
-    sourceResId = R.layout.my_layout
+    sourceResId = R.layout.my_layout,
+    // 指定解析的资源包名，而不是通过 Context 获取
+    resourcePackageName = "com.example.myapp"
 )
 // 创建 AttributeSet 解析器实例
 val resolver = AttributeSetResolver.from(context)

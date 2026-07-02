@@ -129,7 +129,9 @@ val items: List<AttributeItem>
 val params = AttributeResolverParams(
     // Specify the forged source XML layout resource ID,
     // only used to provide context information, and will not actually inflate.
-    sourceResId = R.layout.my_layout
+    sourceResId = R.layout.my_layout,
+    // Specify the resource package name for parsing, instead of obtaining it through context.
+    resourcePackageName = "com.example.myapp"
 )
 // Create an AttributeSet resolver instance
 val resolver = AttributeSetResolver.from(context)
