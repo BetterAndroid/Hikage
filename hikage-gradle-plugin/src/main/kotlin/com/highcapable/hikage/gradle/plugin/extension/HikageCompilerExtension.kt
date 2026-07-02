@@ -43,6 +43,9 @@ open class HikageCompilerExtension @Inject constructor(objects: ObjectFactory, p
 
         /** The view declaration files property name. */
         const val VIEW_DECLARATION_FILES_PROPERTY_NAME = "hikage.compiler.viewDeclarationFiles"
+
+        /** The use embedded KSP property name. */
+        const val USE_EMBEDDED_KSP_PROPERTY_NAME = "hikage.compiler.useEmbeddedKsp"
     }
 
     /** Whether to enable the Hikage compiler integration. */
@@ -61,6 +64,13 @@ open class HikageCompilerExtension @Inject constructor(objects: ObjectFactory, p
     /** Whether to generate code from Hikage view declaration files. */
     val viewDeclarationFiles = objects.property(Boolean::class.java).convention(
         providers.gradleProperty(VIEW_DECLARATION_FILES_PROPERTY_NAME)
+            .map(String::toBoolean)
+            .orElse(true)
+    )
+
+    /** Whether to apply the embedded KSP plugin when the project does not apply KSP. */
+    val useEmbeddedKsp = objects.property(Boolean::class.java).convention(
+        providers.gradleProperty(USE_EMBEDDED_KSP_PROPERTY_NAME)
             .map(String::toBoolean)
             .orElse(true)
     )

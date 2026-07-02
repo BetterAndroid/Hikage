@@ -137,7 +137,7 @@ internal class AndroidIntegration(private val project: Project, private val exte
 
     private fun configureCompiler() {
         val compiler = extension.compiler
-        if (compiler.enabled.get()) project.pluginManager.apply(KSP_PLUGIN_ID)
+        if (compiler.enabled.get() && compiler.useEmbeddedKsp.get()) project.pluginManager.apply(KSP_PLUGIN_ID)
 
         project.plugins.withId(KSP_PLUGIN_ID) {
             configureCompilerOptions()
