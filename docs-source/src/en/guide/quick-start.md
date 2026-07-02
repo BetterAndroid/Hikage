@@ -102,6 +102,8 @@ dependencies {
 
 After clicking the `Sync` button to sync your project, `Hikage` will be successfully integrated into your project.
 
+Then it is recommended to run a build once to ensure all layout components are generated.
+
 ## Features Overview
 
 The project is divided into multiple modules. You can choose the module you wish to include as a dependency in your project, but be sure to include the **hikage-core** module.
