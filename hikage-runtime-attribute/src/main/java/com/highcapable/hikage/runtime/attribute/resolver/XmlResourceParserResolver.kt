@@ -35,6 +35,9 @@ internal interface XmlResourceParserResolver : Closeable {
 
     companion object {
 
+        /** The default parameters for the [XmlResourceParserResolver]. */
+        var defaultResolverParams = AttributeResolverParams()
+
         /**
          * Create a new [XmlResourceParserResolver] from the given context.
          * @param context the context.
@@ -52,7 +55,7 @@ internal interface XmlResourceParserResolver : Closeable {
      */
     fun newParser(
         attrs: List<AttributeItem> = listOf(),
-        params: AttributeResolverParams = AttributeResolverParams()
+        params: AttributeResolverParams = defaultResolverParams
     ): XmlResourceParser
 
     /**

@@ -38,6 +38,9 @@ class AttributeSetResolver private constructor(private val resolver: XmlResource
 
     companion object {
 
+        /** The default parameters for the [AttributeSetResolver]. */
+        var defaultResolverParams by XmlResourceParserResolver::defaultResolverParams
+
         /**
          * Create a new [AttributeSetResolver] from the given context.
          * @param context the context.
@@ -58,7 +61,7 @@ class AttributeSetResolver private constructor(private val resolver: XmlResource
     @JvmOverloads
     fun newParser(
         attrs: List<AttributeItem> = listOf(),
-        params: AttributeResolverParams = AttributeResolverParams()
+        params: AttributeResolverParams = defaultResolverParams
     ) = resolver.newParser(attrs, params)
 
     /**
