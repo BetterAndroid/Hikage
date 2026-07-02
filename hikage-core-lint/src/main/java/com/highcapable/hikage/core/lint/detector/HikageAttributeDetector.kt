@@ -35,14 +35,18 @@ import com.highcapable.hikage.core.lint.detector.extension.createKotlinOnlyUastH
 import com.highcapable.hikage.core.lint.detector.extension.hasHikagable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.toUElementOfType
 
@@ -174,7 +178,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
     override fun createUastHandler(context: JavaContext) = context.createKotlinOnlyUastHandler(object : UElementHandler() {
 
-        private val attributes = hashMapOf<PsiElement, MutableMap<String, PsiElement>>()
+        private val attributes = hashMapOf<PsiElement, MutableMap<String, MutableList<AttributeUsage>>>()
         private val reportedLayoutAttributes = hashSetOf<PsiElement>()
 
         override fun visitCallExpression(node: UCallExpression) {
@@ -190,7 +194,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         node: UCallExpression,
         callExpr: KtCallExpression,
         method: PsiMethod,
-        attributes: MutableMap<PsiElement, MutableMap<String, PsiElement>>,
+        attributes: MutableMap<PsiElement, MutableMap<String, MutableList<AttributeUsage>>>,
         reportedLayoutAttributes: MutableSet<PsiElement>
     ) {
         when {
@@ -396,13 +400,15 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         context: JavaContext,
         node: UCallExpression,
         callExpr: KtCallExpression,
-        attributes: MutableMap<PsiElement, MutableMap<String, PsiElement>>
+        attributes: MutableMap<PsiElement, MutableMap<String, MutableList<AttributeUsage>>>
     ) {
         val attrName = callExpr.firstStringLiteralText() ?: return
         val attrKey = attrName.attributeKey() ?: return
         val attrNameExpr = node.valueArguments.firstOrNull()?.sourcePsi ?: return
         val root = callExpr.findAttributeRoot() ?: return
-        val exists = attributes.getOrPut(root) { hashMapOf() }.putIfAbsent(attrKey, attrNameExpr)
+        val usages = attributes.getOrPut(root) { hashMapOf() }.getOrPut(attrKey) { mutableListOf() }
+        val exists = usages.firstOrNull { it.callExpr.canCoexistInExecutionPath(callExpr) }
+        usages.add(AttributeUsage(callExpr))
         if (exists == null) return
 
         val location = context.getLocation(attrNameExpr)
@@ -696,6 +702,55 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             else -> value.toIntOrNull()
         }
     }
+
+    private fun KtCallExpression.canCoexistInExecutionPath(other: KtCallExpression): Boolean {
+        val otherAncestors = other.ancestorsWithSelf().toList()
+        return ancestorsWithSelf()
+            .filter { ancestor -> otherAncestors.any { it === ancestor } }
+            .none { it.hasMutuallyExclusiveBranches(this, other) }
+    }
+
+    private fun PsiElement.hasMutuallyExclusiveBranches(first: PsiElement, second: PsiElement) = when (this) {
+        is KtIfExpression -> {
+            val firstBranch = branchContaining(first)
+            val secondBranch = branchContaining(second)
+            firstBranch != null && secondBranch != null && firstBranch != secondBranch
+        }
+        is KtWhenExpression -> {
+            val firstBranch = entries.firstOrNull { it.isSelfOrAncestorOf(first) }
+            val secondBranch = entries.firstOrNull { it.isSelfOrAncestorOf(second) }
+            firstBranch != null && secondBranch != null && firstBranch != secondBranch
+        }
+        is KtBinaryExpression -> {
+            operationToken == KtTokens.ELVIS && run {
+                val firstBranch = elvisBranchContaining(first)
+                val secondBranch = elvisBranchContaining(second)
+                firstBranch != null && secondBranch != null && firstBranch != secondBranch
+            }
+        }
+        else -> false
+    }
+
+    private fun KtIfExpression.branchContaining(element: PsiElement): KtExpression? {
+        then?.takeIf { it.isSelfOrAncestorOf(element) }?.let { return it }
+        `else`?.takeIf { it.isSelfOrAncestorOf(element) }?.let { return it }
+        return null
+    }
+
+    private fun KtBinaryExpression.elvisBranchContaining(element: PsiElement): KtExpression? {
+        left?.takeIf { it.isSelfOrAncestorOf(element) }?.let { return it }
+        right?.takeIf { it.isSelfOrAncestorOf(element) }?.let { return it }
+        return null
+    }
+
+    private fun PsiElement.ancestorsWithSelf() = generateSequence(this) { it.parent }
+
+    private fun PsiElement.isSelfOrAncestorOf(element: PsiElement) =
+        element.ancestorsWithSelf().any { it === this }
+
+    private data class AttributeUsage(
+        val callExpr: KtCallExpression
+    )
 
     private data class LayoutAttributeReport(
         val name: String,
