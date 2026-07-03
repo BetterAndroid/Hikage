@@ -60,7 +60,7 @@ implementation("com.highcapable.hikage:hikage-runtime-attribute:<version>")
 
 以下是通过 Hikage 测试的系统版本列表和其对应的设备信息，以供参考。
 
-| Android 版本 / API 版本 | 可用性 |          测试设备          |
+| Android 版本 / API 级别 | 可用性 |          测试设备          |
 | :---------------------: | :----: | :------------------------: |
 |       5.0.2 (21)        |   ✅    |        Redmi Note 2        |
 |        6.0 (23)         |   ✅    |          OPPO A53          |
