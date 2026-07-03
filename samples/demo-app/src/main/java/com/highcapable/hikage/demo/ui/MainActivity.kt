@@ -52,6 +52,7 @@ import com.highcapable.hikage.widget.androidx.coordinatorlayout.widget.Coordinat
 import com.highcapable.hikage.widget.com.google.android.material.appbar.MaterialToolbar
 import com.highcapable.hikage.widget.com.google.android.material.card.MaterialCardView
 import com.highcapable.hikage.widget.com.google.android.material.chip.ChipGroup
+import com.highcapable.hikage.widget.com.google.android.material.materialswitch.MaterialSwitch
 import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputEditText
 import com.highcapable.hikage.widget.com.google.android.material.textfield.TextInputLayout
 import com.highcapable.hikage.widget.com.highcapable.hikage.demo.ui.widget.CheckableChip
@@ -159,6 +160,21 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+        MaterialSwitch(
+            lparams = LayoutParams(widthMatchParent = true) {
+                topMargin = 16.dp
+            },
+            init = {
+                text = stringResource(R.string.text_enable_notification)
+                setOnCheckedChangeListener { _, isChecked ->
+                    viewModel.setNotificationEnabled(isChecked)
+                }
+                setState(viewModel.uiState) {
+                    if (isChecked != it.isNotificationEnabled)
+                        isChecked = it.isNotificationEnabled
+                }
+            }
+        )
         MaterialCardView(
             lparams = LayoutParams(matchParent = true) {
                 topMargin = 16.dp
