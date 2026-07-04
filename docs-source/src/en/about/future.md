@@ -10,6 +10,10 @@
 
 Hikage will launch an official plugin for Android Studio, which will be an independent project. It plans to support the following features.
 
+#### Project Template Capabilities
+
+The IDE plugin will provide a template for Hikage projects, allowing developers to quickly create an Android project based on Hikage.
+
 #### AST Capabilities
 
 The IDE plugin will implement recognizing UpperCamelCase naming of functions annotated with `@Hikagable` as a standard specification, and no more `FunctionName` and `PropertyName` check warnings.

@@ -10,6 +10,10 @@
 
 Hikage 会推出针对 Android Studio 的官方插件，它将作为独立项目，计划支持以下功能。
 
+#### 项目模板能力
+
+IDE 插件将提供一个 Hikage 项目的模板，允许开发者快速创建一个基于 Hikage 的 Android 项目。
+
 #### 语法树能力
 
 IDE 插件将实现将 `@Hikagable` 注解的函数大驼峰命名识别为标准规范，不再出现 `FunctionName`、`PropertyName` 检查提示 (警告)。
