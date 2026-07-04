@@ -64,7 +64,7 @@ LinearLayout(
 }
 ```
 
-Hikage 能**即插即用**并在**任何地方创建**一个可被设置到父布局以及 `Window` 上的 `View` 对象。
+Hikage 能**即插即用**并在**任何地方**创建一个可被设置到父布局以及 `Window` 上的 `View` 对象。
 
 同时它**全面兼容**混合式布局，你可以在 Hikage 中嵌入 XML (使用 `R.layout` 方案装载布局)、ViewBinding 甚至是 Jetpack Compose。
 
