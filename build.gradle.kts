@@ -64,7 +64,7 @@ allprojects {
     }
 }
 
-libraryProjects {
+fun Project.registerPublishing() {
     afterEvaluate {
         configure<PublishingExtension> {
             repositories {
@@ -88,6 +88,14 @@ libraryProjects {
                 configure(AndroidSingleVariantLibrary(JavadocJar.None(), SourcesJar.Sources()))
         }
     }
+}
+
+pluginProjects { 
+    registerPublishing()
+}
+
+libraryProjects {
+    registerPublishing()
 
     plugins.withId(dokkaPluginId) {
         configure<DokkaExtension> {
@@ -127,7 +135,7 @@ registerAggregatePublishTask(
 registerAggregatePublishTask(
     name = "publishPluginToMavenCentral",
     description = "Publishes all Gradle plugins to the Maven Central repository.",
-    taskName = "publishMavenPublicationToMavenCentralRepository",
+    taskName = "publishAllPublicationsToMavenCentralRepository",
     projectNames = Libraries.plugins
 )
 
@@ -185,6 +193,11 @@ fun registerAggregatePublishTask(name: String, description: String, taskName: St
         this.description = description
         dependsOn(projectNames.map { ":$it:$taskName" })
     }
+}
+
+fun pluginProjects(action: Action<in Project>) {
+    val plugins = Libraries.plugins
+    allprojects { if (plugins.contains(name)) action.execute(this) }
 }
 
 fun libraryProjects(action: Action<in Project>) {
