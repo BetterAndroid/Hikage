@@ -13,7 +13,7 @@ the name is taken from the original song "Haru**hikage**" in "BanG Dream It's My
   <div align="center">
   <img src="/images/nagasaki_soyo.png" width = "100" height = "100" alt="LOGO"/>
 
-  **なんで春日影レイアウト使いの？**
+  **なんで春日影レイアウトしたの？**
   </div>
 </details>
 
@@ -69,13 +69,13 @@ LinearLayout(
         orientation = LinearLayout.VERTICAL
     }
 ) {
-    // Embed an XML layout
+    // Embed an XML layout.
     Layout(R.layout.my_layout)
 
-    // Embed a ViewBinding layout
+    // Embed a ViewBinding layout.
     Layout<MyLayoutBinding>()
 
-    // Embed a Jetpack Compose layout
+    // Embed a Jetpack Compose layout.
     ComposeView {
         Text("Hello, World!")
     }

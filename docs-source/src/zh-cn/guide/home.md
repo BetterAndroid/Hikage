@@ -12,7 +12,7 @@
   <div align="center">
   <img src="/images/nagasaki_soyo.png" width = "100" height = "100" alt="LOGO"/>
 
-  **なんで春日影レイアウト使いの？**
+  **なんで春日影レイアウトしたの？**
   </div>
 </details>
 
