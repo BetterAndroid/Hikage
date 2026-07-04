@@ -1,8 +1,8 @@
 # hikage-declaration-gradle-plugin
 
-![Maven Central](https://img.shields.io/maven-central/v/com.highcapable.hikage/com.highcapable.hikage.declaration.gradle.plugin?logo=apachemaven&logoColor=orange&style=flat-square)
+![Maven Central](https://img.shields.io/maven-central/v/com.highcapable.hikage.declaration/com.highcapable.hikage.declaration.gradle.plugin?logo=apachemaven&logoColor=orange&style=flat-square)
 <span style="margin-left: 5px"/>
-![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fraw.githubusercontent.com%2FHighCapable%2Fmaven-repository%2Frefs%2Fheads%2Fmain%2Frepository%2Freleases%2Fcom%2Fhighcapable%2Fhikage%2Fcom.highcapable.hikage.declaration.gradle.plugin%2Fmaven-metadata.xml&logo=apachemaven&logoColor=orange&label=highcapable-maven-releases&style=flat-square)
+![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fraw.githubusercontent.com%2FHighCapable%2Fmaven-repository%2Frefs%2Fheads%2Fmain%2Frepository%2Freleases%2Fcom%2Fhighcapable%2Fhikage%2Fdeclaration%2Fcom.highcapable.hikage.declaration.gradle.plugin%2Fmaven-metadata.xml&logo=apachemaven&logoColor=orange&label=highcapable-maven-releases&style=flat-square)
 
 这是 Hikage 用于自动打包 `View` 声明文件的 Gradle 插件。
 
