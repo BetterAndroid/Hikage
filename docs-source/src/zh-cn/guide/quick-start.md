@@ -14,7 +14,7 @@
 
 ### 配置存储库
 
-`Hikage` 的依赖发布在 **Maven Central** 和我们的公共存储库中，你可以使用如下方式配置存储库。
+Hikage 的依赖发布在 **Maven Central** 和我们的公共存储库中，你可以使用如下方式配置存储库。
 
 我们推荐使用 Kotlin DSL 作为 Gradle 构建脚本语言。
 
@@ -97,7 +97,7 @@ dependencies {
 }
 ```
 
-点击 `Sync` 按钮同步项目后，`Hikage` 就已经成功集成到你的项目中了。
+点击 `Sync` 按钮同步项目后，Hikage 就已经成功集成到你的项目中了。
 
 然后建议继续运行一次构建，以确保生成所有布局组件。
 
@@ -109,7 +109,7 @@ dependencies {
 
 ::: tip 版本说明
 
-从 `1.1.0` 起，`Hikage` 开始采用统一版本进行发布，通常情况下你只需要关注同一个主版本即可，你也可以直接参考下方的 [hikage-bom](../library/hikage-bom.md) 使用 BOM 统一管理依赖版本。
+从 `1.1.0` 起，Hikage 开始采用统一版本进行发布，通常情况下你只需要关注同一个主版本即可，你也可以直接参考下方的 [hikage-bom](../library/hikage-bom.md) 使用 BOM 统一管理依赖版本。
 
 详情请见 [更新日志](../about/changelog.md)。
 
@@ -129,7 +129,7 @@ dependencies {
 
 ### Gradle 插件
 
-Gradle 插件为 `Hikage` 提供了依赖装配和简化配置流程的能力，推荐优先和运行时依赖配套使用。
+Gradle 插件为 Hikage 提供了依赖装配和简化配置流程的能力，推荐优先和运行时依赖配套使用。
 
 - [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md)
 - [hikage-declaration-gradle-plugin](../plugin/hikage-declaration-gradle-plugin.md)

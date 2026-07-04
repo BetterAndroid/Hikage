@@ -15,7 +15,7 @@ project with integrated Kotlin environment dependencies.
 
 ### Configure Repositories
 
-The dependencies of `Hikage` are published in **Maven Central** and our public repository,
+The dependencies of Hikage are published in **Maven Central** and our public repository,
 you can use the following method to configure repositories.
 
 We recommend using Kotlin DSL as the Gradle build script language.
@@ -100,7 +100,7 @@ dependencies {
 }
 ```
 
-After clicking the `Sync` button to sync your project, `Hikage` will be successfully integrated into your project.
+After clicking the `Sync` button to sync your project, Hikage will be successfully integrated into your project.
 
 Then it is recommended to run a build once to ensure all layout components are generated.
 
@@ -112,7 +112,7 @@ Click the corresponding module below to view detailed feature descriptions.
 
 ::: tip Version Notes
 
-Starting from `1.1.0`, `Hikage` started using unified versioning for releases.
+Starting from `1.1.0`, Hikage started using unified versioning for releases.
 In most cases, you only need to pay attention to the same major version.
 You can also refer to the [hikage-bom](../library/hikage-bom.md) below to use BOM for unified dependency version management.
 
@@ -134,7 +134,7 @@ For details, please see the [changelog](../about/changelog.md).
 
 ### Gradle Plugins
 
-Gradle plugins provide dependency assembly and simplified configuration capabilities for `Hikage`.
+Gradle plugins provide dependency assembly and simplified configuration capabilities for Hikage.
 It is recommended to use them in conjunction with runtime dependencies.
 
 - [hikage-gradle-plugin](../plugin/hikage-gradle-plugin.md)

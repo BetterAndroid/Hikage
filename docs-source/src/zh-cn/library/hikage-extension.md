@@ -80,11 +80,11 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-借助 `Hikage` 的 `setContentView` 扩展方法，你可以像 Jetpack Compose 一样使用 `setContent` 方法来设置布局。
+借助 Hikage 的 `setContentView` 扩展方法，你可以像 Jetpack Compose 一样使用 `setContent` 方法来设置布局。
 
 ### Window
 
-在 `Window` 中使用 Hikage 创建布局与 [Activity](#activity) 保持一致，你只需要使用 `setContentView` 方法传入一个 `Hikage` 布局即可。
+在 `Window` 中使用 Hikage 创建布局与 [Activity](#activity) 保持一致，你只需要使用 `setContentView` 方法传入一个 Hikage 布局即可。
 
 ### Dialog
 
@@ -107,7 +107,7 @@ AlertDialog.Builder(context)
     .show()
 ```
 
-在 `AlertDialog` 中使用 Hikage 创建布局，你只需要使用 `setView` 方法传入一个 `Hikage` 布局即可。
+在 `AlertDialog` 中使用 Hikage 创建布局，你只需要使用 `setView` 方法传入一个 Hikage 布局即可。
 
 如果你是继承于 `Dialog` 进行自定义，那么你可以和像在 [Activity](#activity) 一样使用 `setContentView` 方法。
 

@@ -80,11 +80,11 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-With the `setContentView` extension method of `Hikage`, you can set the layout using the `setContent` method like Jetpack Compose.
+With the `setContentView` extension method of Hikage, you can set the layout using the `setContent` method like Jetpack Compose.
 
 ### Window
 
-Using Hikage to create a layout in Window is consistent with [Activity](#activity), you just need to use the `setContentView` method to pass in a `Hikage` layout.
+Using Hikage to create a layout in Window is consistent with [Activity](#activity), you just need to use the `setContentView` method to pass in a Hikage layout.
 
 ### Dialog
 
@@ -107,7 +107,7 @@ AlertDialog.Builder(context)
     .show()
 ```
 
-To create a layout using Hikage in `AlertDialog`, you just need to use the `setView` method to pass in a `Hikage` layout.
+To create a layout using Hikage in `AlertDialog`, you just need to use the `setView` method to pass in a Hikage layout.
 
 If you inherited from `Dialog` for customization, you can use the `setContentView` method as in [Activity](#activity).
 
