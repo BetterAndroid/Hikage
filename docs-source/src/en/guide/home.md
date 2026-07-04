@@ -56,7 +56,7 @@ LinearLayout(
 }
 ```
 
-Hikage can be **plug-and-play** and **create a View object anywhere** that can be attached to a parent layout or even a `Window`.
+Hikage can be **plug-and-play** and create a `View` **anywhere** that can be attached to a parent layout or even a `Window`.
 
 It is also **fully compatible** with hybrid layouts. You can embed XML (loaded via the `R.layout` scheme), ViewBinding, and even Jetpack Compose inside Hikage.
 
@@ -82,9 +82,8 @@ LinearLayout(
 }
 ```
 
-Compared to pure DSL scaffolding lightweight dependency libraries like Anko and Splitties, the whole ecosystem brought by Hikage naturally supports an **in-memory AAPT2 resource parsing emulator**,
-capable of **dynamically constructing an `AttributeSet`**. This solution has passed interactive tests and Benchmark performance stress tests on emulators and real devices,
-ensuring **stable compatibility with Android 5.0.2 (API 21) ~ 17 (API 37)**.
+Compared to pure DSL scaffolding lightweight dependency libraries like Anko and Splitties, Hikage's ecosystem naturally supports **dynamically constructing an `AttributeSet`**.
+This solution has passed interactive tests and benchmark performance stress tests on emulators and real devices, ensuring **stable compatibility with Android 5.0.2 (API 21) ~ 17 (API 37)**.
 This empowers legacy custom views that lack programmatic setters to be revitalized via Hikage.
 
 > The following example
