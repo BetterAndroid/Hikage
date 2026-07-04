@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hikage View Tree Benchmark</title>
+<style>
+:root {
+    color-scheme: light dark;
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --text: #1f2328;
+    --muted: #667085;
+    --line: #d9dee7;
+    --accent: #006d77;
+    --accent-soft: #e1f3f1;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #111418;
+        --surface: #1a1f25;
+        --text: #ecf0f4;
+        --muted: #aab4c0;
+        --line: #303844;
+        --accent: #7dd3c7;
+        --accent-soft: #173d3b;
+    }
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+}
+main {
+    width: min(1180px, calc(100vw - 32px));
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+header {
+    margin-bottom: 24px;
+}
+h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 720;
+    letter-spacing: 0;
+}
+h2 {
+    margin: 28px 0 12px;
+    font-size: 18px;
+    letter-spacing: 0;
+}
+h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    letter-spacing: 0;
+}
+.meta {
+    color: var(--muted);
+    font-size: 14px;
+}
+.device-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.meta-subtle {
+    color: color-mix(in srgb, var(--muted) 78%, transparent);
+    font-size: 13px;
+}
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px;
+    margin: 16px 0;
+    overflow-x: auto;
+}
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+.summary div {
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 8px;
+    padding: 12px;
+}
+.summary strong {
+    display: block;
+    font-size: 22px;
+    color: var(--accent);
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+th, td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+    white-space: nowrap;
+}
+th:first-child, td:first-child { text-align: left; }
+th {
+    color: var(--muted);
+    font-weight: 650;
+}
+tr:last-child td { border-bottom: 0; }
+.primary { color: var(--accent); font-weight: 650; }
+.path {
+    max-width: 700px;
+    color: var(--muted);
+    font-family: "SFMono-Regular", "Cascadia Code", monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>XML vs Hikage View Tree Benchmark</h1>
+<div class="device-meta">
+<span class="meta">Merged from 1 benchmark JSON file(s)</span>
+<span class="meta-subtle">7 benchmark cases</span>
+</div>
+<div class="meta">Generated at 2026-07-01 07:26:48 UTC</div>
+</header>
+<section class="summary">
+<div><span>Devices</span><strong>1</strong></div>
+<div><span>Benchmarks</span><strong>7</strong></div>
+<div><span>Fastest median</span><strong>Hikage 210 views: 21.651 ms</strong></div>
+<div><span>Slowest median</span><strong>Demo XML layout: 91.483 ms</strong></div>
+</section>
+
+<section class="panel">
+<h3>Source JSON</h3>
+<table>
+<thead><tr><th>Device</th><th>Cases</th><th>File</th></tr></thead>
+<tbody>
+<tr><td>Xiaomi 25019PNF3C</td><td>7</td><td class="path">/Users/fankes/Projects/Libraries/Android/Hikage/samples/demo-benchmark/build/outputs/hikage_benchmark/releaseAndroidTest/additional_test_output/com.highcapable.hikage.benchmark.test-benchmarkData.json</td></tr>
+</tbody>
+</table>
+</section>
+
+<h2>Xiaomi 25019PNF3C</h2>
+<div class="meta">API 36 · 7 cases</div>
+<section class="panel">
+<h3>Metrics</h3>
+<table>
+<thead><tr><th>Case</th><th>Group</th><th>Min</th><th>Median</th><th>Max</th><th>CV</th><th>Alloc Median</th><th>Warmup</th><th>Repeat</th></tr></thead>
+<tbody>
+<tr><td>XML 210 views</td><td>210 View Tree</td><td>27.917 ms</td><td class="primary">28.860 ms</td><td>34.688 ms</td><td>5.75%</td><td>40,479</td><td>271</td><td>3</td></tr>
+<tr><td>Hikage 210 views</td><td>210 View Tree</td><td>20.848 ms</td><td class="primary">21.651 ms</td><td>26.867 ms</td><td>6.03%</td><td>38,803</td><td>355</td><td>4</td></tr>
+<tr><td>Hikage 210 views with attrs</td><td>210 View Tree</td><td>21.803 ms</td><td class="primary">22.339 ms</td><td>26.032 ms</td><td>4.98%</td><td>41,696</td><td>332</td><td>4</td></tr>
+<tr><td>Hikage 210 views fully attrs</td><td>210 View Tree</td><td>30.214 ms</td><td class="primary">31.126 ms</td><td>38.847 ms</td><td>6.25%</td><td>61,543</td><td>247</td><td>3</td></tr>
+<tr><td>Hikage 210 views full view attrs</td><td>210 View Tree</td><td>29.469 ms</td><td class="primary">30.155 ms</td><td>38.916 ms</td><td>7.21%</td><td>59,185</td><td>251</td><td>3</td></tr>
+<tr><td>Demo XML layout</td><td>Demo Layout</td><td>87.833 ms</td><td class="primary">91.483 ms</td><td>125.759 ms</td><td>9.82%</td><td>96,828</td><td>76</td><td>1</td></tr>
+<tr><td>Demo Hikage layout</td><td>Demo Layout</td><td>84.965 ms</td><td class="primary">90.388 ms</td><td>120.811 ms</td><td>8.60%</td><td>109,141</td><td>84</td><td>1</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="panel">
+<h3>XML Baseline Ratios</h3>
+<table>
+<thead><tr><th>Case</th><th>Baseline</th><th>Median Time</th><th>Min Time</th><th>Allocations</th><th>Allocation Ratio</th></tr></thead>
+<tbody>
+<tr><td>Hikage 210 views</td><td>XML 210 views</td><td class="primary">0.75x</td><td>0.75x</td><td>38,803</td><td class="primary">0.96x</td></tr>
+<tr><td>Hikage 210 views with attrs</td><td>XML 210 views</td><td class="primary">0.77x</td><td>0.78x</td><td>41,696</td><td class="primary">1.03x</td></tr>
+<tr><td>Hikage 210 views fully attrs</td><td>XML 210 views</td><td class="primary">1.08x</td><td>1.08x</td><td>61,543</td><td class="primary">1.52x</td></tr>
+<tr><td>Hikage 210 views full view attrs</td><td>XML 210 views</td><td class="primary">1.04x</td><td>1.06x</td><td>59,185</td><td class="primary">1.46x</td></tr>
+<tr><td>Demo Hikage layout</td><td>Demo XML layout</td><td class="primary">0.99x</td><td>0.97x</td><td>109,141</td><td class="primary">1.13x</td></tr>
+</tbody>
+</table>
+</section>
+
+</main>
+</body>
+</html>

@@ -8,6 +8,7 @@ interface PageLinkRefs {
 const navigationLinks = {
     start: [
         '/guide/home',
+        '/guide/architecture',
         '/guide/quick-start'
     ],
     library: [
