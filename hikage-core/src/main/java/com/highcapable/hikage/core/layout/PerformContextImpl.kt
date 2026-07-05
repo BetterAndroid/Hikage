@@ -86,8 +86,10 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
 
     /**
      * Get the actual view id by [id].
+     *
+     * If the view with [id] is not found, it will return [View.NO_ID].
      * @param id the view id.
-     * @return [Int] or -1.
+     * @return [Int]
      */
     override fun actualViewId(id: String) = session.getActualViewId(id)
 
@@ -129,15 +131,16 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         attrs: HikageAttribute,
         init: HikageView<V>
     ): V {
+        startProvide(id, viewClass)
+
         val view = session.process(context, attrs) { attributeSet, lParamsAttributeSet ->
             val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, attrs = lParamsAttributeSet)
-            session.createView(viewClass, factory, id, context, attributeSet, parent).apply {
+            session.createView(viewClass, factory, id, context, attributeSet, parent) {
                 layoutParams = lpDelegate.create()
+                session.requireNoPerformers(viewClass.qualifiedName) { init(this) }
             }
         }
 
-        session.requireNoPerformers(viewClass.qualifiedName) { view.init() }
-        startProvide(id, viewClass)
         addToParentIfRequired(view)
 
         return view
@@ -161,15 +164,16 @@ internal class PerformContextImpl<LP : ViewGroup.LayoutParams>(
         init: HikageView<VG>,
         performer: HikagePerformer<NLP>
     ): VG {
+        startProvide(id, viewClass)
+
         val view = session.process(context, attrs) { attributeSet, lparamsAttributeSet ->
             val lpDelegate = LayoutParams.from(session, lpClass, parent, lparams, attrs = lparamsAttributeSet)
-            session.createView(viewClass, factory, id, context, attributeSet, parent).apply {
+            session.createView(viewClass, factory, id, context, attributeSet, parent) {
                 layoutParams = lpDelegate.create()
+                session.requireNoPerformers(viewClass.qualifiedName) { init(this) }
             }
         }
 
-        session.requireNoPerformers(viewClass.qualifiedName) { view.init() }
-        startProvide(id, viewClass)
         addToParentIfRequired(view)
         session.newPerformer(childLpClass, view).apply(performer)
 

@@ -21,6 +21,7 @@
  */
 package com.highcapable.hikage
 
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -28,8 +29,11 @@ import android.widget.TextView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.layout.Layout
 import com.highcapable.hikage.core.layout.View
 import com.highcapable.hikage.core.layout.ViewGroup
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -58,5 +62,57 @@ class CoreInstrumentationTest {
         assertNotSame(parent, hikage.root)
         assertTrue(hikage.root is LinearLayout)
         assertSame(parent, hikage.root.parent)
+    }
+
+    @Test
+    fun manualAndroidViewIdSetInInitIsPreserved() {
+        val manualId = View.generateViewId()
+        val hikage = Hikage.create(context) {
+            View<TextView>(id = "title") {
+                id = manualId
+            }
+        }
+
+        val view = hikage.get<TextView>("title")
+        assertEquals(manualId, view.id)
+        assertEquals(manualId, hikage.getActualViewId("title"))
+    }
+
+    @Test
+    fun viewInitRunsOnlyOnce() {
+        var initCount = 0
+        Hikage.create(context) {
+            View<TextView>(id = "title") {
+                initCount++
+            }
+        }
+
+        assertEquals(1, initCount)
+    }
+
+    @Test
+    fun missingAndroidViewIdIsGenerated() {
+        val hikage = Hikage.create(context) {
+            View<TextView>(id = "title")
+        }
+
+        val view = hikage.get<TextView>("title")
+        assertNotEquals(View.NO_ID, view.id)
+        assertEquals(view.id, hikage.getActualViewId("title"))
+    }
+
+    @Test
+    fun existingAndroidViewIdIsPreserved() {
+        val manualId = View.generateViewId()
+        val textView = TextView(context).apply {
+            id = manualId
+        }
+        val hikage = Hikage.create(context) {
+            Layout(textView, id = "title")
+        }
+
+        assertSame(textView, hikage["title"])
+        assertEquals(manualId, textView.id)
+        assertEquals(manualId, hikage.getActualViewId("title"))
     }
 }

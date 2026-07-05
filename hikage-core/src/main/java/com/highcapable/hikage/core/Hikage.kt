@@ -217,8 +217,10 @@ class Hikage private constructor(internal val session: LayoutSession) {
 
     /**
      * Get the actual view id by [id].
+     *
+     * If the view with [id] is not found, it will return [View.NO_ID].
      * @param id the view id.
-     * @return [Int] or -1.
+     * @return [Int]
      */
     fun getActualViewId(id: String) = session.getActualViewId(id)
 

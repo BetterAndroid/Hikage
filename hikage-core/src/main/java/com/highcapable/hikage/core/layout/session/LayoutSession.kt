@@ -35,6 +35,7 @@ import com.highcapable.hikage.core.attribute.hikageAttributeIsAvailable
 import com.highcapable.hikage.core.attribute.isNotEmpty
 import com.highcapable.hikage.core.attribute.widget.HikageAttributeView
 import com.highcapable.hikage.core.base.HikageFactory
+import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.ViewConstructor
 import com.highcapable.hikage.core.extension.identityKey
 import com.highcapable.hikage.core.layout.PerformContextImpl
@@ -58,7 +59,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         private val viewResolvers = mutableMapOf<String?, ViewResolver<*>>()
 
         /** The view atomic id. */
-        private val viewAtomicId = AtomicInteger(0x7F00000)
+        private val viewAtomicId = AtomicInteger(1)
 
         /**
          * Create a new [LayoutSession] with [factories].
@@ -76,9 +77,6 @@ internal class LayoutSession private constructor(private val factories: List<Hik
 
     /** The view map. */
     private val views = linkedMapOf<String, View>()
-
-    /** The view id map. */
-    private val viewIds = mutableMapOf<String, Int>()
 
     /** The attribute set resolver map. */
     private val attributeSetResolvers = mutableMapOf<String, AttributeSetResolver>()
@@ -109,10 +107,12 @@ internal class LayoutSession private constructor(private val factories: List<Hik
 
     /**
      * Get the actual view id by [id].
+     *
+     * If the view with [id] is not found, it will return [View.NO_ID].
      * @param id the view id.
-     * @return [Int] or -1.
+     * @return [Int]
      */
-    fun getActualViewId(id: String) = viewIds[id] ?: -1
+    fun getActualViewId(id: String) = views[id]?.id ?: View.NO_ID
 
     /**
      * Create a new [View] via [V].
@@ -122,6 +122,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @param context the context.
      * @param attrs the attributes body.
      * @param parent the parent view group.
+     * @param beforeInit the view initialization body before [provideView].
      * @return [V]
      */
     fun <V : View> createView(
@@ -130,7 +131,8 @@ internal class LayoutSession private constructor(private val factories: List<Hik
         id: String?,
         context: Context,
         attrs: Lazy<AttributeSet>,
-        parent: ViewGroup?
+        parent: ViewGroup?,
+        beforeInit: HikageView<V>
     ): V {
         val view = createViewFromFactory(viewClass, factory, id, context, attrs, parent)
             ?: factory?.invoke(context, attrs.value) ?: viewResolverOf(viewClass)?.build(context, attrs)
@@ -139,6 +141,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
                 "Please make sure the view class has a constructor with Context and AttributeSet or Context."
         )
 
+        view.beforeInit()
         provideView(view, id)
         return view
     }
@@ -193,8 +196,9 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @return [String]
      */
     fun provideView(view: View, id: String?): String {
-        val (requireId, viewId) = generateViewId(id)
-        view.id = viewId
+        val requireId = id ?: generateRandomViewId()
+        if (views.contains(requireId)) throw PerformerException("View with id \"$requireId\" already exists.")
+        if (view.id == View.NO_ID) view.id = View.generateViewId()
         views[requireId] = view
         providedViewCount++
 
@@ -244,12 +248,11 @@ internal class LayoutSession private constructor(private val factories: List<Hik
      * @param session the child session.
      */
     fun include(session: LayoutSession) {
-        val duplicateId = session.viewIds.keys.firstOrNull { it in viewIds }
+        val duplicateId = session.views.keys.firstOrNull { it in views }
         if (duplicateId != null) throw PerformerException(
             "Embedded layout view IDs conflict, the view id \"$duplicateId\" is already exists."
         )
 
-        viewIds.putAll(session.viewIds)
         views.putAll(session.views)
         performerCount += session.performerCount
         providedViewCount += session.providedViewCount
@@ -319,34 +322,8 @@ internal class LayoutSession private constructor(private val factories: List<Hik
     }
 
     /**
-     * Generate view id from [id].
-     * @param id the view id.
-     * @return [Pair]<[String], [Int]>
-     */
-    private fun generateViewId(id: String?): Pair<String, Int> {
-        /**
-         * Generate a new view id.
-         * @param id the view id.
-         * @return [Int]
-         */
-        fun doGenerate(id: String): Int {
-            val generateId = View.generateViewId()
-
-            if (viewIds.contains(id)) throw PerformerException("View with id \"$id\" already exists.")
-            viewIds[id] = generateId
-
-            return generateId
-        }
-
-        val requireId = id ?: generateRandomViewId()
-        val viewId = doGenerate(requireId)
-
-        return requireId to viewId
-    }
-
-    /**
      * Generate random view id.
      * @return [String]
      */
-    private fun generateRandomViewId() = "anonymous@${viewAtomicId.getAndIncrement().toHexString()}"
+    private fun generateRandomViewId() = "anonymous@${viewAtomicId.getAndIncrement().toString().padStart(4, '0')}"
 }
