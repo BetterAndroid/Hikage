@@ -1,0 +1,10 @@
+[
+  {
+    "viewClass": "com.google.android.material.transformation.TransformationChildCard",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
+    "viewClass": "com.google.android.material.transformation.TransformationChildLayout",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  }
+]
