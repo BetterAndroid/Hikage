@@ -31,6 +31,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.highcapable.hikage.core.Hikage
 import com.highcapable.hikage.core.extension.createViewFromBridgeInflaterOrNull
+import com.highcapable.hikage.core.extension.createViewFromInflaterOrNull
 import kotlin.reflect.KClass
 
 /**
@@ -62,24 +63,59 @@ fun interface HikageFactory {
         val viewClass: KClass<out View>,
         val factory: ViewConstructor<View>? = null
     )
+
+    /**
+     * The configuration of the [HikageFactory].
+     * @param privateFactory whether to process the private factory of [LayoutInflater],
+     * enabling this may cause a performance decrease.
+     * @param privateFactoryViews the list of [View] classes that need to process the private factory of [LayoutInflater].
+     * leaving it empty will process all [View] classes.
+     */
+    data class Config(
+        val privateFactory: Boolean = defaultProcessPrivateFactory,
+        val privateFactoryViews: List<String> = defaultPrivateFactoryViews
+    ) {
+
+        companion object {
+
+            /**
+             * Whether to process the private factory of [LayoutInflater] by default.
+             * default is false, enabling this may cause a performance decrease.
+             */
+            var defaultProcessPrivateFactory = false
+
+            /**
+             * The list of [View] classes that need to process the private factory of [LayoutInflater] by default.
+             * leaving it empty will process all [View] classes.
+             */
+            var defaultPrivateFactoryViews = emptyList<String>()
+        }
+    }
 }
 
 /**
  * Create a [Hikage] factory from [LayoutInflater].
  *
- * This will proxy the function of [LayoutInflater.Factory2] to [Hikage].
+ * This will proxy the factory pipeline of [LayoutInflater] to [Hikage].
  * @param inflater the layout inflater.
+ * @param config the configuration.
  * @return [HikageFactory]
  */
 @JvmSynthetic
-fun HikageFactory(inflater: LayoutInflater) = HikageFactory { parent, base, context, params ->
-    val name = params.viewClass.java.name.let {
+fun HikageFactory(
+    inflater: LayoutInflater,
+    config: HikageFactory.Config = HikageFactory.Config()
+) = HikageFactory { parent, base, context, params ->
+    val fullName = params.viewClass.java.name
+    val name = fullName.let {
         if (it.startsWith(Hikage.ANDROID_WIDGET_CLASS_PREFIX))
             it.replace(Hikage.ANDROID_WIDGET_CLASS_PREFIX, "")
         else it
     }
+    val processPrivateFactory = config.privateFactory
+    val processViews = config.privateFactoryViews
 
-    base ?: inflater.factory2?.onCreateView(parent, name, context, params.attrs)
+    base ?: inflater.createViewFromInflaterOrNull(parent, name, fullName, context, params.attrs, processPrivateFactory, processViews)
         ?: inflater.createViewFromBridgeInflaterOrNull(name, params.attrs)
 }
 
