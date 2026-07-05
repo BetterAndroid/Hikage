@@ -660,9 +660,47 @@ val factory = HikageFactory { parent, base, context, params ->
 val layoutInflater: LayoutInflater
 // 通过 LayoutInflater 创建 HikageFactory 对象
 val factory = HikageFactory(layoutInflater)
+// 你也可以在其中传入参数
+val factory = HikageFactory(layoutInflater, HikageFactory.Config())
 ```
 
-然后使用以下方式将其设置到你需要装载的 Hikage 布局上。
+`HikageFactory.Config` 支持以下参数。
+
+> 示例如下
+
+```kotlin
+// 定义 HikageFactory.Config 对象
+val config = HikageFactory.Config(
+    // 是否处理 LayoutInflater 的 mPrivateFactory
+    privateFactory = false,
+    // 指定需要处理的 View 类名列表，默认处理所有 View
+    privateFactoryViews = listOf(
+        // 例如处理 FCV
+        "androidx.fragment.app.FragmentContainerView"
+    )
+)
+// 然后将其设置到 HikageFactory 对象上
+val factory = HikageFactory(layoutInflater, config)
+```
+
+你也可以全局修改 `HikageFactory.Config` 的默认配置。
+
+> 示例如下
+
+```kotlin
+HikageFactory.Config.defaultProcessPrivateFactory = false
+HikageFactory.Config.defaultPrivateFactoryViews = emptyList()
+```
+
+::: warning
+
+由于完整模拟 `LayoutInflater` 行为管线会显著降低运行时的性能表现，所以 Hikage 默认不启用 `privateFactory`。
+
+启用后可以提升某些组件的兼容性，例如 `FragmentContainerView`，你可以在启用的同时将特定需要处理的 `View` 加入 `privateFactoryViews` 列表，就像上述示例所描述的那样。
+
+:::
+
+你可以使用以下方式将其设置到你需要装载的 Hikage 布局上。
 
 > 示例如下
 

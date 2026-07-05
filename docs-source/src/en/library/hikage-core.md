@@ -692,9 +692,50 @@ You can also pass in the `LayoutInflater` object directly to automatically infla
 val layoutInflater: LayoutInflater
 // Create HikageFactory object through LayoutInflater.
 val factory = HikageFactory(layoutInflater)
+// You can also pass parameters here.
+val factory = HikageFactory(layoutInflater, HikageFactory.Config())
 ```
 
-Then set it to the Hikage layout you need to inflate.
+`HikageFactory.Config` supports the following parameters.
+
+> The following example
+
+```kotlin
+// Define a HikageFactory.Config object.
+val config = HikageFactory.Config(
+    // Whether to process LayoutInflater's mPrivateFactory.
+    privateFactory = false,
+    // Specify the list of View class names to process, and all Views are processed by default.
+    privateFactoryViews = listOf(
+        // For example, handle FCV.
+        "androidx.fragment.app.FragmentContainerView"
+    )
+)
+// Then set it on the HikageFactory object.
+val factory = HikageFactory(layoutInflater, config)
+```
+
+You can also change the default configuration of `HikageFactory.Config` globally.
+
+> The following example
+
+```kotlin
+HikageFactory.Config.defaultProcessPrivateFactory = false
+HikageFactory.Config.defaultPrivateFactoryViews = emptyList()
+```
+
+::: warning
+
+Because fully simulating the `LayoutInflater` pipeline significantly reduces runtime performance,
+Hikage does not enable `privateFactory` by default.
+
+After enabling it, you can improve compatibility for some components, such as `FragmentContainerView`.
+At the same time, you can add specific `View` entries that need to be handled to the `privateFactoryViews` list,
+as described in the example above.
+
+:::
+
+You can use the following way to set it to the Hikage layout you need to inflate.
 
 > The following example
 
