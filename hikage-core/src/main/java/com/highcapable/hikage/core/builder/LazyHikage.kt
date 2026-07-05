@@ -28,10 +28,10 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.base.Hikagable
 import com.highcapable.hikage.core.base.HikageFactory
 import com.highcapable.hikage.core.base.HikageFactoryBuilder
 import com.highcapable.hikage.core.base.HikagePerformer
-import com.highcapable.hikage.core.base.Hikagable
 
 /**
  * Lazy initialize a [Hikage] layout.
@@ -148,6 +148,54 @@ inline fun <reified LP : ViewGroup.LayoutParams> Context.lazyHikage(
         performer = performer
     )
 }
+
+/**
+ * Lazy initialize a [Hikage] layout.
+ *
+ * Usage:
+ *
+ * ```kotlin
+ * object MainLayout : HikageBuilder {
+ *
+ *    override fun build() = Hikagable {
+ *        LinearLayout(
+ *            lparams = LayoutParams(matchParent = true),
+ *            init = {
+ *                orientation = LinearLayout.VERTICAL
+ *                gravity = Gravity.CENTER
+ *            }
+ *       ) {
+ *            TextView {
+ *                text = "Hello, Hikage!"
+ *                textSize = 20f
+ *            }
+ *       }
+ *    }
+ * }
+ *
+ * class MainFragment : Fragment() {
+ *
+ *     private val hikage by lazyHikage(MainLayout)
+ *
+ *     override fun onCreateView(
+ *         inflater: LayoutInflater,
+ *         container: ViewGroup?,
+ *         savedInstanceState: Bundle?
+ *     ) = hikage.root
+ * }
+ * ```
+ * @receiver the [Fragment] to create the layout.
+ * @param builder the [HikageBuilder] instance.
+ * @param parent the parent view group.
+ * @param attachToParent whether to attach the layout to the parent when the [parent] is filled.
+ * @return [Lazy]<[Hikage]>
+ */
+@JvmSynthetic
+fun Fragment.lazyHikage(
+    builder: HikageBuilder,
+    parent: ViewGroup? = null,
+    attachToParent: Boolean = parent != null
+) = lazy { builder.build().create(context = requireContext(), parent, attachToParent) }
 
 /**
  * Lazy initialize a [Hikage] layout.
