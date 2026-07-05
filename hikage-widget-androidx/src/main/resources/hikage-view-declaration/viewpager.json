@@ -4,6 +4,14 @@
     "performer": false
   },
   {
+    "viewClass": "androidx.viewpager.widget.PagerTitleStrip",
+    "performer": false
+  },
+  {
+    "viewClass": "androidx.viewpager.widget.PagerTabStrip",
+    "performer": false
+  },
+  {
     "viewClass": "androidx.viewpager2.widget.ViewPager2",
     "performer": false
   }

@@ -4,6 +4,10 @@
     "lparams": "android.widget.FrameLayout.LayoutParams"
   },
   {
+    "viewClass": "androidx.core.view.insets.ProtectionLayout",
+    "lparams": "android.widget.FrameLayout.LayoutParams"
+  },
+  {
     "viewClass": "androidx.core.widget.ContentLoadingProgressBar"
   }
 ]

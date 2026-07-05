@@ -8,6 +8,49 @@
     "lparams": "androidx.constraintlayout.widget.ConstraintLayout.LayoutParams"
   },
   {
+    "viewClass": "androidx.constraintlayout.motion.widget.MotionHelper"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.Carousel"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.CircularFlow"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.Flow"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.Grid"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.Layer"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.MotionEffect"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.helper.widget.MotionPlaceholder"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.widget.Barrier"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.widget.Constraints",
+    "lparams": "androidx.constraintlayout.widget.Constraints.LayoutParams"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.widget.Group"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.widget.Guideline"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.widget.Placeholder"
+  },
+  {
+    "viewClass": "androidx.constraintlayout.widget.ReactiveGuide"
+  },
+  {
     "viewClass": "androidx.constraintlayout.utils.widget.ImageFilterButton"
   },
   {

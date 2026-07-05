@@ -1,0 +1,11 @@
+[
+  {
+    "viewClass": "androidx.fragment.app.FragmentContainerView",
+    "lparams": "android.widget.FrameLayout.LayoutParams",
+    "performer": false
+  },
+  {
+    "viewClass": "androidx.fragment.app.FragmentTabHost",
+    "performer": false
+  }
+]
