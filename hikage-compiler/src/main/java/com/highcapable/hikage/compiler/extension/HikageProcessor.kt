@@ -28,6 +28,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueArgument
 import com.squareup.kotlinpoet.ClassName
+import javax.lang.model.SourceVersion
 
 fun KSDeclaration.getClassDeclaration(resolver: Resolver) =
     this as? KSClassDeclaration ?: qualifiedName?.let { resolver.getClassDeclarationByName(it) }
@@ -71,16 +72,20 @@ fun ClassName.getTypedSimpleName() = simpleName.replace(".", "_")
 
 object ClassDetector {
 
-    private val javaKeywords = setOf(
-        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class",
-        "const", "continue", "default", "do", "double", "else", "enum", "extends", "final",
-        "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int",
-        "interface", "long", "native", "new", "package", "private", "protected", "public",
-        "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
-        "throw", "throws", "transient", "try", "void", "volatile", "while"
+    private val kotlinKeywords = setOf(
+        "as", "break", "class", "continue", "do", "else", "false", "for", "fun",
+        "if", "in", "interface", "is", "null", "object", "package", "return",
+        "super", "this", "throw", "true", "try", "typealias", "typeof", "val",
+        "var", "when", "while", "by", "catch", "constructor", "delegate",
+        "dynamic", "field", "file", "finally", "get", "import", "init", "param",
+        "property", "receiver", "set", "setparam", "where", "actual", "abstract",
+        "annotation", "companion", "const", "crossinline", "data", "enum", "expect",
+        "external", "final", "infix", "inline", "inner", "internal", "lateinit",
+        "noinline", "open", "operator", "out", "override", "private", "protected",
+        "public", "reified", "sealed", "suspend", "tailrec", "value", "vararg", "_"
     )
 
-    private val invalidPattern = "^(\\d.*|.*[^A-Za-z0-9_$].*)$".toRegex()
-
-    fun verify(name: String) = name !in javaKeywords && !invalidPattern.matches(name)
+    fun verify(name: String) = SourceVersion.isIdentifier(name) &&
+        !SourceVersion.isKeyword(name) &&
+        name !in kotlinKeywords && '$' !in name
 }
