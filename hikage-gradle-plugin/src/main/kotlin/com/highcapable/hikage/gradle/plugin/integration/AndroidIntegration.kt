@@ -29,6 +29,7 @@ import com.highcapable.hikage.gradle.plugin.extension.HikageExtension
 import com.highcapable.hikage.gradle.plugin.provider.ViewDeclarationFilesArgumentProvider
 import com.highcapable.hikage.gradle.plugin.task.CollectHikageViewDeclarationFilesTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.PathSensitivity
@@ -101,6 +102,8 @@ internal class AndroidIntegration(private val project: Project, private val exte
         private const val GENERATED_HIKAGE_VIEW_DECLARATION_FOLDER = "generated/hikage/view-declaration-files"
 
         private const val HIKAGE_GROUP_NAME = HikageProperties.PROJECT_GROUP_NAME
+        private const val HIKAGE_BOM_MODULE_NAME = HikageProperties.PROJECT_HIKAGE_BOM_MODULE_NAME
+        private const val HIKAGE_BOM_MODULE_EMBEDDED_VERSION = HikageProperties.PROJECT_HIKAGE_BOM_VERSION
         private const val HIKAGE_COMPILER_MODULE_NAME = HikageProperties.PROJECT_HIKAGE_COMPILER_MODULE_NAME
     }
 
@@ -189,11 +192,28 @@ internal class AndroidIntegration(private val project: Project, private val exte
             if (!compiler.enabled.get()) return@provider null
 
             val version = compiler.version.get().trim()
+                .ifEmpty { findHikageBomVersion() }
+                .ifEmpty { HIKAGE_BOM_MODULE_EMBEDDED_VERSION }
             if (version.isEmpty()) throw HikagePluginException("Hikage compiler version cannot be empty.")
 
             "$HIKAGE_GROUP_NAME:$HIKAGE_COMPILER_MODULE_NAME:$version"
         }
     )
+
+    private fun findHikageBomVersion() = project.configurations
+        .asSequence()
+        .filterNot { it.name.startsWith(KSP_CONFIGURATION_NAME) }
+        .flatMap { it.dependencies.asSequence() }
+        .filterIsInstance<ExternalModuleDependency>()
+        .firstNotNullOfOrNull { dependency ->
+            if (dependency.group != HIKAGE_GROUP_NAME || dependency.name != HIKAGE_BOM_MODULE_NAME) return@firstNotNullOfOrNull null
+
+            dependency.versionConstraint.strictVersion
+                .ifEmpty { dependency.versionConstraint.requiredVersion }
+                .ifEmpty { dependency.versionConstraint.preferredVersion }
+                .ifEmpty { dependency.version.orEmpty() }
+                .takeIf(String::isNotBlank)
+        }.orEmpty()
 
     private fun createCollectViewDeclarationFilesTask(): TaskProvider<CollectHikageViewDeclarationFilesTask> {
         val collectTask = project.tasks.register<CollectHikageViewDeclarationFilesTask>(COLLECT_VIEW_DECLARATION_FILES_TASK_NAME) {

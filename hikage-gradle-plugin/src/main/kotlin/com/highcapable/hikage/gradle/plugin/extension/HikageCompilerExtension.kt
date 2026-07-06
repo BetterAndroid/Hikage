@@ -21,7 +21,6 @@
  */
 package com.highcapable.hikage.gradle.plugin.extension
 
-import com.highcapable.hikage.generated.HikageProperties
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import javax.inject.Inject
@@ -58,7 +57,7 @@ open class HikageCompilerExtension @Inject constructor(objects: ObjectFactory, p
     /** The Hikage compiler version. */
     val version = objects.property(String::class.java).convention(
         providers.gradleProperty(VERSION_PROPERTY_NAME)
-            .orElse(HikageProperties.PROJECT_HIKAGE_BOM_VERSION)
+            .orElse("")
     )
 
     /** Whether to generate code from Hikage view declaration files. */
