@@ -189,11 +189,15 @@ internal object AttributeValueEncoder {
         value: String,
         params: AttributeResolverParams
     ): EncodedAttributeValue {
+        if (value.startsWith("@+")) throw XmlParserException(
+            "Cannot create resource \"$value\" for attribute \"${attr.name}\" at runtime."
+        )
+
         // @null
         if (value == "@null") return EncodedAttributeValue(TypedValue.TYPE_REFERENCE, 0, -1)
 
-        // @[+][pkg:]type/name
-        val body = value.removePrefix("@").removePrefix("+")
+        // @[pkg:]type/name
+        val body = value.removePrefix("@")
         val id = resolveResourceId(context, attr, body, defType = null, params)
 
         return EncodedAttributeValue(TypedValue.TYPE_REFERENCE, id, -1)
