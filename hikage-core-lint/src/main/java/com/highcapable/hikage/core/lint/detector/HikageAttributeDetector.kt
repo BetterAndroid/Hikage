@@ -877,7 +877,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         if (replaceFix == null) return idFix
 
         return LintFix.create()
-            .name("Declare '$idName' in $IDS_XML_FILE")
+            .name(idDeclarationFixName(idName))
             .composite(idFix, replaceFix)
     }
 
@@ -907,7 +907,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         }.getOrDefault(false)
 
     private fun File.createIdsXmlFix(idName: String) = LintFix.create()
-        .name("Create $IDS_XML_FILE")
+        .name(idDeclarationFixName(idName))
         .newFile(this, """
             <?xml version="1.0" encoding="utf-8"?>
             <resources>
@@ -918,13 +918,15 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         .build()
 
     private fun File.createInsertIdFix(idName: String) = LintFix.create()
-        .name("Declare '$idName' in $IDS_XML_FILE")
+        .name(idDeclarationFixName(idName))
         .replace()
         .range(Location.create(this))
         .pattern("</resources>")
         .with("    <item name=\"$idName\" type=\"$ID_RESOURCE_TYPE\" />\n</resources>")
         .reformat(true)
         .build()
+
+    private fun idDeclarationFixName(idName: String) = "Declare '$idName' in $IDS_XML_FILE"
 
     private fun String.parseIntLiteralOrNull(): Int? {
         val value = replace("_", "")
