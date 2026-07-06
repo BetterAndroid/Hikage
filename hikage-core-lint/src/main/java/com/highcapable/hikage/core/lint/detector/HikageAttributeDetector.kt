@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.toUElementOfType
 import java.io.File
+import javax.lang.model.SourceVersion
 
 class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
@@ -114,7 +115,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             id = "CreateIdInHikageAttribute",
             briefDescription = "Hikage attribute creates ID resource.",
             explanation = "Hikage attributes are resolved at runtime and cannot create new ID resources. " +
-                "Declare the id in `ids.xml` and reference it with `@id/name`.",
+                "Declare the ID in `ids.xml` and reference it with `@id/name`.",
             category = Category.CORRECTNESS,
             priority = 6,
             severity = Severity.ERROR,
@@ -200,13 +201,13 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         private const val ANDROID_NAMESPACE = "android"
         private const val APP_NAMESPACE = "app"
         private const val ID_RESOURCE_TYPE = "id"
+        private const val ATTR_RESOURCE_TYPE = "attr"
         private const val IDS_XML_FILE = "ids.xml"
         private const val ATTRIBUTE_UTILS_SUFFIX = ".attribute.HikageAttributeUtils"
         private const val ATTRIBUTE_SCOPE_SUFFIX = ".attribute.AttributeScope"
         private const val HIKAGE_CLASS_SUFFIX = ".Hikage"
 
         private val COLOR_VALUE_REGEX = "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$".toRegex()
-        private val RESOURCE_NAME_REGEX = "^[a-zA-Z_][a-zA-Z0-9_]*$".toRegex()
     }
 
     override fun getApplicableUastTypes() = listOf(UCallExpression::class.java)
@@ -232,6 +233,9 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         attributes: MutableMap<PsiElement, MutableMap<String, MutableList<AttributeUsage>>>,
         reportedLayoutAttributes: MutableSet<PsiElement>
     ) {
+        val isHikageSet = method.isHikageRootSetFunction() || method.isHikageScopeSetFunction()
+        if (isHikageSet && visitAndReportInvalidAttribute(context, node, callExpr)) return
+
         when {
             method.isHikageNamespaceFunction() -> {
                 visitAndReportNamespaceShortcut(context, callExpr)
@@ -241,8 +245,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             method.isHikageScopeSetFunction() -> visitAndReportScopedSet(context, node, callExpr)
         }
 
-        if (method.isHikageRootSetFunction() || method.isHikageScopeSetFunction()) {
-            visitAndReportInvalidAttribute(context, node, callExpr)
+        if (isHikageSet) {
             visitAndReportIdResource(context, callExpr)
             visitAndReportDuplicate(context, node, callExpr, attributes)
         }
@@ -350,12 +353,15 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         )
     }
 
-    private fun visitAndReportInvalidAttribute(context: JavaContext, node: UCallExpression, callExpr: KtCallExpression) {
-        val attrNameExpr = node.valueArguments.firstOrNull()?.sourcePsi ?: return
+    private fun visitAndReportInvalidAttribute(context: JavaContext, node: UCallExpression, callExpr: KtCallExpression): Boolean {
+        var hasError = false
+        val attrNameExpr = node.valueArguments.firstOrNull()?.sourcePsi ?: return false
+
         val attrName = callExpr.stringLiteralTextAt(0)
         if (attrName != null) {
             val location = context.getLocation(attrNameExpr)
             attrName.invalidAttributeNameMessage()?.let {
+                hasError = true
                 context.report(
                     INVALID_NAME_ISSUE,
                     attrNameExpr,
@@ -364,6 +370,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
                 )
             }
             attrName.attributeNameString().takeIf { it.length > ATTRIBUTE_STRING_MAX_LENGTH }?.let {
+                hasError = true
                 context.report(
                     TOO_LONG_STRING_ISSUE,
                     attrNameExpr,
@@ -373,10 +380,12 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             }
         }
 
-        val valueExpr = callExpr.valueArguments.getOrNull(1)?.getArgumentExpression() ?: return
-        val value = valueExpr.staticStringText() ?: return
+        val valueExpr = callExpr.valueArguments.getOrNull(1)?.getArgumentExpression() ?: return hasError
+        val value = valueExpr.staticStringText() ?: return hasError
         val valueLocation = context.getLocation(valueExpr)
+
         value.invalidResourceReferenceMessage()?.let {
+            hasError = true
             context.report(
                 INVALID_RESOURCE_REFERENCE_ISSUE,
                 valueExpr,
@@ -385,6 +394,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             )
         }
         value.invalidColorValueMessage()?.let {
+            hasError = true
             context.report(
                 INVALID_COLOR_VALUE_ISSUE,
                 valueExpr,
@@ -392,12 +402,17 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
                 message = it
             )
         }
-        if (value.length > ATTRIBUTE_STRING_MAX_LENGTH) context.report(
-            TOO_LONG_STRING_ISSUE,
-            valueExpr,
-            valueLocation,
-            message = "Attribute string is too long. Maximum length is $ATTRIBUTE_STRING_MAX_LENGTH characters."
-        )
+        if (value.length > ATTRIBUTE_STRING_MAX_LENGTH) {
+            hasError = true
+            context.report(
+                TOO_LONG_STRING_ISSUE,
+                valueExpr,
+                valueLocation,
+                message = "Attribute string is too long. Maximum length is $ATTRIBUTE_STRING_MAX_LENGTH characters."
+            )
+        }
+
+        return hasError
     }
 
     private fun visitAndReportIdResource(context: JavaContext, callExpr: KtCallExpression) {
@@ -717,43 +732,121 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         if (isEmpty()) return "Attribute name must not be empty."
 
         val separator = indexOf(':')
-        if (separator < 0) return null
+        if (separator < 0) return invalidResourceNameMessage("Attribute name")
         return when {
             separator == 0 -> "Attribute `$this` is missing a namespace before `:`."
             separator == lastIndex -> "Attribute `$this` is missing a name after `:`."
             indexOf(':', separator + 1) >= 0 -> "Attribute `$this` must not contain more than one `:`."
-            else -> null
+            !substring(0, separator).isValidResourceNamespace() -> "Attribute `$this` has an invalid namespace prefix."
+            else -> substring(separator + 1).invalidResourceNameMessage("Attribute name")
         }
     }
 
     private fun String.invalidResourceReferenceMessage(): String? {
-        if (!startsWith("@") || this == "@null") return null
+        if (startsWith("@")) return invalidResourceValueReferenceMessage()
+        if (startsWith("?")) return invalidAttributeValueReferenceMessage()
+        return null
+    }
 
-        var body = removePrefix("@").removePrefix("+")
+    private fun String.invalidResourceValueReferenceMessage(): String? {
+        if (this == "@null") return null
+
+        var body = removePrefix("@")
         if (body.isEmpty()) return "Resource reference `$this` is missing a resource type and name."
 
+        val createsResource = body.startsWith("+")
+        if (createsResource) body = body.drop(1)
+        if (body.isEmpty()) return "Resource reference `$this` is missing a resource type and name."
+
+        val reference = body.resourceReferenceBody(displayValue = this, requireType = true)
+        reference.message?.let { return it }
+
+        return when {
+            createsResource && reference.type != ID_RESOURCE_TYPE -> "Resource reference `$this` can only create ID resources."
+            else -> null
+        }
+    }
+
+    private fun String.invalidAttributeValueReferenceMessage(): String? {
+        val body = removePrefix("?")
+        if (body.isEmpty()) return "Attribute reference `$this` is missing an attribute name."
+
+        val reference = body.resourceReferenceBody(displayValue = this, requireType = false)
+        reference.message?.let { return it.replace("Resource reference", "Attribute reference") }
+
+        return when {
+            reference.type != null && reference.type != ATTR_RESOURCE_TYPE ->
+                "Attribute reference `$this` must use the attr resource type."
+            else -> null
+        }
+    }
+
+    private fun String.resourceReferenceBody(displayValue: String, requireType: Boolean): ResourceReferenceBody {
+        var body = this
         val colon = body.indexOf(':')
         if (colon >= 0) {
-            if (colon == 0) return "Resource reference `$this` is missing a package name before `:`."
-            if (colon == body.lastIndex) return "Resource reference `$this` is missing a resource type and name after `:`."
+            if (colon == 0) return ResourceReferenceBody(message = "Resource reference `$displayValue` is missing a package name before `:`.")
+            if (colon == body.lastIndex)
+                return ResourceReferenceBody(message = "Resource reference `$displayValue` is missing a resource type and name after `:`.")
+            if (body.indexOf(':', colon + 1) >= 0)
+                return ResourceReferenceBody(message = "Resource reference `$displayValue` must not contain more than one `:`.")
+
+            val packageName = body.substring(0, colon)
+            if (!packageName.isValidResourceNamespace())
+                return ResourceReferenceBody(message = "Resource reference `$displayValue` has an invalid package name.")
+
             body = body.substring(colon + 1)
         }
 
         val slash = body.indexOf('/')
-        if (slash < 0) return "Resource reference `$this` must include a resource type, for example `@string/name`."
+        val type: String?
+        val name: String
+        if (slash < 0) {
+            if (requireType) return ResourceReferenceBody(
+                message = "Resource reference `$displayValue` must include a resource type, for example `@string/name`."
+            )
 
-        return when {
-            slash == 0 -> "Resource reference `$this` is missing a resource type before `/`."
-            slash == body.lastIndex -> "Resource reference `$this` is missing a resource name after `/`."
-            body.indexOf('/', slash + 1) >= 0 -> "Resource reference `$this` must not contain more than one `/`."
-            else -> null
+            type = null
+            name = body
+        } else {
+            if (slash == 0) return ResourceReferenceBody(message = "Resource reference `$displayValue` is missing a resource type before `/`.")
+            if (slash == body.lastIndex)
+                return ResourceReferenceBody(message = "Resource reference `$displayValue` is missing a resource name after `/`.")
+            if (body.indexOf('/', slash + 1) >= 0)
+                return ResourceReferenceBody(message = "Resource reference `$displayValue` must not contain more than one `/`.")
+
+            type = body.substring(0, slash)
+            name = body.substring(slash + 1)
         }
+
+        if (type != null && !type.isValidResourceTypeName())
+            return ResourceReferenceBody(type, name, "Resource reference `$displayValue` has an invalid resource type.")
+        name.invalidResourceNameMessage("Resource reference name")?.let {
+            return ResourceReferenceBody(type, name, it.replace("Resource reference name", "Resource reference `$displayValue` name"))
+        }
+
+        return ResourceReferenceBody(type, name)
     }
 
     private fun String.invalidColorValueMessage(): String? {
         if (!startsWith("#") || COLOR_VALUE_REGEX.matches(this)) return null
         return "Color value `$this` must be #RGB, #ARGB, #RRGGBB or #AARRGGBB."
     }
+
+    private fun String.invalidResourceNameMessage(label: String): String? {
+        val normalized = replace('.', '_')
+        return when {
+            isEmpty() -> "$label must not be empty."
+            startsWith(".") -> "$label `$this` must not start with `.`."
+            !SourceVersion.isIdentifier(normalized) -> "$label `$this` is not a valid resource name."
+            SourceVersion.isKeyword(normalized) -> "$label `$this` must not be a reserved Java keyword."
+            else -> null
+        }
+    }
+
+    private fun String.isValidResourceName() = invalidResourceNameMessage("Resource name") == null
+    private fun String.isValidResourceTypeName() = isValidResourceName()
+    private fun String.isValidResourceNamespace() = split('.').all { it.isValidResourceName() }
 
     private fun String.idResourceReference(): IdResourceReference? {
         val createsId = startsWith("@+$ID_RESOURCE_TYPE/")
@@ -774,7 +867,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         idExists: Boolean
     ): LintFix? {
         if (this !is KtStringTemplateExpression) return null
-        if (!idName.matches(RESOURCE_NAME_REGEX)) return null
+        if (!idName.isValidResourceName()) return null
 
         val replaceFix = if (createsId) createReplaceCreatedIdFix(context, idName) else null
         if (idExists) return replaceFix
@@ -893,6 +986,12 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
     private data class LayoutAttributeReport(
         val name: String,
         val element: PsiElement
+    )
+
+    private data class ResourceReferenceBody(
+        val type: String? = null,
+        val name: String = "",
+        val message: String? = null
     )
 
     private data class IdResourceReference(
