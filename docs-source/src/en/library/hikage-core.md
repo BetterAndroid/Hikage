@@ -656,6 +656,9 @@ If you manually create `LayoutParams` using the `lparams` parameter, Hikage will
 the parent layout and create new `LayoutParams`, these attributes will no longer take effect and will be overridden,
 you can only choose one scheme to set layout parameters.
 
+Due to the attribute parsing work being done at runtime, you cannot use `@+id` to add a new resource ID.
+The correct approach is to create a `res/values/ids.xml` file and declare the resource ID in it.
+
 :::
 
 ### Custom Layout Factory
