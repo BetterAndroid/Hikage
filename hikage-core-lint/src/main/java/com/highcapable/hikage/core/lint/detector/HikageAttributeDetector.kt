@@ -21,6 +21,8 @@
  */
 package com.highcapable.hikage.core.lint.detector
 
+import com.android.resources.ResourceType
+import com.android.tools.lint.client.api.ResourceRepositoryScope
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Detector
@@ -28,6 +30,7 @@ import com.android.tools.lint.detector.api.Implementation
 import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.LintFix
+import com.android.tools.lint.detector.api.Location
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.highcapable.hikage.core.lint.DeclaredSymbol
@@ -49,6 +52,7 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.toUElementOfType
+import java.io.File
 
 class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
@@ -100,6 +104,34 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             category = Category.CORRECTNESS,
             priority = 5,
             severity = Severity.WARNING,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
+        val CREATE_ID_ISSUE = Issue.create(
+            id = "CreateIdInHikageAttribute",
+            briefDescription = "Hikage attribute creates ID resource.",
+            explanation = "Hikage attributes are resolved at runtime and cannot create new ID resources. " +
+                "Declare the id in `ids.xml` and reference it with `@id/name`.",
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.ERROR,
+            implementation = Implementation(
+                HikageAttributeDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+
+        val MISSING_ID_ISSUE = Issue.create(
+            id = "MissingIdInHikageAttribute",
+            briefDescription = "Hikage attribute ID resource missing.",
+            explanation = "ID resources used in Hikage attributes must be declared in the current project " +
+                "or provided by one of its dependencies.",
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.ERROR,
             implementation = Implementation(
                 HikageAttributeDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
@@ -167,11 +199,14 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         private const val ATTRIBUTE_STRING_MAX_LENGTH = 0x7FFF
         private const val ANDROID_NAMESPACE = "android"
         private const val APP_NAMESPACE = "app"
+        private const val ID_RESOURCE_TYPE = "id"
+        private const val IDS_XML_FILE = "ids.xml"
         private const val ATTRIBUTE_UTILS_SUFFIX = ".attribute.HikageAttributeUtils"
         private const val ATTRIBUTE_SCOPE_SUFFIX = ".attribute.AttributeScope"
         private const val HIKAGE_CLASS_SUFFIX = ".Hikage"
 
         private val COLOR_VALUE_REGEX = "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$".toRegex()
+        private val RESOURCE_NAME_REGEX = "^[a-zA-Z_][a-zA-Z0-9_]*$".toRegex()
     }
 
     override fun getApplicableUastTypes() = listOf(UCallExpression::class.java)
@@ -208,6 +243,7 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
 
         if (method.isHikageRootSetFunction() || method.isHikageScopeSetFunction()) {
             visitAndReportInvalidAttribute(context, node, callExpr)
+            visitAndReportIdResource(context, callExpr)
             visitAndReportDuplicate(context, node, callExpr, attributes)
         }
 
@@ -361,6 +397,30 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
             valueExpr,
             valueLocation,
             message = "Attribute string is too long. Maximum length is $ATTRIBUTE_STRING_MAX_LENGTH characters."
+        )
+    }
+
+    private fun visitAndReportIdResource(context: JavaContext, callExpr: KtCallExpression) {
+        val valueExpr = callExpr.valueArguments.getOrNull(1)?.getArgumentExpression() ?: return
+        val value = valueExpr.staticStringText() ?: return
+        val idReference = value.idResourceReference() ?: return
+
+        val idName = idReference.name
+        val idExists = context.hasIdResource(idName)
+        if (!idReference.createsId && idExists) return
+
+        val location = context.getLocation(valueExpr)
+        val issue = if (idReference.createsId) CREATE_ID_ISSUE else MISSING_ID_ISSUE
+        val message = if (idReference.createsId) 
+            "Resource ID `$idName` cannot be created from Hikage attributes at runtime."
+        else "Resource ID `$idName` does not exist."
+
+        context.report(
+            issue,
+            valueExpr,
+            location,
+            message = message,
+            quickfixData = valueExpr.createIdResourceFix(context, idName, idReference.createsId, idExists)
         )
     }
 
@@ -695,6 +755,84 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
         return "Color value `$this` must be #RGB, #ARGB, #RRGGBB or #AARRGGBB."
     }
 
+    private fun String.idResourceReference(): IdResourceReference? {
+        val createsId = startsWith("@+$ID_RESOURCE_TYPE/")
+        val referencesId = startsWith("@$ID_RESOURCE_TYPE/")
+        if (!createsId && !referencesId) return null
+
+        val prefix = if (createsId) "@+$ID_RESOURCE_TYPE/" else "@$ID_RESOURCE_TYPE/"
+        val idName = removePrefix(prefix)
+        if (idName.isEmpty()) return null
+
+        return IdResourceReference(idName, createsId)
+    }
+
+    private fun KtExpression.createIdResourceFix(
+        context: JavaContext,
+        idName: String,
+        createsId: Boolean,
+        idExists: Boolean
+    ): LintFix? {
+        if (this !is KtStringTemplateExpression) return null
+        if (!idName.matches(RESOURCE_NAME_REGEX)) return null
+
+        val replaceFix = if (createsId) createReplaceCreatedIdFix(context, idName) else null
+        if (idExists) return replaceFix
+
+        val idsXml = context.findIdsXml()
+        val idFix = if (idsXml.exists()) idsXml.createInsertIdFix(idName) else idsXml.createIdsXmlFix(idName)
+        if (replaceFix == null) return idFix
+
+        return LintFix.create()
+            .name("Declare '$idName' in $IDS_XML_FILE")
+            .composite(idFix, replaceFix)
+    }
+
+    private fun KtExpression.createReplaceCreatedIdFix(context: JavaContext, idName: String) = LintFix.create()
+        .name("Replace with '@$ID_RESOURCE_TYPE/$idName'")
+        .replace()
+        .range(context.getLocation(this))
+        .with("\"@$ID_RESOURCE_TYPE/$idName\"")
+        .reformat(true)
+        .build()
+
+    private fun JavaContext.findIdsXml(): File {
+        val resourceFolders = project.resourceFolders
+        val resDir = resourceFolders.firstOrNull { File(File(it, "values"), IDS_XML_FILE).exists() }
+            ?: resourceFolders.firstOrNull { it.name == "res" && "/src/main/" in it.invariantSeparatorsPath }
+            ?: resourceFolders.firstOrNull { it.name == "res" && "/build/" !in it.invariantSeparatorsPath }
+            ?: resourceFolders.firstOrNull { it.name == "res" }
+            ?: File(project.dir, "src/main/res")
+
+        return File(File(resDir, "values"), IDS_XML_FILE)
+    }
+
+    private fun JavaContext.hasIdResource(idName: String) =
+        runCatching {
+            client.getResources(project, ResourceRepositoryScope.ALL_DEPENDENCIES)
+                .hasResources(project.resourceNamespace, ResourceType.ID, idName)
+        }.getOrDefault(false)
+
+    private fun File.createIdsXmlFix(idName: String) = LintFix.create()
+        .name("Create $IDS_XML_FILE")
+        .newFile(this, """
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <item name="$idName" type="$ID_RESOURCE_TYPE" />
+            </resources>
+        """.trimIndent())
+        .reformat(true)
+        .build()
+
+    private fun File.createInsertIdFix(idName: String) = LintFix.create()
+        .name("Declare '$idName' in $IDS_XML_FILE")
+        .replace()
+        .range(Location.create(this))
+        .pattern("</resources>")
+        .with("    <item name=\"$idName\" type=\"$ID_RESOURCE_TYPE\" />\n</resources>")
+        .reformat(true)
+        .build()
+
     private fun String.parseIntLiteralOrNull(): Int? {
         val value = replace("_", "")
         return when {
@@ -755,5 +893,10 @@ class HikageAttributeDetector : Detector(), Detector.UastScanner {
     private data class LayoutAttributeReport(
         val name: String,
         val element: PsiElement
+    )
+
+    private data class IdResourceReference(
+        val name: String,
+        val createsId: Boolean
     )
 }

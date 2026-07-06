@@ -42,6 +42,8 @@ class HikageIssueRegistry : IssueRegistry() {
         HikageAttributeDetector.DUPLICATE_ISSUE,
         HikageAttributeDetector.NAMESPACE_ISSUE,
         HikageAttributeDetector.INEFFECTIVE_LAYOUT_ATTRIBUTE_ISSUE,
+        HikageAttributeDetector.CREATE_ID_ISSUE,
+        HikageAttributeDetector.MISSING_ID_ISSUE,
         HikageAttributeDetector.INVALID_NAME_ISSUE,
         HikageAttributeDetector.INVALID_RESOURCE_REFERENCE_ISSUE,
         HikageAttributeDetector.INVALID_COLOR_VALUE_ISSUE,
