@@ -18,7 +18,7 @@ material = "1.11.0"
 betterandroid-android-bom = "1.1.4"
 hiddenapibypass = "6.1"
 kavaref-bom = "1.1.0"
-hikage-plugin = "1.0.0"
+hikage-plugin = "1.0.1"
 pangutext-android = "1.0.6"
 # The project current support min sdk version is 21,
 # suppress the warning about using newer versions of dependencies that may require higher min sdk version.

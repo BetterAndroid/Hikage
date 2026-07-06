@@ -16,7 +16,33 @@ Time zone of version release date: **UTC+8**
 
 :::
 
-### 1.1.0 | 2026.07.05 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.1.1 | 2026.07.06 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+#### hikage-core
+
+- Fixed the issue where `LayoutSession` repeatedly set `View` IDs, preventing the layout pipeline from interfering with user-set IDs
+- Added `HikageFactory.Config`, supporting configuration of whether to enable `privateFactory` to be compatible with the XML layout pipeline handling
+- Added support for missing `lazyHikage` overloads in `Fragment`
+- Added Lint checks for runtime attributes, detecting `@+id` and providing quick fixes to add them to `ids.xml`
+- Added Lint checks for runtime attribute validity
+
+#### hikage-compiler
+
+- Enhanced detection capabilities for illegal syntax keyword aliases
+
+#### hikage-runtime-attribute
+
+- No longer accepts `@+id` as a valid runtime attribute, adjusted to Fail-Fast handling to avoid runtime exceptions
+
+#### hikage-widget-androidx
+
+- Completed the declaration of all public API `View` components
+
+#### hikage-widget-material
+
+- Completed the declaration of all public API `View` components
+
+### 1.1.0 | 2026.07.05 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 - **<u>⚠️ Breaking Change</u>**: All names `Hikageable` have been corrected to `Hikagable`
 - **<u>⚠️ Breaking Change</u>**: Adjusted `HikageView` and `HikageViewDeclaration` annotation parameters, removed `requireInit`, `requirePerformer` and `final`, and replaced them with `init` and `performer` to control whether the corresponding parameters are generated
@@ -81,7 +107,13 @@ Time zone of version release date: **UTC+8**
 
 ## Gradle Plugins
 
-### 1.0.0 | 2026.07.05 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+### 1.0.1 | 2026.07.06 &ensp;<Badge type="tip" text="latest" vertical="middle" />
+
+#### hikage-gradle-plugin
+
+- Automatically reads the `hikage-compiler` version managed by `hikage-bom` to avoid version inconsistencies between the plugin and the compiler
+
+### 1.0.0 | 2026.07.05 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
 #### hikage-gradle-plugin
 

@@ -8,7 +8,33 @@
 
 :::
 
-### 1.1.0 | 2026.07.05 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.1.1 | 2026.07.06 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+#### hikage-core
+
+- 修复 `LayoutSession` 重复设置 `View` ID 的问题，避免布局管线干预用户手动设置的 ID
+- 新增 `HikageFactory.Config`，支持配置是否启用 `privateFactory` 以兼容 XML 布局管线的处理方式
+- 补充对 `Fragment` 遗漏的 `lazyHikage` 重载方法支持
+- 新增对运行时属性的 Lint，检测 `@+id` 并可使用快速修复添加至 `ids.xml`
+- 新增对运行时属性合法性 Lint 检测
+
+#### hikage-compiler
+
+- 增强对不合法的语法关键词别名的检测能力
+
+#### hikage-runtime-attribute
+
+- 不再接受 `@+id` 作为运行时属性的合法性，调整为 Fail-Fast 处理，避免运行时异常
+
+#### hikage-widget-androidx
+
+- 补全所有公开 API 的 `View` 组件声明
+
+#### hikage-widget-material
+
+- 补全所有公开 API 的 `View` 组件声明
+
+### 1.1.0 | 2026.07.05 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 - **<u>⚠️ 破坏性更新</u>**，修正所有命名 `Hikageable` 到 `Hikagable`
 - **<u>⚠️ 破坏性更新</u>**，调整 `HikageView` 与 `HikageViewDeclaration` 注解参数，移除 `requireInit`、`requirePerformer` 与 `final`，改为使用 `init` 与 `performer` 控制是否生成对应参数
@@ -73,7 +99,13 @@
 
 ## Gradle 插件
 
-### 1.0.0 | 2026.07.05 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+### 1.0.1 | 2026.07.06 &ensp;<Badge type="tip" text="最新" vertical="middle" />
+
+#### hikage-gradle-plugin
+
+- 自动读取 `hikage-bom` 管理的 `hikage-compiler` 版本，避免插件与编译器版本不一致
+
+### 1.0.0 | 2026.07.05 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
 #### hikage-gradle-plugin
 
