@@ -345,7 +345,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                         ).defaultValue("{}").build()
                     )
 
-                val viewConstructor = createViewConstructorStatement(viewClass.second)
                 lparamsClass?.second?.takeIf { hasPerformer }?.let {
                     if (performer.annotation.performer)
                         addParameter(
@@ -360,7 +359,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                             performFunctionAlias = performFunctionAlias,
                             viewClass = viewClass.second,
                             lparamsClass = it,
-                            viewConstructor = viewConstructor,
                             spec = performer.annotation
                         )
                     )
@@ -368,7 +366,6 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
                     "%L", createViewStatement(
                         performFunctionAlias = performFunctionAlias,
                         viewClass = viewClass.second,
-                        viewConstructor = viewConstructor,
                         spec = performer.annotation
                     )
                 )
@@ -393,17 +390,11 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
     private fun createViewStatement(
         performFunctionAlias: String,
         viewClass: ClassName,
-        viewConstructor: CodeBlock,
         spec: HikageAnnotationSpec
     ) = CodeBlock.builder().apply {
         add("return %L(\n", performFunctionAlias)
         indent()
-        add("viewClass = %T::class,\n", viewClass)
-        add("factory = %L,\n", viewConstructor)
-        add("lparams = lparams,\n")
-        add("id = id")
-        if (spec.attrs) add(",\nattrs = attrs")
-        if (spec.init) add(",\ninit = init")
+        addInitStatement(spec, viewClass)
         unindent()
         add("\n)\n")
     }.build()
@@ -412,22 +403,29 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
         performFunctionAlias: String,
         viewClass: ClassName,
         lparamsClass: ClassName,
-        viewConstructor: CodeBlock,
         spec: HikageAnnotationSpec
     ) = CodeBlock.builder().apply {
         add("return %L(\n", performFunctionAlias)
         indent()
-        add("viewClass = %T::class,\n", viewClass)
-        add("childLpClass = %T::class,\n", lparamsClass)
-        add("factory = %L,\n", viewConstructor)
-        add("lparams = lparams,\n")
-        add("id = id")
-        if (spec.attrs) add(",\nattrs = attrs")
-        if (spec.init) add(",\ninit = init")
+        addInitStatement(spec, viewClass, lparamsClass)
         if (spec.performer) add(",\nperformer = performer")
         unindent()
         add("\n)\n")
     }.build()
+
+    private fun CodeBlock.Builder.addInitStatement(
+        spec: HikageAnnotationSpec,
+        viewClass: ClassName,
+        lparamsClass: ClassName? = null
+    ) {
+        add("viewClass = %T::class,\n", viewClass)
+        lparamsClass?.let { add("childLpClass = %T::class,\n", it) }
+        add("factory = %L,\n", createViewConstructorStatement(viewClass))
+        add("lparams = lparams,\n")
+        add("id = id")
+        if (spec.attrs) add(",\nattrs = attrs")
+        if (spec.init) add(",\ninit = init")
+    }
 
     private fun createViewConstructorStatement(viewClass: ClassName) = CodeBlock.of("{ context, attrs -> %T(context, attrs) }", viewClass)
 
