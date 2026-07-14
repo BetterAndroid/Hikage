@@ -25,16 +25,21 @@ package com.highcapable.hikage.gradle.plugin
 
 import com.highcapable.hikage.gradle.plugin.extension.HikageExtension
 import com.highcapable.hikage.gradle.plugin.integration.AndroidIntegration
+import com.highcapable.hikage.gradle.plugin.model.HikageGradleModelBuilder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import javax.inject.Inject
 
 /**
  * The Hikage Gradle plugin.
  */
-class HikagePlugin : Plugin<Project> {
+class HikagePlugin @Inject constructor(private val toolingModelBuilders: ToolingModelBuilderRegistry) : Plugin<Project> {
 
     override fun apply(target: Project) {
+        HikageGradleModelBuilder.register(target, toolingModelBuilders)
+
         val extension = target.extensions.create<HikageExtension>(HikageExtension.NAME)
         AndroidIntegration(target, extension).configure()
     }

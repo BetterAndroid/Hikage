@@ -208,6 +208,7 @@ fun libraryProjects(action: Action<in Project>) {
 object Libraries {
     const val HIKAGE_BOM = "hikage-bom"
     const val HIKAGE_GRADLE_PLUGIN = "hikage-gradle-plugin"
+    const val HIKAGE_GRADLE_MODEL = "hikage-gradle-model"
     const val HIKAGE_DECLARATION_GRADLE_PLUGIN = "hikage-declaration-gradle-plugin"
     const val HIKAGE_COMPILER = "hikage-compiler"
     const val HIKAGE_CORE = "hikage-core"
@@ -222,6 +223,7 @@ object Libraries {
 
     val plugins = listOf(
         HIKAGE_GRADLE_PLUGIN,
+        HIKAGE_GRADLE_MODEL,
         HIKAGE_DECLARATION_GRADLE_PLUGIN
     )
 

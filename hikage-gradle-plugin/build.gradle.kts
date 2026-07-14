@@ -12,6 +12,7 @@ java {
 
 dependencies {
     compileOnly(libs.android.gradle.plugin)
+    implementation(projects.hikageGradleModel)
     implementation(libs.ksp.symbol.processing.gradle.plugin)
     implementation(libs.zip4j)
 }

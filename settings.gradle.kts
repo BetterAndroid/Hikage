@@ -75,6 +75,7 @@ include(":hikage-bom")
 include(
     ":hikage-compiler",
     ":hikage-gradle-plugin",
+    ":hikage-gradle-model",
     ":hikage-declaration-gradle-plugin"
 )
 include(

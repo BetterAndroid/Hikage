@@ -26,6 +26,7 @@ import com.google.devtools.ksp.gradle.KspExtension
 import com.highcapable.hikage.generated.HikageProperties
 import com.highcapable.hikage.gradle.plugin.debug.HikagePluginException
 import com.highcapable.hikage.gradle.plugin.extension.HikageExtension
+import com.highcapable.hikage.gradle.plugin.input.HikageCompilerInputs
 import com.highcapable.hikage.gradle.plugin.provider.ViewDeclarationFilesArgumentProvider
 import com.highcapable.hikage.gradle.plugin.task.CollectHikageViewDeclarationFilesTask
 import org.gradle.api.Project
@@ -150,7 +151,8 @@ internal class AndroidIntegration(private val project: Project, private val exte
 
     private fun configureCompilerOptions() = project.extensions.configure<KspExtension> {
         val collectTask = createCollectViewDeclarationFilesTask()
-        configureKspTaskInputs(collectTask)
+        val inputs = createCompilerInputs(collectTask)
+        configureKspTaskInputs(collectTask, inputs)
 
         arg(PROJECT_GROUP_OPTION_NAME, project.provider { project.group.toString() })
         arg(PROJECT_NAME_OPTION_NAME, project.provider { project.name })
@@ -159,27 +161,25 @@ internal class AndroidIntegration(private val project: Project, private val exte
             enabled = extension.compiler.enabled,
             viewDeclarationFiles = extension.compiler.viewDeclarationFiles,
             optionName = VIEW_DECLARATION_FILES_OPTION_NAME,
-            files = project.files(collectTask.flatMap { it.strictOutputDirectory }).builtBy(collectTask)
+            files = inputs.viewDeclarationFiles
         ))
         arg(ViewDeclarationFilesArgumentProvider(
             enabled = extension.compiler.enabled,
             viewDeclarationFiles = extension.compiler.viewDeclarationFiles,
             optionName = OPTIONAL_VIEW_DECLARATION_FILES_OPTION_NAME,
-            files = project.files(collectTask.flatMap { it.optionalOutputDirectory }).builtBy(collectTask)
+            files = inputs.optionalViewDeclarationFiles
         ))
     }
 
-    private fun configureKspTaskInputs(collectTask: TaskProvider<CollectHikageViewDeclarationFilesTask>) {
-        val files = project.files(
-            collectTask.flatMap { it.strictOutputDirectory },
-            collectTask.flatMap { it.optionalOutputDirectory }
-        ).builtBy(collectTask)
-
+    private fun configureKspTaskInputs(
+        collectTask: TaskProvider<CollectHikageViewDeclarationFilesTask>,
+        compilerInputs: HikageCompilerInputs
+    ) {
         project.tasks.configureEach {
             if (!name.startsWith(KSP_TASK_NAME_PREFIX) || !name.endsWith(KSP_TASK_NAME_SUFFIX)) return@configureEach
 
             dependsOn(collectTask)
-            inputs.files(files)
+            inputs.files(compilerInputs.viewDeclarationFiles, compilerInputs.optionalViewDeclarationFiles)
                 .withPropertyName(VIEW_DECLARATION_FILES_INPUT_PROPERTY_NAME)
                 .withPathSensitivity(PathSensitivity.RELATIVE)
         }
@@ -237,6 +237,11 @@ internal class AndroidIntegration(private val project: Project, private val exte
 
         return collectTask
     }
+
+    private fun createCompilerInputs(collectTask: TaskProvider<CollectHikageViewDeclarationFilesTask>) = HikageCompilerInputs(
+        viewDeclarationFiles = project.files(collectTask.flatMap { it.strictOutputDirectory }).builtBy(collectTask),
+        optionalViewDeclarationFiles = project.files(collectTask.flatMap { it.optionalOutputDirectory }).builtBy(collectTask)
+    )
 
     private fun createLocalViewDeclarationFiles(): FileCollection {
         val android = project.extensions.getByType<CommonExtension>()
