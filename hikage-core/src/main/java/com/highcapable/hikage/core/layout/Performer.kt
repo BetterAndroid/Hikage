@@ -238,7 +238,6 @@ fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.Layout(
  * @param body the layout params body.
  * @return [LayoutParams]
  */
-@Hikagable
 fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.LayoutParams(
     width: Int? = null,
     height: Int? = null,
