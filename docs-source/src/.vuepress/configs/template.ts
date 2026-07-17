@@ -29,8 +29,7 @@ const navigationLinks = {
         '/plugin/hikage-declaration-gradle-plugin'
     ],
     config: [
-        '/config/r8-proguard',
-        '/config/lint-rules'
+        '/config/r8-proguard'
     ],
     about: [
         '/about/changelog',

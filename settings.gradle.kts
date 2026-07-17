@@ -80,7 +80,6 @@ include(
 )
 include(
     ":hikage-core",
-    ":hikage-core-lint",
     ":hikage-runtime",
     ":hikage-runtime-attribute",
     ":hikage-extension",

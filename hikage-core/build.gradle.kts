@@ -25,8 +25,6 @@ android {
 }
 
 dependencies {
-    lintPublish(projects.hikageCoreLint)
-
     compileOnly(projects.hikageRuntimeAttribute)
     api(projects.hikageWidgetFoundation)
 
