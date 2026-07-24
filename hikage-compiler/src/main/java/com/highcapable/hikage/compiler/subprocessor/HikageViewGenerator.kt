@@ -38,16 +38,16 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Nullability
 import com.highcapable.hikage.compiler.DeclaredSymbol
-import com.highcapable.hikage.compiler.extension.ClassDetector
-import com.highcapable.hikage.compiler.extension.asType
-import com.highcapable.hikage.compiler.extension.getClassDeclaration
-import com.highcapable.hikage.compiler.extension.getOrNull
-import com.highcapable.hikage.compiler.extension.getSimpleNameString
-import com.highcapable.hikage.compiler.extension.getTypedSimpleName
-import com.highcapable.hikage.compiler.extension.isClass
-import com.highcapable.hikage.compiler.extension.isSubclassOf
-import com.highcapable.hikage.compiler.extension.ownerOf
 import com.highcapable.hikage.compiler.subprocessor.base.BaseSymbolProcessor
+import com.highcapable.hikage.compiler.utils.ClassNameValidator
+import com.highcapable.hikage.compiler.utils.extension.asType
+import com.highcapable.hikage.compiler.utils.extension.getClassDeclaration
+import com.highcapable.hikage.compiler.utils.extension.getOrNull
+import com.highcapable.hikage.compiler.utils.extension.getSimpleNameString
+import com.highcapable.hikage.compiler.utils.extension.getTypedSimpleName
+import com.highcapable.hikage.compiler.utils.extension.isClass
+import com.highcapable.hikage.compiler.utils.extension.isSubclassOf
+import com.highcapable.hikage.compiler.utils.extension.ownerOf
 import com.highcapable.hikage.generated.HikageProperties
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -581,7 +581,7 @@ class HikageViewGenerator(override val environment: SymbolProcessorEnvironment) 
             val declaration = ViewDeclaration(packageName, className, _alias, isViewGroup, locateDesc)
 
             // Verify the legality of the class name.
-            if (!_alias.isNullOrBlank()) require(ClassDetector.verify(_alias)) {
+            if (!_alias.isNullOrBlank()) require(ClassNameValidator.check(_alias)) {
                 "Declares @$tagName's alias \"$_alias\" is illegal.\n${declaration.locateDesc}"
             }
 

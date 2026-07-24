@@ -19,7 +19,7 @@
  *
  * This file is created by fankes on 2025/3/30.
  */
-package com.highcapable.hikage.compiler.extension
+package com.highcapable.hikage.compiler.utils.extension
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -28,7 +28,6 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueArgument
 import com.squareup.kotlinpoet.ClassName
-import javax.lang.model.SourceVersion
 
 fun KSDeclaration.getClassDeclaration(resolver: Resolver) =
     this as? KSClassDeclaration ?: qualifiedName?.let { resolver.getClassDeclarationByName(it) }
@@ -69,23 +68,3 @@ inline fun <reified T> List<KSValueArgument>.getOrNull(name: String) =
     firstOrNull { it.name?.asString() == name }?.value as? T?
 
 fun ClassName.getTypedSimpleName() = simpleName.replace(".", "_")
-
-object ClassDetector {
-
-    private val kotlinKeywords = setOf(
-        "as", "break", "class", "continue", "do", "else", "false", "for", "fun",
-        "if", "in", "interface", "is", "null", "object", "package", "return",
-        "super", "this", "throw", "true", "try", "typealias", "typeof", "val",
-        "var", "when", "while", "by", "catch", "constructor", "delegate",
-        "dynamic", "field", "file", "finally", "get", "import", "init", "param",
-        "property", "receiver", "set", "setparam", "where", "actual", "abstract",
-        "annotation", "companion", "const", "crossinline", "data", "enum", "expect",
-        "external", "final", "infix", "inline", "inner", "internal", "lateinit",
-        "noinline", "open", "operator", "out", "override", "private", "protected",
-        "public", "reified", "sealed", "suspend", "tailrec", "value", "vararg", "_"
-    )
-
-    fun verify(name: String) = SourceVersion.isIdentifier(name) &&
-        !SourceVersion.isKeyword(name) &&
-        name !in kotlinKeywords && '$' !in name
-}
