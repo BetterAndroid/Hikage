@@ -17,7 +17,7 @@ This project belongs to the organization above. **Click the link to follow us** 
 
 ## What's this
 
-`Hikage` (Pronunciation /ˈhɪkɑːɡeɪ/), this is an Android View runtime powered by Kotlin DSL, designed around **real-time code-based UI construction**.
+Hikage (Pronunciation /ˈhɪkɑːɡeɪ/), this is an Android View runtime powered by Kotlin DSL, designed around **real-time code-based UI construction**.
 
 The project icon was designed by [MaiTungTM](https://github.com/Lagrio),
 the name is taken from the original song "Haru**hikage**" in "BanG Dream It's MyGO!!!!!".
@@ -146,7 +146,7 @@ You can go to the documentation page for more detailed tutorials and content.
 ### What's next?
 
 1. **Add dependencies**: Add the **hikage-core** dependency and the dependencies you need to your project.
-2. **Sync the project**: After a Gradle sync, you can start using `Hikage`.
+2. **Sync the project**: After a Gradle sync, you can start using Hikage.
 
 In the opened page, select the **Quick Start** section in the sidebar to continue reading.
 

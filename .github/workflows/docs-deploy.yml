@@ -46,7 +46,7 @@ jobs:
           key: gradle-deps-core-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: |
             gradle-deps
-      - name: Build VuePress site
+      - name: Build VitePress site
         run: |
           cd docs-source
           yarn -i

@@ -45,7 +45,7 @@
 - 新增 `attrs` XML 属性集合动态创建支持，参考 [hikage-runtime-attribute](../library/hikage-runtime-attribute.md) 模块
 - 将 `Hikage.LayoutParams` 迁移为 `LayoutParams`
 - 修复 `HikageFactory` 在多层布局中获取父布局对象不正确的问题
-- 新增 `HikageBuilder` 的 `lazyHikage` 重载方法，支持直接创建 `Hikage` 对象
+- 新增 `HikageBuilder` 的 `lazyHikage` 重载方法，支持直接创建 Hikage 对象
 - 修复 `ViewGroup` 当前布局参数与子布局参数类型混用的问题
 - 优化 `LayoutParams` 对 `ViewGroup.generateLayoutParams` 的反射调用缓存
 - 将布局组件类型传递从 `Class` 调整为 `KClass`
@@ -78,7 +78,7 @@
 
 #### hikage-extension
 
-- 修复 `Activity.setContentView`、`Window.setContentView`、`Dialog.setContentView` 与 `ViewGroup.addView` 创建 `Hikage` 时无父容器 `LayoutParams` 传递问题
+- 修复 `Activity.setContentView`、`Window.setContentView`、`Dialog.setContentView` 与 `ViewGroup.addView` 创建 Hikage 时无父容器 `LayoutParams` 传递问题
 
 #### hikage-widget-foundation
 
@@ -121,7 +121,7 @@
 
 #### 1.0.4 | 2025.12.17 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
-- 适配 `BetterAndroid` 新特性
+- 适配 BetterAndroid 新特性
 - 将 `LayoutParam` 的 `width` 和 `height` 默认值设置为 `null`
 
 #### 1.0.3 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
@@ -171,7 +171,7 @@
 
 #### 1.0.3 | 2025.12.17 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
-- 适配 `BetterAndroid` 新特性
+- 适配 BetterAndroid 新特性
 
 #### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
@@ -190,7 +190,7 @@
 
 #### 1.0.3 | 2025.12.17 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
-- 适配 `BetterAndroid` 新特性
+- 适配 BetterAndroid 新特性
 
 #### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
@@ -198,7 +198,7 @@
 
 #### 1.0.1 | 2025.08.24 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 
-- 适配了 `BetterAndroid` 解耦合后的 `ui-component` 和 `ui-component-adapter`
+- 适配了 BetterAndroid 解耦合后的 `ui-component` 和 `ui-component-adapter`
 
 #### 1.0.0 | 2025.04.20 &ensp;<Badge type="warning" text="过旧" vertical="middle" />
 

@@ -3,7 +3,7 @@
 > In most scenarios, app packages can be compressed through obfuscation.
 > Here is an introduction to how to configure obfuscation rules.
 
-`Hikage` itself does not require additional obfuscation rules. Since `View` objects created by Hikage do not need to be declared in XML, their class names can also be obfuscated.
+Hikage itself does not require additional obfuscation rules. Since `View` objects created by Hikage do not need to be declared in XML, their class names can also be obfuscated.
 
 ## Keep Custom Constructors
 

@@ -10,8 +10,6 @@ We will only maintain the latest dependencies. If you are using outdated depende
 
 ::: warning
 
-To avoid translation time consumption, Changelog will use **Google Translation** from **Chinese** to **English**, please refer to the original text for actual reference.
-
 Time zone of version release date: **UTC+8**
 
 :::
@@ -53,7 +51,7 @@ Time zone of version release date: **UTC+8**
 - Added support for dynamic creation of `attrs` XML attribute sets, refer to [hikage-runtime-attribute](../library/hikage-runtime-attribute.md) module
 - Migrated `Hikage.LayoutParams` to `LayoutParams`
 - Fixed the problem that `HikageFactory` gets an incorrect parent layout object in multi-level layouts
-- Added an overloaded method `lazyHikage` to `HikageBuilder`, which supports directly creating `Hikage` objects
+- Added an overloaded method `lazyHikage` to `HikageBuilder`, which supports directly creating Hikage objects
 - Fixed the problem that the current layout params and sub-layout params types of `ViewGroup` are mixed
 - Optimized the reflection call cache of `ViewGroup.generateLayoutParams` in `LayoutParams`
 - Changed layout component type passing from `Class` to `KClass`
@@ -86,7 +84,7 @@ Time zone of version release date: **UTC+8**
 
 #### hikage-extension
 
-- Fixed the problem of no parent container `LayoutParams` being passed when creating `Hikage` with `Activity.setContentView`, `Window.setContentView`, `Dialog.setContentView` and `ViewGroup.addView`
+- Fixed the problem of no parent container `LayoutParams` being passed when creating Hikage with `Activity.setContentView`, `Window.setContentView`, `Dialog.setContentView` and `ViewGroup.addView`
 
 #### hikage-widget-foundation
 
@@ -129,7 +127,7 @@ Time zone of version release date: **UTC+8**
 
 #### 1.0.4 | 2025.12.17 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
-- Adapted to `BetterAndroid` new features
+- Adapted to BetterAndroid new features
 - Set the default values of `width` and `height` in `LayoutParam` to `null`
 
 #### 1.0.3 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
@@ -179,7 +177,7 @@ Time zone of version release date: **UTC+8**
 
 #### 1.0.3 | 2025.12.17 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
-- Adapted to `BetterAndroid` new features
+- Adapted to BetterAndroid new features
 
 #### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
@@ -198,7 +196,7 @@ Time zone of version release date: **UTC+8**
 
 #### 1.0.3 | 2025.12.17 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
-- Adapted to `BetterAndroid` new features
+- Adapted to BetterAndroid new features
 
 #### 1.0.2 | 2025.12.14 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
@@ -206,7 +204,7 @@ Time zone of version release date: **UTC+8**
 
 #### 1.0.1 | 2025.08.24 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 
-- Adapted to decoupled `ui-component` and `ui-component-adapter` in `BetterAndroid`
+- Adapted to decoupled `ui-component` and `ui-component-adapter` in BetterAndroid
 
 #### 1.0.0 | 2025.04.20 &ensp;<Badge type="warning" text="stale" vertical="middle" />
 

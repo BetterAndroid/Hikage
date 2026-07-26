@@ -96,7 +96,7 @@ This object can be created and maintained in the following ways.
 
 #### Hikagable
 
-As shown in [Basic Usage](#basic-usage), `Hikagable` can directly create a `Hikage.Delegate` or `Hikage` object.
+As shown in [Basic Usage](#basic-usage), `Hikagable` can directly create a `Hikage.Delegate` or Hikage object.
 
 In DSL, you can get the `Hikage.Performer` object to create the layout content.
 
@@ -160,7 +160,7 @@ val context: Context
 val hikage = myLayout.create(context)
 ```
 
-The second solution is to create the `Hikage` delegate object using `Context.lazyHikage`.
+The second solution is to create the Hikage delegate object using `Context.lazyHikage`.
 
 For example, we can use it like `ViewBinding` in `Activity`.
 
@@ -181,7 +181,7 @@ class MyActivity: AppCompatActivity() {
 }
 ```
 
-Or, we can directly create a `Hikage` object.
+Or, we can directly create a Hikage object.
 
 > The following example
 

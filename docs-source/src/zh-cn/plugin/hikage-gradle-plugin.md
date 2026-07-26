@@ -51,7 +51,7 @@ plugins {
 插件会自动完成以下工作。
 
 - 自动应用 [Google KSP](https://github.com/google/ksp) 插件
-- 自动向 `ksp` 配置加入当前版本对应的 [hikage-compiler](./hikage-compiler.md) 依赖
+- 自动向 `ksp` 配置加入当前版本对应的 [hikage-compiler](../library/hikage-compiler.md) 依赖
 - 自动读取当前 Android `main` 源集 `resources/hikage-view-declaration` 目录下的 JSON 声明文件，并作为严格声明传递给编译器
 - 自动读取运行时依赖中由 [hikage-declaration-gradle-plugin](./hikage-declaration-gradle-plugin.md) 打包到 `META-INF/hikage/view-declaration/<group>/<module>/` 的 JSON 声明文件，并作为可选声明传递给编译器
 - 自动生成 Hikage Performer 符号信息，并在最终 APK / AAB 中排除 `META-INF/hikage/**` 与 `hikage-view-declaration/**`

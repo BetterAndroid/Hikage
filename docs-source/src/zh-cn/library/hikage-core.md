@@ -91,7 +91,7 @@ Hikage 的布局基本元素基于 Android 原生的 `View` 组件，所有的�
 
 #### Hikagable
 
-正如 [基本用法](#基本用法) 所示，`Hikagable` 可以直接创建一个 `Hikage.Delegate` 或 `Hikage` 对象，在 DSL 中，你可以得到 `Hikage.Performer` 对象对布局内容进行创建。
+正如 [基本用法](#基本用法) 所示，`Hikagable` 可以直接创建一个 `Hikage.Delegate` 或 Hikage 对象，在 DSL 中，你可以得到 `Hikage.Performer` 对象对布局内容进行创建。
 
 第一种方案，在任意地方创建。
 
@@ -153,7 +153,7 @@ val context: Context
 val hikage = myLayout.create(context)
 ```
 
-第二种方案，使用 `Context.lazyHikage` 创建 `Hikage` 委托对象。
+第二种方案，使用 `Context.lazyHikage` 创建 Hikage 委托对象。
 
 例如，我们可以在 `Activity` 中像 `ViewBinding` 一样使用它。
 
@@ -174,7 +174,7 @@ class MyActivity : AppCompatActivity() {
 }
 ```
 
-或者，直接创建 `Hikage` 对象。
+或者，直接创建 Hikage 对象。
 
 > 示例如下
 

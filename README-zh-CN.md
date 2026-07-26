@@ -17,7 +17,7 @@
 
 ## 这是什么
 
-`Hikage` (发音 /ˈhɪkɑːɡeɪ/)，这是一个由 Kotlin DSL 驱动的 Android View 运行时框架，它的设计聚焦于 **实时代码构建 UI**。
+Hikage (发音 /ˈhɪkɑːɡeɪ/)，这是一个由 Kotlin DSL 驱动的 Android View 运行时框架，它的设计聚焦于 **实时代码构建 UI**。
 
 项目图标由 [MaiTungTM](https://github.com/Lagrio) 设计，名称取自 「BanG Dream It's MyGO!!!!!」 中的原创歌曲《春日影》(Haru**hikage**)。
 
@@ -132,7 +132,7 @@ Hikage 配合我们的另一个项目 [BetterAndroid](https://github.com/BetterA
 ### 下一步做什么？
 
 1. **引入依赖**: 将 **hikage-core** 依赖和你需要的依赖添加到你的项目中。
-2. **同步项目**: 在 Gradle 同步后，你就可以开始使用 `Hikage` 了。
+2. **同步项目**: 在 Gradle 同步后，你就可以开始使用 Hikage 了。
 
 在打开的页面中，选择侧边栏的 **快速开始** 章节以继续阅读。
 
