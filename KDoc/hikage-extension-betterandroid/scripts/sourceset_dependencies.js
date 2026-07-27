@@ -1,0 +1,1 @@
+sourceset_dependencies='{":hikage-extension-betterandroid/release":[]}'
