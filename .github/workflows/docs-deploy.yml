@@ -9,6 +9,8 @@ on:
       - 'hikage-extension/src/**'
       - 'hikage-extension-betterandroid/src/**'
       - 'hikage-extension-compose/src/**'
+      - 'hikage-runtime/src/**'
+      - 'hikage-runtime-attribute/src/**'
       - 'docs-source/**'
       - '.github/workflows/**'
 
