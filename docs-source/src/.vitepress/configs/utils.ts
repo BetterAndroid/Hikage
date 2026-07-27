@@ -79,11 +79,6 @@ const resolvePublicHtml = (base: string, content: string) =>
         return ` ${name}=${quote}${publicLink.href}${quote}`;
     });
 
-/** Exposes the active documentation build mode to configuration helpers. */
-export const env = {
-    dev: process.env.NODE_ENV === 'development'
-};
-
 /** Provides Markdown renderer hooks shared by development and production builds. */
 export const markdown = {
     /** Localizes default custom-container titles while preserving titles declared in Markdown. */
@@ -108,7 +103,8 @@ export const markdown = {
             };
         }
     },
-    injectLinks: (md: VitePressMarkdownIt, maps: Record<string, string>[], base: string) => {
+    /** Rewrites custom protocols and public asset links for the active documentation command. */
+    injectLinks: (md: VitePressMarkdownIt, maps: Record<string, string>[], base: string, dev: boolean) => {
         const defaultRender = md.renderer.rules.link_open || function (tokens, idx, options, _env, self) {
             return self.renderToken(tokens, idx, options);
         };
@@ -119,12 +115,12 @@ export const markdown = {
             return tokens[idx].content;
         };
         md.renderer.rules.html_block = function (tokens, idx, options, renderEnv, self) {
-            if (env.dev)
+            if (dev)
                 tokens[idx].content = resolvePublicHtml(base, tokens[idx].content);
             return defaultHtmlBlockRender(tokens, idx, options, renderEnv, self);
         };
         md.renderer.rules.html_inline = function (tokens, idx, options, renderEnv, self) {
-            if (env.dev)
+            if (dev)
                 tokens[idx].content = resolvePublicHtml(base, tokens[idx].content);
             return defaultHtmlInlineRender(tokens, idx, options, renderEnv, self);
         };

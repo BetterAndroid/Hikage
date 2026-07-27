@@ -2,14 +2,16 @@ import {
     GitChangelog,
     GitChangelogMarkdownSection
 } from '@nolebase/vitepress-plugin-git-changelog/vite';
-import { defineConfig } from 'vitepress';
+import { defineConfig, type DefaultTheme, type UserConfigFn } from 'vitepress';
 import { alignI18nAnchors } from './configs/anchors';
 import { createHomepageAlternates, createRootLocaleRedirect } from './configs/i18n';
 import { configs, pageLinkRefs } from './configs/template';
-import { env, markdown } from './configs/utils';
+import { markdown } from './configs/utils';
 import locales from './locales';
 
-export default defineConfig({
+const createConfig: UserConfigFn<DefaultTheme.Config> = ({ command }) => {
+    const dev = command === 'serve';
+    return defineConfig({
     base: configs.website.base,
     title: configs.website.title,
     description: configs.website.locales.en.description,
@@ -72,7 +74,7 @@ export default defineConfig({
         config: (md) => {
             md.use(alignI18nAnchors);
             markdown.localizeContainerTitles(md);
-            markdown.injectLinks(md, env.dev ? pageLinkRefs.dev : pageLinkRefs.prod, configs.website.base);
+            markdown.injectLinks(md, dev ? pageLinkRefs.dev : pageLinkRefs.prod, configs.website.base, dev);
             const defaultFence = md.renderer.rules.fence || function (tokens, idx, options, _env, self) {
                 return self.renderToken(tokens, idx, options);
             };
@@ -121,4 +123,7 @@ export default defineConfig({
             copyright: 'Copyright © 2019 HighCapable'
         }
     }
-});
+    });
+};
+
+export default createConfig;
