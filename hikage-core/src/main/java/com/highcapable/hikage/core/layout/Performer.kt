@@ -72,7 +72,7 @@ fun <V : View, LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.View(
  * @return [View]
  */
 @Hikagable
-fun <LP : ViewGroup.LayoutParams> Hikage.Performer<LP>.View(
+fun Hikage.Performer<*>.View(
     factory: ViewConstructor<View>? = null,
     lparams: LayoutParams? = null,
     id: String? = null,
