@@ -162,7 +162,7 @@ In the opened page, select the **Quick Start** section in the sidebar to continu
 
 ## Star History
 
-![Star History Chart](https://api.star-history.com/svg?repos=BetterAndroid/Hikage&type=Date)
+[![Star History Chart](https://api.star-history.com/chart?repos=BetterAndroid/Hikage&type=date&legend=top-left&sealed_token=NEbQx4a25VUk_FxFUwWhGWPewHaWOtfNrpH9yjoNhgBFeWN9Q1-TGC3xVK2UkWc_eeYUuBdlzPOuldMJSes5FTLxrgHesm6AtiqaquRbk5WPUgF_NDDR9A)](https://www.star-history.com/?repos=BetterAndroid%2FHikage&type=date&legend=top-left)
 
 ## Third-Party Open Source Usage Statement
 

@@ -148,7 +148,7 @@ Hikage 配合我们的另一个项目 [BetterAndroid](https://github.com/BetterA
 
 ## Star History
 
-![Star History Chart](https://api.star-history.com/svg?repos=BetterAndroid/Hikage&type=Date)
+[![Star History Chart](https://api.star-history.com/chart?repos=BetterAndroid/Hikage&type=date&legend=top-left&sealed_token=NEbQx4a25VUk_FxFUwWhGWPewHaWOtfNrpH9yjoNhgBFeWN9Q1-TGC3xVK2UkWc_eeYUuBdlzPOuldMJSes5FTLxrgHesm6AtiqaquRbk5WPUgF_NDDR9A)](https://www.star-history.com/?repos=BetterAndroid%2FHikage&type=date&legend=top-left)
 
 ## 第三方开源使用声明
 
