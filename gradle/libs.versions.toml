@@ -11,7 +11,7 @@ kotlinpoet = "2.3.0"
 zip4j = "2.11.6"
 # noinspection GradleDependency
 material = "1.11.0"
-betterandroid-android-bom = "1.1.4"
+betterandroid-android-bom = "1.1.5"
 hiddenapibypass = "6.1"
 kavaref-bom = "1.1.0"
 # TODO: Change to release version when released.
