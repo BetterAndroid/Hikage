@@ -11,25 +11,16 @@ kotlinpoet = "2.3.0"
 zip4j = "2.11.6"
 # noinspection GradleDependency
 material = "1.11.0"
-betterandroid-android-bom = "1.1.5"
+betterandroid-android-bom = "1.1.6"
 hiddenapibypass = "6.1"
 kavaref-bom = "1.1.0"
 # TODO: Change to release version when released.
 # noinspection NewerVersionAvailable
 hikage-plugin = "1.0.1-dev"
 pangutext-android = "1.0.6"
-# The project current support min sdk version is 21,
-# suppress the warning about using newer versions of dependencies that may require higher min sdk version.
-# noinspection GradleDependency
-androidx-core = "1.17.0"
-# The project current support min sdk version is 21,
-# suppress the warning about using newer versions of dependencies that may require higher min sdk version.
-# noinspection GradleDependency
+androidx-core = "1.19.0"
 androidx-lifecycle = "2.9.4"
-# The project current support min sdk version is 21,
-# suppress the warning about using newer versions of dependencies that may require higher min sdk version.
-# noinspection GradleDependency
-androidx-appcompat = "1.7.1"
+androidx-appcompat = "1.8.0"
 androidx-constraintlayout = "2.2.2"
 androidx-coordinatorlayout = "1.3.0"
 androidx-swiperefreshlayout = "1.2.0"
