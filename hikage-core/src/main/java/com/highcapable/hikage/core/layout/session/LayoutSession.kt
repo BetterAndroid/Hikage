@@ -33,7 +33,7 @@ import com.highcapable.hikage.core.attribute.build
 import com.highcapable.hikage.core.attribute.exception.AttributeResolvingException
 import com.highcapable.hikage.core.attribute.hikageAttributeIsAvailable
 import com.highcapable.hikage.core.attribute.isNotEmpty
-import com.highcapable.hikage.core.attribute.widget.HikageAttributeView
+import com.highcapable.hikage.core.attribute.resolver.SimpleAttributeSetResolver
 import com.highcapable.hikage.core.base.HikageFactory
 import com.highcapable.hikage.core.base.HikageView
 import com.highcapable.hikage.core.base.ViewConstructor
@@ -161,8 +161,7 @@ internal class LayoutSession private constructor(private val factories: List<Hik
                     "Please make sure you have added the `hikage-runtime-attribute` dependency for attribute resolving."
             )
 
-            val layoutAttrs = HikageAttributeView.resolveSimpleAttributeSet(context)
-            block(lazyOf(layoutAttrs), null)
+            SimpleAttributeSetResolver.withParser(context) { block(lazyOf(it), null) }
         }
 
         val attributeItems = requireNoPerformers(Hikage.Attribute::class.qualifiedName) { attrs.build() }
