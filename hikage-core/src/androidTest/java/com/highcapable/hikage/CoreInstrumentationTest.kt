@@ -29,6 +29,7 @@ import android.widget.TextView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.highcapable.hikage.core.Hikage
+import com.highcapable.hikage.core.attribute.resolver.SimpleAttributeSetResolver
 import com.highcapable.hikage.core.layout.Layout
 import com.highcapable.hikage.core.layout.View
 import com.highcapable.hikage.core.layout.ViewGroup
@@ -47,6 +48,17 @@ import org.junit.runner.RunWith
 class CoreInstrumentationTest {
 
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Test
+    fun simpleAttributeSetParserRemainsOpenDuringViewConstruction() {
+        val root = SimpleAttributeSetResolver.withParser(context) { LinearLayout(context, it) }
+        val child = SimpleAttributeSetResolver.withParser(context) { TextView(context, it) }
+        child.text = "Hello World!"
+        root.addView(child)
+
+        assertSame(child, root.getChildAt(0))
+        assertEquals("Hello World!", child.text.toString())
+    }
 
     @Test
     fun attachedParentIsNotHikageRoot() {
