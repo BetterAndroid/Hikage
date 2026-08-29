@@ -77,7 +77,7 @@ flowchart TB
   H3 -->|"Yes"| A1["HikageAttribute DSL\nandroid/app/set(...)"] --> A2["AttributeItem list"] --> A3["AttributeSetResolver.newParser(...)"] --> A4["runtime-generated\nXmlResourceParser / AttributeSet"]
   A2 --> A5["filter layout_* attrs"] --> A6["LayoutParams AttributeSet\n(optional lazy parser)"] --> H9["LayoutParams.from(...)"] --> H10["explicit LayoutParams first\nelse parent.generateLayoutParams(AttributeSet)\nelse default LayoutParams"]
 
-  H3 -->|"No + attrs empty"| H4["valid system AttributeSet\nfrom HikageAttributeView"] --> H6["session.createView(...)"]
+  H3 -->|"No + attrs empty"| H4["valid system AttributeSet\nfrom SimpleAttributeSetResolver"] --> H6["session.createView(...)"]
   H3 -->|"No + attrs non-empty"| H5["throw AttributeResolvingException"]
 
   A4 --> H6

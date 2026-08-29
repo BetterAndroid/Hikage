@@ -70,7 +70,7 @@ flowchart TB
   H3 -->|"是"| A1["HikageAttribute DSL\nandroid/app/set(...)"] --> A2["AttributeItem 列表"] --> A3["AttributeSetResolver.newParser(...)"] --> A4["运行时生成的\nXmlResourceParser / AttributeSet"]
   A2 --> A5["过滤 layout_* 属性"] --> A6["LayoutParams AttributeSet\n(可选延迟解析器)"] --> H9["LayoutParams.from(...)"] --> H10["显式 LayoutParams 优先\n否则 parent.generateLayoutParams(AttributeSet)\n否则默认 LayoutParams"]
 
-  H3 -->|"否 + 属性为空"| H4["合法的系统 AttributeSet\n来自 HikageAttributeView"] --> H6["session.createView(...)"]
+  H3 -->|"否 + 属性为空"| H4["合法的系统 AttributeSet\n来自 SimpleAttributeSetResolver"] --> H6["session.createView(...)"]
   H3 -->|"否 + 属性非空"| H5["抛出 AttributeResolvingException"]
 
   A4 --> H6
