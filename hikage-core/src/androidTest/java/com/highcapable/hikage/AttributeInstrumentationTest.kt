@@ -34,6 +34,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.AutoCompleteTextView
 import android.widget.FrameLayout
 import android.widget.GridView
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -89,6 +90,14 @@ class AttributeInstrumentationTest {
                     }
                 }
             )
+            View<ImageView>(
+                id = "image",
+                attrs = {
+                    android {
+                        set("scaleType", "fitCenter")
+                    }
+                }
+            )
         }
 
         val view = hikage.get<TextView>("text")
@@ -102,6 +111,7 @@ class AttributeInstrumentationTest {
         assertEquals(EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_FULLSCREEN, view.imeOptions)
         assertTrue(view.isHorizontalScrollBarEnabled)
         assertTrue(view.isVerticalScrollBarEnabled)
+        assertEquals(ImageView.ScaleType.FIT_CENTER, hikage.get<ImageView>("image").scaleType)
     }
 
     @Test
